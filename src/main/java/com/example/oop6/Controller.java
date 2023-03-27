@@ -3,7 +3,8 @@ package com.example.oop6;
 import com.example.oop6.models.PaintField;
 import com.example.oop6.models.shapes.Circle;
 import com.example.oop6.models.shapes.Shape;
-import com.example.oop6.models.shapes.Square;
+import com.example.oop6.models.shapes.Rectangle;
+import com.example.oop6.models.shapes.Triangle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -28,6 +29,8 @@ public class Controller implements Initializable {
     private Button btnCircle;
     @FXML
     private Button btnSquare;
+    @FXML
+    private Button btnTriangle;
     private PaintField paintField;
 
     private Shape shape;
@@ -36,19 +39,23 @@ public class Controller implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         Canvas canvas = new Canvas(drawField.getPrefWidth(), drawField.getPrefHeight());
         paintField = new PaintField(canvas);
-        drawField.prefWidthProperty().addListener((o, oldValue, newValue) -> {
+        drawField.widthProperty().addListener((o, oldValue, newValue) -> {
             paintField.resizeWidth(newValue.intValue());
         });
-        drawField.prefHeightProperty().addListener((o, oldValue, newValue) -> {
+        drawField.heightProperty().addListener((o, oldValue, newValue) -> {
             paintField.resizeHeight(newValue.intValue());
         });
+        form.setMinWidth(700);
+        form.setMinHeight(400);
         drawField.getChildren().add(canvas);
-        Shape circle = new Circle(20);
+        Shape circle = new Circle(40, 60);
         btnCircle.setUserData(circle);
-        btnSquare.setUserData(new Square(20));
+        btnSquare.setUserData(new Rectangle(40, 60));
+        btnTriangle.setUserData(new Triangle(40, 80));
         shape = circle.clone();
         btnCircle.setOnAction(this::btnShapePress);
         btnSquare.setOnAction(this::btnShapePress);
+        btnTriangle.setOnAction(this::btnShapePress);
         drawField.setBackground(new Background(new BackgroundFill(Color.web("#FFFFFF"), CornerRadii.EMPTY, Insets.EMPTY)));
     }
 

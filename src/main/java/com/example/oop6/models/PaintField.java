@@ -25,8 +25,12 @@ public class PaintField {
     public void addOrSelectShape(Shape shape, int x, int y){
         if(!multiplySelection) unselectAllShapes();
         if(!isASelection(x,y)){
-            unselectAllShapes();
             shape.setPosition(x, y);
+            if(!isInAField(shape)) {
+                drawAllShapesInContainer();
+                return;
+            }
+            unselectAllShapes();
             shape.changeSelection();
             shapeContainer.add(shape);
         }
@@ -61,6 +65,10 @@ public class PaintField {
         fieldCanvas.setHeight(newHeight);
         drawAllShapesInContainer();
     }
+    public void clearField(){
+        shapeContainer.clear();
+        clearCanvas();
+    }
     private boolean isASelection(int x, int y){
         boolean global = false;
         for (Shape shape : shapeContainer) {
@@ -84,14 +92,15 @@ public class PaintField {
         for (Shape shape : shapeContainer) {
             if(!isInAField(shape)) candidates.add(i);
             else shape.draw(gc);
+            i++;
         }
         deleteAtIndexes(candidates);
     }
 
     private void deleteAtIndexes(List<Integer> list){
         if(list.isEmpty()) return;
-        for (int i = list.size(); i >= 0; i--) {
-            shapeContainer.deleteAt(i);
+        for (int i = list.size() - 1; i >= 0; i--) {
+            shapeContainer.deleteAt(list.get(i));
         }
     }
     private void unselectAllShapes(){
@@ -103,6 +112,6 @@ public class PaintField {
         fieldCanvas.getGraphicsContext2D().clearRect(0,0,fieldCanvas.getWidth(),fieldCanvas.getHeight());
     }
     private boolean isInAField(Shape shape){
-        return shape.getX() > shape.getRadius() && shape.getY() > shape.getRadius() && shape.getX() < fieldWidth - shape.getRadius() && shape.getY() < fieldHeight - shape.getRadius();
+        return shape.getX() > shape.getCenterToX() && shape.getY() > shape.getCenterToY() && shape.getX() < fieldWidth - shape.getCenterToX() && shape.getY() < fieldHeight - shape.getCenterToY();
     }
 }

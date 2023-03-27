@@ -223,7 +223,6 @@ public class Container<T> implements Iterable<T> {
             if(size == 0) tail = head;
             return true;
         }
-        if(index == 0 && size == 0) return false;
         Node node = findNode(index - 1);
         if(node.next == tail){
             tail = node;
