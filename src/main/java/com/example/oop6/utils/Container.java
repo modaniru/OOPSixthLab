@@ -1,5 +1,8 @@
 package com.example.oop6.utils;
 
+import com.example.oop6.funcInterfaces.ContainerMapFunc;
+import com.example.oop6.models.shapes.Shape;
+
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -231,8 +234,6 @@ public class Container<T> implements Iterable<T> {
         node.next = node.next.next;
         return true;
     }
-
-
 
     /**
      * Очищает контейнер путем установки head.next = null

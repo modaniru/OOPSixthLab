@@ -58,6 +58,17 @@ public abstract class Shape {
         return y;
     }
 
+    public final void setWidth(int newWidth){
+        width = newWidth;
+    }
+    public final void setHeight(int newHeight){
+        height = newHeight;
+    }
+
+    public final void setFillColor(Color color){
+        fillColor = color;
+    }
+
     protected final Color getBorderColor() {
         if (selection) return selectionColor;
         return Color.rgb(0, 0, 0, 0);

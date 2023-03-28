@@ -1,10 +1,13 @@
 package com.example.oop6;
 
 import com.example.oop6.models.PaintField;
+import com.example.oop6.models.ShapeSizeModel;
 import com.example.oop6.models.shapes.Circle;
 import com.example.oop6.models.shapes.Shape;
 import com.example.oop6.models.shapes.Rectangle;
 import com.example.oop6.models.shapes.Triangle;
+import javafx.beans.Observable;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -22,8 +25,6 @@ import java.util.ResourceBundle;
 
 public class Controller implements Initializable {
     @FXML
-    private AnchorPane form;
-    @FXML
     private Pane drawField;
     @FXML
     private Button btnCircle;
@@ -31,53 +32,120 @@ public class Controller implements Initializable {
     private Button btnSquare;
     @FXML
     private Button btnTriangle;
+    @FXML
+    private Button btnCanvasClear;
+    @FXML
+    private Slider widthSlider;
+    @FXML
+    private Slider heightSlider;
+    @FXML
+    private ColorPicker colorPicker;
     private PaintField paintField;
+    private ShapeSizeModel shapeSizeModel;
 
     private Shape shape;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        //todo минимальный размер формы
+        //Работа с Canvas
         Canvas canvas = new Canvas(drawField.getPrefWidth(), drawField.getPrefHeight());
         paintField = new PaintField(canvas);
-        drawField.widthProperty().addListener((o, oldValue, newValue) -> {
-            paintField.resizeWidth(newValue.intValue());
-        });
-        drawField.heightProperty().addListener((o, oldValue, newValue) -> {
-            paintField.resizeHeight(newValue.intValue());
-        });
-        form.setMinWidth(700);
-        form.setMinHeight(400);
         drawField.getChildren().add(canvas);
-        Shape circle = new Circle(40, 60);
+        //Обработчики событий при изменении размера окна
+        drawField.widthProperty().addListener(this::formChangeWidthEvent);
+        drawField.heightProperty().addListener(this::formChangeHeightEvent);
+        //Моделька
+        shapeSizeModel = new ShapeSizeModel(40, 40);
+        shapeSizeModel.setModelChangeEvent(this::changeModel);
+        //Слайдеры, для выбора размера фигуры
+        heightSlider.valueProperty().addListener(this::heightSliderChangeEvent);
+        widthSlider.valueProperty().addListener(this::widthSliderChangeEvent);
+        //Колор пикер
+        colorPicker.setOnAction(this::colorPickerAction);
+        //Вставка фигур в кнопки
+        Shape circle = new Circle(shapeSizeModel.getWidth(), shapeSizeModel.getHeight());
         btnCircle.setUserData(circle);
-        btnSquare.setUserData(new Rectangle(40, 60));
-        btnTriangle.setUserData(new Triangle(40, 80));
+        btnSquare.setUserData(new Rectangle(shapeSizeModel.getWidth(), shapeSizeModel.getHeight()));
+        btnTriangle.setUserData(new Triangle(shapeSizeModel.getWidth(), shapeSizeModel.getHeight()));
+        //По дефолту круг
         shape = circle.clone();
+        //Обработчики событий при нажатии на кнопку
         btnCircle.setOnAction(this::btnShapePress);
         btnSquare.setOnAction(this::btnShapePress);
         btnTriangle.setOnAction(this::btnShapePress);
+        btnCanvasClear.setOnAction(this::btnClearCanvasAction);
+        //Белый цвет paintField
         drawField.setBackground(new Background(new BackgroundFill(Color.web("#FFFFFF"), CornerRadii.EMPTY, Insets.EMPTY)));
     }
 
+    //Обработчик колор пиркера
+    private void colorPickerAction(ActionEvent actionEvent) {
+        paintField.changeColorSelectedShapes(colorPicker.getValue());
+    }
+
+    //Обработчики слайдеров
+    private void heightSliderChangeEvent(ObservableValue<? extends Number> o, Number oldValue, Number newValue) {
+        shapeSizeModel.setHeight(newValue.intValue());
+    }
+
+    private void widthSliderChangeEvent(ObservableValue<? extends Number> o, Number oldValue, Number newValue) {
+        shapeSizeModel.setWidth(newValue.intValue());
+    }
+
+    //Обработчики изменения размера окна
+    private void formChangeWidthEvent(ObservableValue<? extends Number> o, Number oldValue, Number newValue) {
+        paintField.resizeWidth(newValue.intValue());
+    }
+
+    private void formChangeHeightEvent(ObservableValue<? extends Number> o, Number oldValue, Number newValue) {
+        paintField.resizeHeight(newValue.intValue());
+    }
+
+    //Обработчики нажатия на кнопку
     private void btnShapePress(ActionEvent actionEvent) {
         shape = ((Shape) ((Button) actionEvent.getSource()).getUserData());
     }
 
-    public void clickPaintField(MouseEvent mouseEvent) {
-        paintField.addOrSelectShape(shape.clone(), (int) mouseEvent.getX(), (int) mouseEvent.getY());
+    private void btnClearCanvasAction(ActionEvent actionEvent) {
+        paintField.clearField();
     }
 
+    //Нажатие на форму рисования
+    public void clickPaintField(MouseEvent mouseEvent) {
+        Shape shapeClone = shape.clone();
+        shapeClone.setHeight(shapeSizeModel.getHeight());
+        shapeClone.setWidth(shapeSizeModel.getWidth());
+        shapeClone.setFillColor(colorPicker.getValue());
+        paintField.addOrSelectShape(shapeClone, (int) mouseEvent.getX(), (int) mouseEvent.getY());
+    }
+
+    //Обработчик различных нажатий клавиш
     public void keyInFormDown(KeyEvent keyEvent) {
         if (keyEvent.getCode() == KeyCode.COMMAND) {
             paintField.setMultiplySelection(true);
         } else if (keyEvent.getCode() == KeyCode.BACK_SPACE) {
             paintField.deleteAllSelectedShapes();
+        } else if (keyEvent.getCode() == KeyCode.RIGHT) {
+            paintField.moveAllSelectedShapes(2, 0);
+        } else if (keyEvent.getCode() == KeyCode.LEFT) {
+            paintField.moveAllSelectedShapes(-2, 0);
+        } else if (keyEvent.getCode() == KeyCode.UP) {
+            paintField.moveAllSelectedShapes(0, -2);
+        } else if (keyEvent.getCode() == KeyCode.DOWN) {
+            paintField.moveAllSelectedShapes(0, 2);
         }
     }
 
+    //Множественное выделение фигур
     public void keyInFormUp(KeyEvent keyEvent) {
         if (keyEvent.getCode() == KeyCode.COMMAND) {
             paintField.setMultiplySelection(false);
         }
+    }
+
+    //Model change event
+    private void changeModel(int x, int y) {
+        paintField.resizeSelectedShapes(x, y);
     }
 }
