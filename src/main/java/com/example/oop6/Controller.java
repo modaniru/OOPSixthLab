@@ -25,6 +25,8 @@ import java.util.ResourceBundle;
 
 public class Controller implements Initializable {
     @FXML
+    private AnchorPane form;
+    @FXML
     private Pane drawField;
     @FXML
     private Button btnCircle;
@@ -47,7 +49,6 @@ public class Controller implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        //todo минимальный размер формы
         //Работа с Canvas
         Canvas canvas = new Canvas(drawField.getPrefWidth(), drawField.getPrefHeight());
         paintField = new PaintField(canvas);
@@ -58,6 +59,8 @@ public class Controller implements Initializable {
         //Моделька
         shapeSizeModel = new ShapeSizeModel(40, 40);
         shapeSizeModel.setModelChangeEvent(this::changeModel);
+        widthSlider.setValue(shapeSizeModel.getWidth());
+        heightSlider.setValue(shapeSizeModel.getHeight());
         //Слайдеры, для выбора размера фигуры
         heightSlider.valueProperty().addListener(this::heightSliderChangeEvent);
         widthSlider.valueProperty().addListener(this::widthSliderChangeEvent);
@@ -134,6 +137,14 @@ public class Controller implements Initializable {
             paintField.moveAllSelectedShapes(0, -2);
         } else if (keyEvent.getCode() == KeyCode.DOWN) {
             paintField.moveAllSelectedShapes(0, 2);
+        } else if (keyEvent.getCode() == KeyCode.L) {
+            paintField.resizeDeltaSelectedShapes(2, 0);
+        }else if (keyEvent.getCode() == KeyCode.K) {
+            paintField.resizeDeltaSelectedShapes(-2, 0);
+        }else if (keyEvent.getCode() == KeyCode.O) {
+            paintField.resizeDeltaSelectedShapes(0, 2);
+        }else if (keyEvent.getCode() == KeyCode.I) {
+            paintField.resizeDeltaSelectedShapes(0, -2);
         }
     }
 

@@ -1,16 +1,17 @@
 package com.example.oop6.models.shapes;
 
-import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
 public abstract class Shape {
+    private static int MIN_HEIGHT = 10;
+    private static int MIN_WIDTH = 10;
     protected int x;
     protected int y;
     protected int width;
     protected int height;
     protected boolean selection;
-    private Color fillColor = Color.AQUA;
+    private Color fillColor;
     private Color selectionColor = Color.ORANGERED;
 
     public Shape(int width, int height) {
@@ -59,9 +60,11 @@ public abstract class Shape {
     }
 
     public final void setWidth(int newWidth){
+        if(newWidth < MIN_WIDTH) return;
         width = newWidth;
     }
     public final void setHeight(int newHeight){
+        if(newHeight < MIN_HEIGHT) return;
         height = newHeight;
     }
 

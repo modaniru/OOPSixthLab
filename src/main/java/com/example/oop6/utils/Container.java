@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.Objects;
 import java.util.function.Consumer;
 
+//Контейнер, показанный OOP3
 public class Container<T> implements Iterable<T> {
 
     /**

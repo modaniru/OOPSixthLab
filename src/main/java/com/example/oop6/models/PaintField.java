@@ -24,6 +24,7 @@ public class PaintField {
         this.fieldCanvas = canvas;
     }
 
+    //Добавляет или выделяет фигуру
     public void addOrSelectShape(Shape shape, int x, int y) {
         if (!multiplySelection) unselectAllShapes();
         if (!isASelection(x, y)) {
@@ -39,10 +40,12 @@ public class PaintField {
         drawAllShapesInContainer();
     }
 
+    //Устанавливает флаг множественного выделения
     public void setMultiplySelection(boolean value) {
         multiplySelection = value;
     }
 
+    //Удаляет все выделенные фигуры
     public void deleteAllSelectedShapes() {
         List<Integer> candidates = new ArrayList<>();
         int i = 0;
@@ -55,6 +58,7 @@ public class PaintField {
         drawAllShapesInContainer();
     }
 
+    //Отвечает за отрисовку, после изменения размера формы
     public void resizeWidth(int newWidth) {
         fieldWidth = newWidth;
         fieldCanvas.setWidth(newWidth);
@@ -67,11 +71,13 @@ public class PaintField {
         drawAllShapesInContainer();
     }
 
+    //Очищает поле
     public void clearField() {
         shapeContainer.clear();
         clearCanvas();
     }
 
+    //метод, который двигает фигуру на dx и dy
     public void moveAllSelectedShapes(int dx, int dy) {
         map(shape -> {
             if (shape.isSelection()) {
@@ -85,6 +91,7 @@ public class PaintField {
         drawAllShapesInContainer();
     }
 
+    //Меняет цвет всех выделенных фигур
     public void changeColorSelectedShapes(Color color) {
         map(shape -> {
             if (shape.isSelection()) {
@@ -94,6 +101,7 @@ public class PaintField {
         drawAllShapesInContainer();
     }
 
+    //Отвечает за изменения размера фигуры
     public void resizeSelectedShapes(int newWidth, int newHeight) {
         map(shape -> {
             if (shape.isSelection()) {
@@ -108,6 +116,21 @@ public class PaintField {
         drawAllShapesInContainer();
     }
 
+    public void resizeDeltaSelectedShapes(int dx, int dy) {
+        map(shape -> {
+            if(shape.isSelection()){
+                if (!(shape.getX() + shape.getCenterToX() + dx * 2 >= fieldWidth || shape.getX() - shape.getCenterToX() - 2 * dx <= 0)) {
+                    shape.setWidth(shape.getCenterToX() * 2 + dx * 2);
+                }
+                if (!(shape.getY() + shape.getCenterToY() + 2 * dy >= fieldHeight || shape.getY() - shape.getCenterToY() - 2 * dy <= 0)) {
+                    shape.setHeight(shape.getCenterToY() * 2 + dy * 2);
+                }
+            }
+        });
+        drawAllShapesInContainer();
+    }
+
+    //Проверяет, если ли в списке, которые могут быть выделенными по заданным координатам
     private boolean isASelection(int x, int y) {
         boolean global = false;
         for (Shape shape : shapeContainer) {
@@ -121,7 +144,7 @@ public class PaintField {
         return global;
     }
 
-
+    //Отрисовывает все фигуры, находящиеся в списке
     private void drawAllShapesInContainer() {
         clearCanvas();
         GraphicsContext gc = fieldCanvas.getGraphicsContext2D();
@@ -135,6 +158,7 @@ public class PaintField {
         deleteAtIndexes(candidates);
     }
 
+    //Удаляет все фигуры, по заданному массиву индексов
     private void deleteAtIndexes(List<Integer> list) {
         if (list.isEmpty()) return;
         for (int i = list.size() - 1; i >= 0; i--) {
@@ -142,18 +166,22 @@ public class PaintField {
         }
     }
 
+    //Выключает выделение у всех фигур
     private void unselectAllShapes() {
         map(Shape::disableSelection);
     }
 
+    //Очищает canvas
     private void clearCanvas() {
         fieldCanvas.getGraphicsContext2D().clearRect(0, 0, fieldCanvas.getWidth(), fieldCanvas.getHeight());
     }
 
+    //Проверяет, находится ли фигура в поле для рисования
     private boolean isInAField(Shape shape) {
         return shape.getX() > shape.getCenterToX() && shape.getY() > shape.getCenterToY() && shape.getX() < fieldWidth - shape.getCenterToX() && shape.getY() < fieldHeight - shape.getCenterToY();
     }
 
+    //Функция для прохода по всем элементам, принимающая в себя функц. интерфейс
     private void map(ContainerMapFunc func) {
         for (Shape shape : shapeContainer) {
             func.map(shape);
