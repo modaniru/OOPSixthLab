@@ -6,7 +6,6 @@ import com.example.oop6.models.shapes.Circle;
 import com.example.oop6.models.shapes.Shape;
 import com.example.oop6.models.shapes.Rectangle;
 import com.example.oop6.models.shapes.Triangle;
-import javafx.beans.Observable;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -56,9 +55,10 @@ public class Controller implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         //Работа с Canvas
         Canvas canvas = new Canvas(drawField.getPrefWidth(), drawField.getPrefHeight());
-        paintField = new PaintField(canvas);
         drawField.getChildren().add(canvas);
+        paintField = new PaintField(canvas);
         //Обработчики событий при изменении размера окна
+
         drawField.widthProperty().addListener(this::formChangeWidthEvent);
         drawField.heightProperty().addListener(this::formChangeHeightEvent);
         //Моделька
@@ -90,7 +90,7 @@ public class Controller implements Initializable {
         drawField.setBackground(new Background(new BackgroundFill(Color.web("#FFFFFF"), CornerRadii.EMPTY, Insets.EMPTY)));
     }
 
-    //Обработчик колор пиркера
+    //Обработчик колор пикера
     private void colorPickerAction(ActionEvent actionEvent) {
         paintField.changeColorSelectedShapes(colorPicker.getValue());
     }
@@ -105,11 +105,11 @@ public class Controller implements Initializable {
     }
 
     //Обработчики изменения размера окна
-    private void formChangeWidthEvent(ObservableValue<? extends Number> o, Number oldValue, Number newValue) {
+    public void formChangeWidthEvent(ObservableValue<? extends Number> o, Number oldValue, Number newValue) {
         paintField.resizeWidth(newValue.intValue());
     }
 
-    private void formChangeHeightEvent(ObservableValue<? extends Number> o, Number oldValue, Number newValue) {
+    public void formChangeHeightEvent(ObservableValue<? extends Number> o, Number oldValue, Number newValue) {
         paintField.resizeHeight(newValue.intValue());
     }
 
@@ -125,8 +125,7 @@ public class Controller implements Initializable {
     //Нажатие на форму рисования
     public void clickPaintField(MouseEvent mouseEvent) {
         Shape shapeClone = shape.clone();
-        shapeClone.setHeight(shapeSizeModel.getHeight());
-        shapeClone.setWidth(shapeSizeModel.getWidth());
+        shapeClone.setSize(shapeSizeModel.getWidth(), shapeSizeModel.getHeight());
         shapeClone.setFillColor(colorPicker.getValue());
         paintField.addOrSelectShape(shapeClone, (int) mouseEvent.getX(), (int) mouseEvent.getY());
     }
@@ -147,11 +146,11 @@ public class Controller implements Initializable {
             paintField.moveAllSelectedShapes(0, 2);
         } else if (keyEvent.getCode() == KeyCode.L) {
             paintField.resizeDeltaSelectedShapes(2, 0);
-        }else if (keyEvent.getCode() == KeyCode.K) {
+        } else if (keyEvent.getCode() == KeyCode.K) {
             paintField.resizeDeltaSelectedShapes(-2, 0);
-        }else if (keyEvent.getCode() == KeyCode.O) {
+        } else if (keyEvent.getCode() == KeyCode.O) {
             paintField.resizeDeltaSelectedShapes(0, 2);
-        }else if (keyEvent.getCode() == KeyCode.I) {
+        } else if (keyEvent.getCode() == KeyCode.I) {
             paintField.resizeDeltaSelectedShapes(0, -2);
         }
     }

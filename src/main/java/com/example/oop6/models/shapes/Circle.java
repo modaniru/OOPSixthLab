@@ -1,12 +1,12 @@
 package com.example.oop6.models.shapes;
 
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
 
 public class Circle extends Shape {
     public Circle(int width, int height) {
         super(width, height);
     }
+
     @Override
     public Shape clone() {
         return new Circle(width, height);

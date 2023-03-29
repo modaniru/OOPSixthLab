@@ -1,7 +1,6 @@
 package com.example.oop6.models.shapes;
 
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
 
 public class Rectangle extends Shape {
 

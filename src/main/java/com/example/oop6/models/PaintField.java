@@ -29,7 +29,7 @@ public class PaintField {
         if (!multiplySelection) unselectAllShapes();
         if (!isASelection(x, y)) {
             shape.setPosition(x, y);
-            if (!isInAField(shape)) {
+            if (!shape.isItIncluded(fieldWidth, fieldHeight)) {
                 drawAllShapesInContainer();
                 return;
             }
@@ -81,11 +81,12 @@ public class PaintField {
     public void moveAllSelectedShapes(int dx, int dy) {
         map(shape -> {
             if (shape.isSelection()) {
-                if (shape.getX() + shape.getCenterToX() + dx >= fieldWidth || shape.getX() - shape.getCenterToX() + dx <= 0)
-                    return;
-                if (shape.getY() + shape.getCenterToY() + dy >= fieldHeight || shape.getY() - shape.getCenterToY() + dy <= 0)
-                    return;
-                shape.setPosition(shape.getX() + dx, shape.getY() + dy);
+                int oldX = shape.getX();
+                int oldY = shape.getY();
+                shape.setPosition(oldX + dx, oldY + dy);
+                if (!shape.isItIncluded(fieldWidth, fieldHeight)) {
+                    shape.setPosition(oldX, oldY);
+                }
             }
         });
         drawAllShapesInContainer();
@@ -103,27 +104,25 @@ public class PaintField {
 
     //Отвечает за изменения размера фигуры
     public void resizeSelectedShapes(int newWidth, int newHeight) {
-        map(shape -> {
-            if (shape.isSelection()) {
-                if (!(shape.getX() + (newWidth / 2) >= fieldWidth || shape.getX() - (newWidth / 2) <= 0)) {
-                    shape.setWidth(newWidth);
-                }
-                if (!(shape.getY() + (newHeight / 2) >= fieldHeight || shape.getY() - (newHeight / 2) <= 0)) {
-                    shape.setHeight(newHeight);
-                }
-            }
+        resizeShapes(shape -> {
+            shape.setSize(newWidth, newHeight);
         });
-        drawAllShapesInContainer();
     }
 
     public void resizeDeltaSelectedShapes(int dx, int dy) {
+        resizeShapes(shape -> {
+            shape.increaseSize(dx, dy);
+        });
+    }
+
+    private void resizeShapes(ContainerMapFunc mapFunc) {
         map(shape -> {
-            if(shape.isSelection()){
-                if (!(shape.getX() + shape.getCenterToX() + dx * 2 >= fieldWidth || shape.getX() - shape.getCenterToX() - 2 * dx <= 0)) {
-                    shape.setWidth(shape.getCenterToX() * 2 + dx * 2);
-                }
-                if (!(shape.getY() + shape.getCenterToY() + 2 * dy >= fieldHeight || shape.getY() - shape.getCenterToY() - 2 * dy <= 0)) {
-                    shape.setHeight(shape.getCenterToY() * 2 + dy * 2);
+            if (shape.isSelection()) {
+                int oldWidth = shape.getWidth();
+                int oldHeight = shape.getHeight();
+                mapFunc.map(shape);
+                if (!shape.isItIncluded(fieldWidth, fieldHeight)) {
+                    shape.setSize(oldWidth, oldHeight);
                 }
             }
         });
@@ -148,14 +147,10 @@ public class PaintField {
     private void drawAllShapesInContainer() {
         clearCanvas();
         GraphicsContext gc = fieldCanvas.getGraphicsContext2D();
-        List<Integer> candidates = new ArrayList<>();
-        int i = 0;
-        for (Shape shape : shapeContainer) {
-            if (!isInAField(shape)) candidates.add(i);
-            else shape.draw(gc);
-            i++;
-        }
-        deleteAtIndexes(candidates);
+        map(shape -> {
+            if (shape.isItIncluded(fieldWidth, fieldHeight)) shape.draw(gc);
+            else shape.disableSelection();
+        });
     }
 
     //Удаляет все фигуры, по заданному массиву индексов
@@ -174,11 +169,6 @@ public class PaintField {
     //Очищает canvas
     private void clearCanvas() {
         fieldCanvas.getGraphicsContext2D().clearRect(0, 0, fieldCanvas.getWidth(), fieldCanvas.getHeight());
-    }
-
-    //Проверяет, находится ли фигура в поле для рисования
-    private boolean isInAField(Shape shape) {
-        return shape.getX() > shape.getCenterToX() && shape.getY() > shape.getCenterToY() && shape.getX() < fieldWidth - shape.getCenterToX() && shape.getY() < fieldHeight - shape.getCenterToY();
     }
 
     //Функция для прохода по всем элементам, принимающая в себя функц. интерфейс

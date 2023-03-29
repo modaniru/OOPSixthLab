@@ -12,7 +12,7 @@ public abstract class Shape {
     protected int height;
     protected boolean selection;
     private Color fillColor;
-    private Color selectionColor = Color.ORANGERED;
+    private final Color selectionColor = Color.ORANGERED;
 
     public Shape(int width, int height) {
         this.width = width;
@@ -59,24 +59,44 @@ public abstract class Shape {
         return y;
     }
 
-    public final void setWidth(int newWidth){
-        if(newWidth < MIN_WIDTH) return;
-        width = newWidth;
-    }
-    public final void setHeight(int newHeight){
-        if(newHeight < MIN_HEIGHT) return;
-        height = newHeight;
+    //Вопрос
+    public final void setSize(int width, int height) {
+        if (width >= MIN_WIDTH)
+            this.width = width;
+        if (height >= MIN_HEIGHT) {
+            this.height = height;
+        }
     }
 
-    public final void setFillColor(Color color){
+    public void increaseSize(int dx, int dy) {
+        this.width += dx * 2;
+        this.height += dy * 2;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+
+    public final void setFillColor(Color color) {
         fillColor = color;
+    }
+
+    //Проверяет, находится ли фигура в заданом пространстве
+    public boolean isItIncluded(int width, int height) {
+        return x > getCenterToX() && y > getCenterToY() && x < width - getCenterToX() && y < height - getCenterToY();
     }
 
     protected final Color getBorderColor() {
         if (selection) return selectionColor;
         return Color.rgb(0, 0, 0, 0);
     }
-    protected Color getFillColor(){
+
+    protected Color getFillColor() {
         return fillColor;
     }
 }

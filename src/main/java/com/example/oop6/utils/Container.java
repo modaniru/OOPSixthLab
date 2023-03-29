@@ -31,14 +31,17 @@ public class Container<T> implements Iterable<T> {
 
         }
     }
-    private class ContainerIterator implements Iterator<T>{
+
+    private class ContainerIterator implements Iterator<T> {
         private Node current;
-        ContainerIterator(Node head){
+
+        ContainerIterator(Node head) {
             current = head;
         }
+
         @Override
         public boolean hasNext() {
-            return current!=null;
+            return current != null;
         }
 
         @Override
@@ -224,11 +227,11 @@ public class Container<T> implements Iterable<T> {
         if (index == 0 && size > 0) {
             head.next = head.next.next;
             size--;
-            if(size == 0) tail = head;
+            if (size == 0) tail = head;
             return true;
         }
         Node node = findNode(index - 1);
-        if(node.next == tail){
+        if (node.next == tail) {
             tail = node;
         }
         size--;
