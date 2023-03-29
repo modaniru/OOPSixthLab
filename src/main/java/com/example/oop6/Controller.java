@@ -19,6 +19,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -42,6 +43,10 @@ public class Controller implements Initializable {
     private Slider heightSlider;
     @FXML
     private ColorPicker colorPicker;
+    @FXML
+    private Text tWidth;
+    @FXML
+    private Text tHeight;
     private PaintField paintField;
     private ShapeSizeModel shapeSizeModel;
 
@@ -61,11 +66,14 @@ public class Controller implements Initializable {
         shapeSizeModel.setModelChangeEvent(this::changeModel);
         widthSlider.setValue(shapeSizeModel.getWidth());
         heightSlider.setValue(shapeSizeModel.getHeight());
+        tWidth.setText("width: " + shapeSizeModel.getWidth());
+        tHeight.setText("height: " + shapeSizeModel.getHeight());
         //Слайдеры, для выбора размера фигуры
         heightSlider.valueProperty().addListener(this::heightSliderChangeEvent);
         widthSlider.valueProperty().addListener(this::widthSliderChangeEvent);
         //Колор пикер
         colorPicker.setOnAction(this::colorPickerAction);
+        colorPicker.setValue(Color.BLUEVIOLET);
         //Вставка фигур в кнопки
         Shape circle = new Circle(shapeSizeModel.getWidth(), shapeSizeModel.getHeight());
         btnCircle.setUserData(circle);
@@ -157,6 +165,8 @@ public class Controller implements Initializable {
 
     //Model change event
     private void changeModel(int x, int y) {
+        tWidth.setText("width: " + x);
+        tHeight.setText("height: " + y);
         paintField.resizeSelectedShapes(x, y);
     }
 }
