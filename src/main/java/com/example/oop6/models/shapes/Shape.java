@@ -90,6 +90,12 @@ public abstract class Shape {
     public boolean isItIncluded(int width, int height) {
         return x > getCenterToX() && y > getCenterToY() && x < width - getCenterToX() && y < height - getCenterToY();
     }
+    public boolean isItIncludedWidth(int width){
+        return x > getCenterToX() && x < width - getCenterToX();
+    }
+    public boolean isItIncludedHeight(int height){
+        return y > getCenterToY() && y < height - getCenterToY();
+    }
 
     protected final Color getBorderColor() {
         if (selection) return selectionColor;

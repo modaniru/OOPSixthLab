@@ -29,7 +29,7 @@ public class PaintField {
         if (!multiplySelection) unselectAllShapes();
         if (!isASelection(x, y)) {
             shape.setPosition(x, y);
-            if (!shape.isItIncluded(fieldWidth, fieldHeight)) {
+            if (!(shape.isItIncludedWidth(fieldWidth) && shape.isItIncludedHeight(fieldHeight))) {
                 drawAllShapesInContainer();
                 return;
             }
@@ -84,7 +84,7 @@ public class PaintField {
                 int oldX = shape.getX();
                 int oldY = shape.getY();
                 shape.setPosition(oldX + dx, oldY + dy);
-                if (!shape.isItIncluded(fieldWidth, fieldHeight)) {
+                if (!(shape.isItIncludedWidth(fieldWidth) && shape.isItIncludedHeight(fieldHeight))) {
                     shape.setPosition(oldX, oldY);
                 }
             }
@@ -121,8 +121,11 @@ public class PaintField {
                 int oldWidth = shape.getWidth();
                 int oldHeight = shape.getHeight();
                 mapFunc.map(shape);
-                if (!shape.isItIncluded(fieldWidth, fieldHeight)) {
-                    shape.setSize(oldWidth, oldHeight);
+                if(!shape.isItIncludedWidth(fieldWidth)){
+                    shape.setSize(oldWidth, shape.getHeight());
+                }
+                if (!shape.isItIncludedHeight(fieldHeight)){
+                    shape.setSize(shape.getWidth(), oldHeight);
                 }
             }
         });
@@ -148,7 +151,7 @@ public class PaintField {
         clearCanvas();
         GraphicsContext gc = fieldCanvas.getGraphicsContext2D();
         map(shape -> {
-            if (shape.isItIncluded(fieldWidth, fieldHeight)) shape.draw(gc);
+            if ((shape.isItIncludedWidth(fieldWidth) && shape.isItIncludedHeight(fieldHeight))) shape.draw(gc);
             else shape.disableSelection();
         });
     }
