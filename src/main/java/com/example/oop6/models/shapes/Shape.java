@@ -1,5 +1,6 @@
 package com.example.oop6.models.shapes;
 
+import com.example.oop6.utils.Container;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
@@ -24,6 +25,15 @@ public abstract class Shape {
     public abstract boolean inShapeArea(int x, int y);
 
     public abstract void draw(GraphicsContext graphicsContext);
+    //return true if success
+    //todo можно ли этого избежать
+    public boolean addShape(Shape shape){
+        return false;
+    }
+
+    public Container<Shape> getShapes(){
+        return new Container<>();
+    }
 
 
     public final void changeSelection() {
