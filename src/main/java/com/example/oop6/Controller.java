@@ -46,6 +46,8 @@ public class Controller implements Initializable {
     private Text tWidth;
     @FXML
     private Text tHeight;
+    @FXML
+    private Text tCursorPosition;
     private PaintField paintField;
     private ShapeSizeModel shapeSizeModel;
 
@@ -113,6 +115,11 @@ public class Controller implements Initializable {
         paintField.resizeHeight(newValue.intValue());
     }
 
+    //todo NEW
+    public void mouseMoveInPaintFieldEvent(MouseEvent mouseEvent){
+        tCursorPosition.setText((int)mouseEvent.getX() + " " + (int)mouseEvent.getY());
+    }
+
     //Обработчики нажатия на кнопку
     private void btnShapePress(ActionEvent actionEvent) {
         shape = ((Shape) ((Button) actionEvent.getSource()).getUserData());
@@ -152,6 +159,8 @@ public class Controller implements Initializable {
             paintField.resizeDeltaSelectedShapes(0, 2);
         } else if (keyEvent.getCode() == KeyCode.I) {
             paintField.resizeDeltaSelectedShapes(0, -2);
+        } else if (keyEvent.getCode() == KeyCode.G) {
+            paintField.groupSelectedShapes();
         }
     }
 

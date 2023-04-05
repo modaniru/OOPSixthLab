@@ -21,7 +21,7 @@ public class Triangle extends Shape {
     }
 
     @Override
-    public void draw(GraphicsContext graphicsContext) {
+    public void drawShape(GraphicsContext graphicsContext) {
         graphicsContext.setLineWidth(4);
         graphicsContext.setFill(getFillColor());
         graphicsContext.setStroke(getBorderColor());

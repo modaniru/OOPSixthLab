@@ -2,6 +2,7 @@ package com.example.oop6.models;
 
 import com.example.oop6.funcInterfaces.ContainerMapFunc;
 import com.example.oop6.models.shapes.Shape;
+import com.example.oop6.models.shapes.ShapeGroup;
 import com.example.oop6.utils.Container;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -47,14 +48,7 @@ public class PaintField {
 
     //Удаляет все выделенные фигуры
     public void deleteAllSelectedShapes() {
-        List<Integer> candidates = new ArrayList<>();
-        int i = 0;
-        for (Shape shape : shapeContainer) {
-            if (shape.isSelection())
-                candidates.add(i);
-            i++;
-        }
-        deleteAtIndexes(candidates);
+        shapeContainer.deleteAtIndexes(getSelectedShapesIndexes());
         drawAllShapesInContainer();
     }
 
@@ -77,16 +71,12 @@ public class PaintField {
         clearCanvas();
     }
 
+    //todo NEW
     //метод, который двигает фигуру на dx и dy
     public void moveAllSelectedShapes(int dx, int dy) {
         map(shape -> {
             if (shape.isSelection()) {
-                int oldX = shape.getX();
-                int oldY = shape.getY();
-                shape.setPosition(oldX + dx, oldY + dy);
-                if (!(shape.isItIncludedWidth(fieldWidth) && shape.isItIncludedHeight(fieldHeight))) {
-                    shape.setPosition(oldX, oldY);
-                }
+                shape.increasePositionWithLimit(dx, dy, fieldWidth, fieldHeight);
             }
         });
         drawAllShapesInContainer();
@@ -101,34 +91,31 @@ public class PaintField {
         });
         drawAllShapesInContainer();
     }
-
+    //todo NEW
     //Отвечает за изменения размера фигуры
     public void resizeSelectedShapes(int newWidth, int newHeight) {
-        resizeShapes(shape -> {
-            shape.setSize(newWidth, newHeight);
-        });
-    }
-
-    public void resizeDeltaSelectedShapes(int dx, int dy) {
-        resizeShapes(shape -> {
-            shape.increaseSize(dx, dy);
-        });
-    }
-
-    private void resizeShapes(ContainerMapFunc mapFunc) {
         map(shape -> {
-            if (shape.isSelection()) {
-                int oldWidth = shape.getWidth();
-                int oldHeight = shape.getHeight();
-                mapFunc.map(shape);
-                if(!shape.isItIncludedWidth(fieldWidth)){
-                    shape.setSize(oldWidth, shape.getHeight());
-                }
-                if (!shape.isItIncludedHeight(fieldHeight)){
-                    shape.setSize(shape.getWidth(), oldHeight);
-                }
-            }
+            if (shape.isSelection()) shape.setSizeWithLimit(newWidth, newHeight, fieldWidth, fieldHeight);
         });
+        drawAllShapesInContainer();
+    }
+    //todo NEW
+    public void resizeDeltaSelectedShapes(int dx, int dy) {
+        map(shape -> {
+            if (shape.isSelection()) shape.increaseSizeWithLimit(dx, dy, fieldWidth, fieldHeight);
+        });
+        drawAllShapesInContainer();
+    }
+
+    //todo NEW
+    //Группирует выделенные объекты
+    public void groupSelectedShapes() {
+        ShapeGroup shapeGroup = new ShapeGroup();
+        map(shape -> {
+            if (shape.isSelection()) shapeGroup.addShape(shape);
+        });
+        deleteAllSelectedShapes();
+        shapeContainer.add(shapeGroup);
         drawAllShapesInContainer();
     }
 
@@ -149,19 +136,7 @@ public class PaintField {
     //Отрисовывает все фигуры, находящиеся в списке
     private void drawAllShapesInContainer() {
         clearCanvas();
-        GraphicsContext gc = fieldCanvas.getGraphicsContext2D();
-        map(shape -> {
-            if ((shape.isItIncludedWidth(fieldWidth) && shape.isItIncludedHeight(fieldHeight))) shape.draw(gc);
-            else shape.disableSelection();
-        });
-    }
-
-    //Удаляет все фигуры, по заданному массиву индексов
-    private void deleteAtIndexes(List<Integer> list) {
-        if (list.isEmpty()) return;
-        for (int i = list.size() - 1; i >= 0; i--) {
-            shapeContainer.deleteAt(list.get(i));
-        }
+        map(shape -> shape.draw(fieldCanvas));
     }
 
     //Выключает выделение у всех фигур
@@ -179,5 +154,16 @@ public class PaintField {
         for (Shape shape : shapeContainer) {
             func.map(shape);
         }
+    }
+
+    //Возвращает список индексов у фигур, которые выделены
+    private List<Integer> getSelectedShapesIndexes() {
+        List<Integer> list = new ArrayList<>();
+        int index = 0;
+        for (Shape shape : shapeContainer) {
+            if (shape.isSelection()) list.add(index);
+            index++;
+        }
+        return list;
     }
 }

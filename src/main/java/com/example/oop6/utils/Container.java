@@ -4,6 +4,7 @@ import com.example.oop6.funcInterfaces.ContainerMapFunc;
 import com.example.oop6.models.shapes.Shape;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 
@@ -251,5 +252,11 @@ public class Container<T> implements Iterable<T> {
         head.next = null;
         size = 0;
         tail = head;
+    }
+
+    public void deleteAtIndexes(List<Integer> integerList){
+        for (int i = integerList.size() - 1; i >= 0; i--) {
+            deleteAt(integerList.get(i));
+        }
     }
 }
