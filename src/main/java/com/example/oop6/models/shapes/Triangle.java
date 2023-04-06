@@ -14,9 +14,9 @@ public class Triangle extends Shape {
 
     @Override
     public boolean inShapeArea(int x, int y) {
-        int first = -(width) * (this.y + height / 2 - y);
-        int second = (this.x + width / 2 - x) * (-height) - (-width / 2) * (this.y + height / 2 - y);
-        int third = (this.x - x) * (height) - (-width / 2) * (this.y - height / 2 - y);
+        double first = -(width) * (this.y + height / 2 - y);
+        double second = (this.x + width / 2 - x) * (-height) - (-width / 2) * (this.y + height / 2 - y);
+        double third = (this.x - x) * (height) - (-width / 2) * (this.y - height / 2 - y);
         return (first <= 0 && second <= 0 && third <= 0) || (first >= 0 && second >= 0 && third >= 0);
     }
 

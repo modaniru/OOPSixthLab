@@ -72,6 +72,8 @@ public class PaintField {
     }
 
     //todo NEW
+    //как бы говорим фигуре: "перемести себя, если можешь на dx и dy в пределах fieldWidth, fieldHeight"
+    //идентично для других обновленный функций
     //метод, который двигает фигуру на dx и dy
     public void moveAllSelectedShapes(int dx, int dy) {
         map(shape -> {
