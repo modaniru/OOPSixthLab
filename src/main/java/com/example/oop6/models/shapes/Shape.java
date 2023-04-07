@@ -19,7 +19,10 @@ public abstract class Shape {
     public Shape(int width, int height) {
         this.width = width;
         this.height = height;
+        fillColor = Color.rgb(0,0,0,0);
     }
+
+
 
     public abstract Shape clone();
 
@@ -76,10 +79,13 @@ public abstract class Shape {
 
     //Вопрос
     public void setSize(int width, int height) {
-        if (width >= MIN_WIDTH)
-            this.width = width;
-        if (height >= MIN_HEIGHT) {
-            this.height = height;
+        this.width = width;
+        this.height = height;
+        if (width < MIN_WIDTH){
+            this.width = MIN_WIDTH;
+        }
+        if (height < MIN_HEIGHT) {
+            this.height = MIN_HEIGHT;
         }
     }
 

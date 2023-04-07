@@ -22,7 +22,7 @@ public class Triangle extends Shape {
 
     @Override
     public void drawShape(GraphicsContext graphicsContext) {
-        graphicsContext.setLineWidth(4);
+        graphicsContext.setLineWidth(2);
         graphicsContext.setFill(getFillColor());
         graphicsContext.setStroke(getBorderColor());
         double[] xCoords = new double[]{x - width / 2, x + width / 2, x};

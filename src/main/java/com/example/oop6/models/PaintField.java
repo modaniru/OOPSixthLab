@@ -26,10 +26,9 @@ public class PaintField {
     }
 
     //Добавляет или выделяет фигуру
-    public void addOrSelectShape(Shape shape, int x, int y) {
+    public void addOrSelectShape(Shape shape) {
         if (!multiplySelection) unselectAllShapes();
-        if (!isASelection(x, y)) {
-            shape.setPosition(x, y);
+        if (!isASelection(shape.getX(), shape.getY())) {
             if (!(shape.isItIncludedWidth(fieldWidth) && shape.isItIncludedHeight(fieldHeight))) {
                 drawAllShapesInContainer();
                 return;
@@ -39,6 +38,11 @@ public class PaintField {
             shapeContainer.add(shape);
         }
         drawAllShapesInContainer();
+    }
+
+    public void drawTempShape(Shape shape){
+        drawAllShapesInContainer();
+        shape.draw(fieldCanvas);
     }
 
     //Устанавливает флаг множественного выделения
@@ -113,6 +117,7 @@ public class PaintField {
     //Группирует выделенные объекты
     public void groupSelectedShapes() {
         ShapeGroup shapeGroup = new ShapeGroup();
+        shapeGroup.changeSelection();
         map(shape -> {
             if (shape.isSelection()) shapeGroup.addShape(shape);
         });

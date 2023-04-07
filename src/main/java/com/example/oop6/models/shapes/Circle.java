@@ -7,6 +7,8 @@ public class Circle extends Shape {
         super(width, height);
     }
 
+
+
     @Override
     public Shape clone() {
         return new Circle(width, height);
@@ -21,7 +23,7 @@ public class Circle extends Shape {
 
     @Override
     public void drawShape(GraphicsContext graphicsContext) {
-        graphicsContext.setLineWidth(4);
+        graphicsContext.setLineWidth(2);
         graphicsContext.setStroke(getBorderColor());
         graphicsContext.setFill(getFillColor());
         graphicsContext.strokeOval(x - (width / 2), y - (height / 2), width, height);

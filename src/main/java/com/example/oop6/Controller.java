@@ -75,7 +75,7 @@ public class Controller implements Initializable {
         widthSlider.valueProperty().addListener(this::widthSliderChangeEvent);
         //Колор пикер
         colorPicker.setOnAction(this::colorPickerAction);
-        colorPicker.setValue(Color.BLUEVIOLET);
+        colorPicker.setValue(Color.LIGHTGRAY);
         //Вставка фигур в кнопки
         Shape circle = new Circle(shapeSizeModel.getWidth(), shapeSizeModel.getHeight());
         btnCircle.setUserData(circle);
@@ -129,12 +129,32 @@ public class Controller implements Initializable {
         paintField.clearField();
     }
 
+    //private boolean dragEvent = false;
     //Нажатие на форму рисования
-    public void clickPaintField(MouseEvent mouseEvent) {
-        Shape shapeClone = shape.clone();
-        shapeClone.setSize(shapeSizeModel.getWidth(), shapeSizeModel.getHeight());
-        shapeClone.setFillColor(colorPicker.getValue());
-        paintField.addOrSelectShape(shapeClone, (int) mouseEvent.getX(), (int) mouseEvent.getY());
+    public void mouseDownEventInPaintField(MouseEvent mouseEvent) {
+        shape.setPosition((int) mouseEvent.getX(), (int) mouseEvent.getY());
+        shape.setSize(shapeSizeModel.getWidth(), shapeSizeModel.getHeight());
+    }
+
+    public void mouseDragEventInPaintField(MouseEvent mouseEvent){
+        shape.setSize((int) (Math.abs(mouseEvent.getX() - shape.getX()) * 2), (int) (Math.abs(mouseEvent.getY() - shape.getY() ) * 2));
+        shape.changeSelection();
+        paintField.drawTempShape(shape);
+        shape.changeSelection();
+        //промежуточная на отрисовку будующей фигуры (только с контуром)
+    }
+
+    public void mouseUpEventInPaintField(MouseEvent mouseEvent){
+        Shape clone = shape.clone();
+        clone.setFillColor(colorPicker.getValue());
+        clone.setPosition(shape.getX(), shape.getY());
+        if(!(clone.getX() == mouseEvent.getX() && clone.getY() == mouseEvent.getY())){
+            clone.setSize((int) (Math.abs(mouseEvent.getX() - clone.getX()) * 2), (int) (Math.abs(mouseEvent.getY() - clone.getY() ) * 2));
+        }
+        else{
+            clone.setSize(shapeSizeModel.getWidth(), shapeSizeModel.getHeight());
+        }
+        paintField.addOrSelectShape(clone);
     }
 
     //Обработчик различных нажатий клавиш

@@ -54,35 +54,29 @@ public class ShapeGroup extends Shape {
         return shapeGroup;
     }
 
-    //todo dry
     @Override
     public boolean inShapeArea(int x, int y) {
         for (Shape shape : shapes) {
-            int oldX = shape.getX();
-            int oldY = shape.getY();
-            shape.setPosition(this.x + oldX, this.y + oldY);
-            if (shape.inShapeArea(x, y)) {
-                shape.setPosition(oldX, oldY);
-                return true;
-            }
-            shape.setPosition(oldX, oldY);
+            normalizedShape(shape);
+            boolean res = shape.inShapeArea(x, y);
+            undoNormalizedShape(shape);
+            if(res) return true;
         }
         return false;
     }
 
-    //todo dry
     @Override
     protected void drawShape(GraphicsContext graphicsContext) {
-        graphicsContext.setLineWidth(2);
-        graphicsContext.setStroke(Color.BLACK);
-        graphicsContext.strokeRect(x - getCenterToX(), y - getCenterToY(), width, height);
+        if (selection) {
+            graphicsContext.setLineWidth(1);
+            graphicsContext.setStroke(Color.LIGHTBLUE);
+            graphicsContext.strokeRect(x - getCenterToX(), y - getCenterToY(), width, height);
+        }
         for (Shape shape : shapes) {
             //Установление
-            int oldX = shape.getX();
-            int oldY = shape.getY();
-            shape.setPosition(x + oldX, y + oldY);
+            normalizedShape(shape);
             shape.drawShape(graphicsContext);
-            shape.setPosition(oldX, oldY);
+            undoNormalizedShape(shape);
         }
     }
 
@@ -91,22 +85,22 @@ public class ShapeGroup extends Shape {
     public void increasePositionWithLimit(int dx, int dy, int fieldWidth, int fieldHeight) {
         super.increasePositionWithLimit(dx, dy, fieldWidth, fieldHeight);
     }
-    //todo Группа может расширять свой размер, но при этом не увеличивает размер фигур
-    @Override
-    //todo to double???
-    public void setSizeWithLimit(int width, int height, int fieldWidth, int fieldHeight) {
 
+    //todo в тз не сказано увеличивать группу. Делать или нет?
+    @Override
+    public void setSizeWithLimit(int width, int height, int fieldWidth, int fieldHeight) {
+        return;
     }
 
-    //todo проверять не вышли ли фигуры за пределлы группы при уменьшении
-    //todo мб Делать координаты каждого шейпа относительными группы, при отрисовке делаль их координаты относительно поля
+    //todo в тз не сказано увеличивать группу. Делать или нет?
     @Override
     public void increaseSizeWithLimit(int dx, int dy, int fieldWidth, int fieldHeight) {
-
+        return;
     }
 
     @Override
     public void changeSelection() {
+        selection = !selection;
         for (Shape shape : shapes) {
             shape.changeSelection();
         }
@@ -114,6 +108,7 @@ public class ShapeGroup extends Shape {
 
     @Override
     public void disableSelection() {
+        selection = false;
         for (Shape shape : shapes) {
             shape.disableSelection();
         }
@@ -133,5 +128,13 @@ public class ShapeGroup extends Shape {
         for (Shape shape : shapes) {
             shape.setFillColor(color);
         }
+    }
+    //Устанавливает фигуре координаты относительно Поля
+    private void normalizedShape(Shape shape){
+        shape.setPosition(shape.x + x, shape.y + y);
+    }
+    //Устанавливает фигуре координаты относительно группы
+    private void undoNormalizedShape(Shape shape){
+        shape.setPosition(shape.x - x, shape.y - y);
     }
 }
