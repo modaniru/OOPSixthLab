@@ -116,8 +116,8 @@ public class Controller implements Initializable {
     }
 
     //todo NEW
-    public void mouseMoveInPaintFieldEvent(MouseEvent mouseEvent){
-        tCursorPosition.setText((int)mouseEvent.getX() + " " + (int)mouseEvent.getY());
+    public void mouseMoveInPaintFieldEvent(MouseEvent mouseEvent) {
+        tCursorPosition.setText((int) mouseEvent.getX() + " " + (int) mouseEvent.getY());
     }
 
     //Обработчики нажатия на кнопку
@@ -133,28 +133,40 @@ public class Controller implements Initializable {
     //Нажатие на форму рисования
     public void mouseDownEventInPaintField(MouseEvent mouseEvent) {
         shape.setPosition((int) mouseEvent.getX(), (int) mouseEvent.getY());
-        shape.setSize(shapeSizeModel.getWidth(), shapeSizeModel.getHeight());
+        if (paintField.insideTheFigure(shape.getX(), shape.getY())){
+            paintField.changeSelectIfInside(shape.getX(), shape.getY());
+        }
+        else {
+            shape.setSize(shapeSizeModel.getWidth(), shapeSizeModel.getHeight());
+        }
     }
 
-    public void mouseDragEventInPaintField(MouseEvent mouseEvent){
-        shape.setSize((int) (Math.abs(mouseEvent.getX() - shape.getX()) * 2), (int) (Math.abs(mouseEvent.getY() - shape.getY() ) * 2));
-        shape.changeSelection();
-        paintField.drawTempShape(shape);
-        shape.changeSelection();
+    public void mouseDragEventInPaintField(MouseEvent mouseEvent) {
+        if(paintField.insideTheFigure(shape.getX(), shape.getY())){
+            paintField.moveAllSelectedShapes((int) (mouseEvent.getX() - shape.getX()), (int) (mouseEvent.getY() - shape.getY()));
+            shape.setPosition((int) mouseEvent.getX(), (int) mouseEvent.getY());
+        }
+        else{
+            shape.setSize((int) (Math.abs(mouseEvent.getX() - shape.getX()) * 2), (int) (Math.abs(mouseEvent.getY() - shape.getY()) * 2));
+            shape.changeSelection();
+            paintField.drawTempShape(shape);
+            shape.changeSelection();
+        }
         //промежуточная на отрисовку будующей фигуры (только с контуром)
     }
 
-    public void mouseUpEventInPaintField(MouseEvent mouseEvent){
-        Shape clone = shape.clone();
-        clone.setFillColor(colorPicker.getValue());
-        clone.setPosition(shape.getX(), shape.getY());
-        if(!(clone.getX() == mouseEvent.getX() && clone.getY() == mouseEvent.getY())){
-            clone.setSize((int) (Math.abs(mouseEvent.getX() - clone.getX()) * 2), (int) (Math.abs(mouseEvent.getY() - clone.getY() ) * 2));
+    public void mouseUpEventInPaintField(MouseEvent mouseEvent) {
+        if(!paintField.insideTheFigure(shape.getX(), shape.getY())){
+            Shape clone = shape.clone();
+            clone.setFillColor(colorPicker.getValue());
+            clone.setPosition(shape.getX(), shape.getY());
+            if (!(clone.getX() == mouseEvent.getX() && clone.getY() == mouseEvent.getY())) {
+                clone.setSize((int) (Math.abs(mouseEvent.getX() - clone.getX()) * 2), (int) (Math.abs(mouseEvent.getY() - clone.getY()) * 2));
+            } else {
+                clone.setSize(shapeSizeModel.getWidth(), shapeSizeModel.getHeight());
+            }
+            paintField.addOrSelectShape(clone);
         }
-        else{
-            clone.setSize(shapeSizeModel.getWidth(), shapeSizeModel.getHeight());
-        }
-        paintField.addOrSelectShape(clone);
     }
 
     //Обработчик различных нажатий клавиш

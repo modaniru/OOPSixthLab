@@ -25,22 +25,44 @@ public class PaintField {
         this.fieldCanvas = canvas;
     }
 
+    //todo NEW вынес логику проверки курсора в фигуре
     //Добавляет или выделяет фигуру
     public void addOrSelectShape(Shape shape) {
+        if (!(shape.isItIncludedWidth(fieldWidth) && shape.isItIncludedHeight(fieldHeight))) {
+            return;
+        }
         if (!multiplySelection) unselectAllShapes();
-        if (!isASelection(shape.getX(), shape.getY())) {
-            if (!(shape.isItIncludedWidth(fieldWidth) && shape.isItIncludedHeight(fieldHeight))) {
-                drawAllShapesInContainer();
-                return;
+        shape.changeSelection();
+        shapeContainer.add(shape);
+        drawAllShapesInContainer();
+    }
+
+    //todo NEW
+    //Вынес логику выделения фигур в отдельный метод
+    public List<Shape> getListInsideTheFigure(int x, int y) {
+        List<Shape> shapes = new ArrayList<>();
+        for (Shape shape : shapeContainer) {
+            if (shape.inShapeArea(x, y)) {
+                shapes.add(shape);
             }
-            unselectAllShapes();
+        }
+        return shapes;
+    }
+
+    public boolean insideTheFigure(int x, int y) {
+        return !getListInsideTheFigure(x, y).isEmpty();
+    }
+
+    public void changeSelectIfInside(int x, int y) {
+        if (!multiplySelection) unselectAllShapes();
+        List<Shape> shapes = getListInsideTheFigure(x, y);
+        for (Shape shape : shapes) {
             shape.changeSelection();
-            shapeContainer.add(shape);
         }
         drawAllShapesInContainer();
     }
 
-    public void drawTempShape(Shape shape){
+    public void drawTempShape(Shape shape) {
         drawAllShapesInContainer();
         shape.draw(fieldCanvas);
     }
@@ -97,6 +119,7 @@ public class PaintField {
         });
         drawAllShapesInContainer();
     }
+
     //todo NEW
     //Отвечает за изменения размера фигуры
     public void resizeSelectedShapes(int newWidth, int newHeight) {
@@ -105,6 +128,7 @@ public class PaintField {
         });
         drawAllShapesInContainer();
     }
+
     //todo NEW
     public void resizeDeltaSelectedShapes(int dx, int dy) {
         map(shape -> {
