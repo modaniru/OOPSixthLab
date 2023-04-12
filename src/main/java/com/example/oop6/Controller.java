@@ -6,6 +6,9 @@ import com.example.oop6.models.shapes.Circle;
 import com.example.oop6.models.shapes.Shape;
 import com.example.oop6.models.shapes.Rectangle;
 import com.example.oop6.models.shapes.Triangle;
+import com.example.oop6.models.shapes.funcs.ChangeColorAction;
+import com.example.oop6.models.shapes.funcs.MoveAction;
+import com.example.oop6.models.shapes.funcs.ResizeDeltaAction;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -48,19 +51,30 @@ public class Controller implements Initializable {
     private Text tHeight;
     @FXML
     private Text tCursorPosition;
+    //todo сделать команды для кнопок
+    @FXML
+    private Button btnCreate;
+    @FXML
+    private Button btnSelect;
+    @FXML
+    private Button btnPosition;
+    @FXML
+    private Button btnSize;
     private PaintField paintField;
     private ShapeSizeModel shapeSizeModel;
-
+    private MoveAction moveAction;
+    private ResizeDeltaAction resizeDeltaAction;
     private Shape shape;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         //Работа с Canvas
         Canvas canvas = new Canvas(drawField.getPrefWidth(), drawField.getPrefHeight());
+        moveAction = new MoveAction((int) drawField.getPrefWidth(), (int) drawField.getPrefHeight());
+        resizeDeltaAction = new ResizeDeltaAction((int) drawField.getPrefWidth(), (int) drawField.getPrefHeight());
         drawField.getChildren().add(canvas);
         paintField = new PaintField(canvas);
         //Обработчики событий при изменении размера окна
-
         drawField.widthProperty().addListener(this::formChangeWidthEvent);
         drawField.heightProperty().addListener(this::formChangeHeightEvent);
         //Моделька
@@ -81,6 +95,7 @@ public class Controller implements Initializable {
         btnCircle.setUserData(circle);
         btnSquare.setUserData(new Rectangle(shapeSizeModel.getWidth(), shapeSizeModel.getHeight()));
         btnTriangle.setUserData(new Triangle(shapeSizeModel.getWidth(), shapeSizeModel.getHeight()));
+
         //По дефолту круг
         shape = circle.clone();
         //Обработчики событий при нажатии на кнопку
@@ -94,7 +109,7 @@ public class Controller implements Initializable {
 
     //Обработчик колор пикера
     private void colorPickerAction(ActionEvent actionEvent) {
-        paintField.changeColorSelectedShapes(colorPicker.getValue());
+        paintField.actionSelectedShapes(new ChangeColorAction(colorPicker.getValue()));
     }
 
     //Обработчики слайдеров
@@ -108,10 +123,12 @@ public class Controller implements Initializable {
 
     //Обработчики изменения размера окна
     public void formChangeWidthEvent(ObservableValue<? extends Number> o, Number oldValue, Number newValue) {
+        moveAction.setWidth(newValue.intValue());
         paintField.resizeWidth(newValue.intValue());
     }
 
     public void formChangeHeightEvent(ObservableValue<? extends Number> o, Number oldValue, Number newValue) {
+        moveAction.setHeight(newValue.intValue());
         paintField.resizeHeight(newValue.intValue());
     }
 
@@ -143,7 +160,10 @@ public class Controller implements Initializable {
 
     public void mouseDragEventInPaintField(MouseEvent mouseEvent) {
         if(paintField.insideTheFigure(shape.getX(), shape.getY())){
-            paintField.moveAllSelectedShapes((int) (mouseEvent.getX() - shape.getX()), (int) (mouseEvent.getY() - shape.getY()));
+            moveAction.setDx((int) (mouseEvent.getX() - shape.getX()));
+            moveAction.setDy((int) (mouseEvent.getY() - shape.getY()));
+            paintField.actionSelectedShapes(moveAction);
+            //todo model for cursor position
             shape.setPosition((int) mouseEvent.getX(), (int) mouseEvent.getY());
         }
         else{
@@ -176,21 +196,37 @@ public class Controller implements Initializable {
         } else if (keyEvent.getCode() == KeyCode.BACK_SPACE) {
             paintField.deleteAllSelectedShapes();
         } else if (keyEvent.getCode() == KeyCode.RIGHT) {
-            paintField.moveAllSelectedShapes(2, 0);
+            moveAction.setDx(2);
+            moveAction.setDy(0);
+            paintField.actionSelectedShapes(moveAction);
         } else if (keyEvent.getCode() == KeyCode.LEFT) {
-            paintField.moveAllSelectedShapes(-2, 0);
+            moveAction.setDx(-2);
+            moveAction.setDy(0);
+            paintField.actionSelectedShapes(moveAction);
         } else if (keyEvent.getCode() == KeyCode.UP) {
-            paintField.moveAllSelectedShapes(0, -2);
+            moveAction.setDx(0);
+            moveAction.setDy(-2);
+            paintField.actionSelectedShapes(moveAction);
         } else if (keyEvent.getCode() == KeyCode.DOWN) {
-            paintField.moveAllSelectedShapes(0, 2);
+            moveAction.setDx(0);
+            moveAction.setDy(2);
+            paintField.actionSelectedShapes(moveAction);
         } else if (keyEvent.getCode() == KeyCode.L) {
-            paintField.resizeDeltaSelectedShapes(2, 0);
+            resizeDeltaAction.setDx(2);
+            resizeDeltaAction.setDy(0);
+            paintField.actionSelectedShapes(resizeDeltaAction);
         } else if (keyEvent.getCode() == KeyCode.K) {
-            paintField.resizeDeltaSelectedShapes(-2, 0);
+            resizeDeltaAction.setDx(-2);
+            resizeDeltaAction.setDy(0);
+            paintField.actionSelectedShapes(resizeDeltaAction);
         } else if (keyEvent.getCode() == KeyCode.O) {
-            paintField.resizeDeltaSelectedShapes(0, 2);
+            resizeDeltaAction.setDx(0);
+            resizeDeltaAction.setDy(2);
+            paintField.actionSelectedShapes(resizeDeltaAction);
         } else if (keyEvent.getCode() == KeyCode.I) {
-            paintField.resizeDeltaSelectedShapes(0, -2);
+            resizeDeltaAction.setDx(0);
+            resizeDeltaAction.setDy(-2);
+            paintField.actionSelectedShapes(resizeDeltaAction);
         } else if (keyEvent.getCode() == KeyCode.G) {
             paintField.groupSelectedShapes();
         }

@@ -1,13 +1,14 @@
 package com.example.oop6.models.shapes;
 
+import com.example.oop6.models.shapes.funcs.ShapeAction;
 import com.example.oop6.utils.Container;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
 public abstract class Shape {
-    private static int MIN_HEIGHT = 10;
-    private static int MIN_WIDTH = 10;
+    public static int MIN_HEIGHT = 10;
+    public static int MIN_WIDTH = 10;
     protected int x;
     protected int y;
     protected int width;
@@ -33,7 +34,7 @@ public abstract class Shape {
     public void draw(Canvas canvas){
         int width = (int) canvas.getWidth();
         int height = (int) canvas.getHeight();
-        if(isItIncludedWidth(width) && isItIncludedHeight(height))
+        if(entersByWidth(width) && entersByHeight(height))
             drawShape(canvas.getGraphicsContext2D());
     }
 
@@ -81,19 +82,6 @@ public abstract class Shape {
     public void setSize(int width, int height) {
         this.width = width;
         this.height = height;
-        if (width < MIN_WIDTH){
-            this.width = MIN_WIDTH;
-        }
-        if (height < MIN_HEIGHT) {
-            this.height = MIN_HEIGHT;
-        }
-    }
-
-    //todo NEW
-    public void increasePositionWithLimit(int dx, int dy, int fieldWidth, int fieldHeight) {
-        if (x + dx > getCenterToX() && x + dx < fieldWidth - getCenterToX()) x += dx;
-        if (y + dy > getCenterToY() && y + dy < fieldHeight - getCenterToY()) y += dy;
-        setPosition(x, y);
     }
 
     //todo NEW
@@ -102,32 +90,21 @@ public abstract class Shape {
         if (!(y > height / 2 && y < fieldHeight - height / 2)) height = this.height;
         setSize(width, height);
     }
-
-    //todo NEW
-    public void increaseSizeWithLimit(int dx, int dy, int fieldWidth, int fieldHeight) {
-        setSizeWithLimit(width + dx * 2, height + dy * 2, fieldWidth, fieldHeight);
-    }
-
-
+    
     public void setFillColor(Color color) {
         fillColor = color;
     }
 
     //Проверяет, находится ли фигура в заданом пространстве
-    public boolean isItIncludedWidth(int width) {
+    public boolean entersByWidth(int width) {
+        if(this.width < MIN_WIDTH) return false;
         return x > getCenterToX() && x < width - getCenterToX();
     }
 
-    public boolean isItIncludedHeight(int height) {
+    public boolean entersByHeight(int height) {
+        if(this.height < MIN_HEIGHT) return false;
         return y > getCenterToY() && y < height - getCenterToY();
     }
-//    //todo NEW 7
-//    public boolean isItIncludedWidth(int width, int relativeX){
-//        return x > relativeX - width / 2 + getCenterToX() && x < relativeX + width / 2 - getCenterToX();
-//    }
-//    public boolean isItIncludedHeight(int height, int relativeY){
-//        return y > relativeY - height / 2 + getCenterToY() && y < relativeY + height / 2 - getCenterToY();
-//    }
     protected final Color getBorderColor() {
         if (selection) return selectionColor;
         return Color.rgb(0, 0, 0, 0);
@@ -135,5 +112,17 @@ public abstract class Shape {
 
     protected Color getFillColor() {
         return fillColor;
+    }
+
+    public void accept(ShapeAction action) {
+        action.shapeAction(this);
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
     }
 }

@@ -3,9 +3,9 @@ package com.example.oop6.models;
 import com.example.oop6.funcInterfaces.ContainerMapFunc;
 import com.example.oop6.models.shapes.Shape;
 import com.example.oop6.models.shapes.ShapeGroup;
+import com.example.oop6.models.shapes.funcs.ShapeAction;
 import com.example.oop6.utils.Container;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
@@ -28,7 +28,7 @@ public class PaintField {
     //todo NEW вынес логику проверки курсора в фигуре
     //Добавляет или выделяет фигуру
     public void addOrSelectShape(Shape shape) {
-        if (!(shape.isItIncludedWidth(fieldWidth) && shape.isItIncludedHeight(fieldHeight))) {
+        if (!(shape.entersByWidth(fieldWidth) && shape.entersByHeight(fieldHeight))) {
             return;
         }
         if (!multiplySelection) unselectAllShapes();
@@ -98,41 +98,10 @@ public class PaintField {
     }
 
     //todo NEW
-    //как бы говорим фигуре: "перемести себя, если можешь на dx и dy в пределах fieldWidth, fieldHeight"
-    //идентично для других обновленный функций
-    //метод, который двигает фигуру на dx и dy
-    public void moveAllSelectedShapes(int dx, int dy) {
-        map(shape -> {
-            if (shape.isSelection()) {
-                shape.increasePositionWithLimit(dx, dy, fieldWidth, fieldHeight);
-            }
-        });
-        drawAllShapesInContainer();
-    }
-
-    //Меняет цвет всех выделенных фигур
-    public void changeColorSelectedShapes(Color color) {
-        map(shape -> {
-            if (shape.isSelection()) {
-                shape.setFillColor(color);
-            }
-        });
-        drawAllShapesInContainer();
-    }
-
-    //todo NEW
     //Отвечает за изменения размера фигуры
     public void resizeSelectedShapes(int newWidth, int newHeight) {
         map(shape -> {
             if (shape.isSelection()) shape.setSizeWithLimit(newWidth, newHeight, fieldWidth, fieldHeight);
-        });
-        drawAllShapesInContainer();
-    }
-
-    //todo NEW
-    public void resizeDeltaSelectedShapes(int dx, int dy) {
-        map(shape -> {
-            if (shape.isSelection()) shape.increaseSizeWithLimit(dx, dy, fieldWidth, fieldHeight);
         });
         drawAllShapesInContainer();
     }
@@ -196,5 +165,14 @@ public class PaintField {
             index++;
         }
         return list;
+    }
+
+    public void actionSelectedShapes(ShapeAction action) {
+        for (Shape shape : shapeContainer) {
+            if(shape.isSelection()){
+                shape.accept(action);
+            }
+        }
+        drawAllShapesInContainer();
     }
 }

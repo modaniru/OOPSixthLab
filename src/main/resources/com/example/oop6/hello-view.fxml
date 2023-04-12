@@ -21,5 +21,9 @@
       <Button fx:id="btnCanvasClear" layoutX="631.0" layoutY="361.0" mnemonicParsing="false" text="Очистить" AnchorPane.bottomAnchor="13.0" AnchorPane.rightAnchor="15.5" />
       <Text layoutX="528.0" layoutY="335.0" strokeType="OUTSIDE" strokeWidth="0.0" text="cursor position:" AnchorPane.rightAnchor="89.10595703125" />
       <Text fx:id="tCursorPosition" layoutX="647.0" layoutY="335.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0 0" AnchorPane.rightAnchor="34.56640625" />
+      <Button fx:id="btnCreate" layoutX="312.0" layoutY="1.0" mnemonicParsing="false" text="Создание" />
+      <Button fx:id="btnSelect" layoutX="387.0" layoutY="1.0" mnemonicParsing="false" text="Выделение" />
+      <Button fx:id="btnPosition" layoutX="469.0" layoutY="1.0" mnemonicParsing="false" text="Перемещение" />
+      <Button fx:id="btnSize" layoutX="568.0" layoutY="1.0" mnemonicParsing="false" text="Размер" />
    </children>
 </AnchorPane>

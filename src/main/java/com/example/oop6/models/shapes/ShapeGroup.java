@@ -1,11 +1,16 @@
 package com.example.oop6.models.shapes;
 
+import com.example.oop6.models.shapes.funcs.ShapeAction;
 import com.example.oop6.utils.Container;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
 public class ShapeGroup extends Shape {
     private final Container<Shape> shapes;
+    private int leftShape = 0;
+    private int rightShape = 0;
+    private int upShape = 0;
+    private int downShape = 0;
 
     public ShapeGroup() {
         super(0, 0);
@@ -16,6 +21,10 @@ public class ShapeGroup extends Shape {
         if (shapes.getSize() == 0) {
             width = shape.width;
             height = shape.height;
+            leftShape = shape.x;
+            rightShape = shape.x;
+            upShape = shape.y;
+            downShape = shape.y;
             x = shape.x;
             y = shape.y;
         }
@@ -24,6 +33,10 @@ public class ShapeGroup extends Shape {
         int maxY = Math.max(shape.y + shape.getCenterToY(), y + getCenterToY());
         int minX = Math.min(shape.x - shape.getCenterToX(), x - getCenterToX());
         int minY = Math.min(shape.y - shape.getCenterToY(), y - getCenterToY());
+        if (shape.x > rightShape) rightShape = shape.x + Shape.MIN_WIDTH;
+        if (shape.x < leftShape) leftShape = shape.x - Shape.MIN_WIDTH;
+        if (shape.y > downShape) downShape = shape.y + Shape.MIN_HEIGHT;
+        if (shape.y < upShape) upShape = shape.y - Shape.MIN_HEIGHT;
         width = maxX - minX;
         height = maxY - minY;
         int oldX = x;
@@ -57,10 +70,10 @@ public class ShapeGroup extends Shape {
     @Override
     public boolean inShapeArea(int x, int y) {
         for (Shape shape : shapes) {
-            normalizedShape(shape);
+            shape.setPosition(this.x + shape.getX(), this.y + shape.getY());
             boolean res = shape.inShapeArea(x, y);
-            undoNormalizedShape(shape);
-            if(res) return true;
+            shape.setPosition(shape.getX() - this.x, shape.getY() - this.y);
+            if (res) return true;
         }
         return false;
     }
@@ -74,28 +87,28 @@ public class ShapeGroup extends Shape {
         }
         for (Shape shape : shapes) {
             //Установление
-            normalizedShape(shape);
+            shape.setPosition(x + shape.getX(), y + shape.getY());
             shape.drawShape(graphicsContext);
-            undoNormalizedShape(shape);
+            shape.setPosition(shape.getX() - x, shape.getY() - y);
         }
     }
 
-    //Двигаем саму группу, при этом не меняя относительные координаты объектов в контейнере
     @Override
-    public void increasePositionWithLimit(int dx, int dy, int fieldWidth, int fieldHeight) {
-        super.increasePositionWithLimit(dx, dy, fieldWidth, fieldHeight);
+    public void accept(ShapeAction action) {
+        action.groupAction(this);
     }
 
-    //todo в тз не сказано увеличивать группу. Делать или нет?
+    //переименовать
     @Override
-    public void setSizeWithLimit(int width, int height, int fieldWidth, int fieldHeight) {
-        return;
+    public boolean entersByWidth(int width) {
+        boolean res = super.entersByWidth(width);
+        return res && this.width >= rightShape - leftShape;
     }
 
-    //todo в тз не сказано увеличивать группу. Делать или нет?
     @Override
-    public void increaseSizeWithLimit(int dx, int dy, int fieldWidth, int fieldHeight) {
-        return;
+    public boolean entersByHeight(int height) {
+        boolean res = super.entersByHeight(height);
+        return res && this.height >= downShape - upShape;
     }
 
     @Override
@@ -112,29 +125,6 @@ public class ShapeGroup extends Shape {
         for (Shape shape : shapes) {
             shape.disableSelection();
         }
-    }
-
-    @Override
-    public boolean isSelection() {
-        boolean res = true;
-        for (Shape shape : shapes) {
-            res = res & shape.isSelection();
-        }
-        return res;
-    }
-
-    @Override
-    public void setFillColor(Color color) {
-        for (Shape shape : shapes) {
-            shape.setFillColor(color);
-        }
-    }
-    //Устанавливает фигуре координаты относительно Поля
-    private void normalizedShape(Shape shape){
-        shape.setPosition(shape.x + x, shape.y + y);
-    }
-    //Устанавливает фигуре координаты относительно группы
-    private void undoNormalizedShape(Shape shape){
-        shape.setPosition(shape.x - x, shape.y - y);
+        super.disableSelection();
     }
 }
