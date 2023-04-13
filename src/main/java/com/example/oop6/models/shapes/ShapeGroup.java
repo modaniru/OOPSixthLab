@@ -21,10 +21,10 @@ public class ShapeGroup extends Shape {
         if (shapes.getSize() == 0) {
             width = shape.width;
             height = shape.height;
-            leftShape = shape.x;
-            rightShape = shape.x;
-            upShape = shape.y;
-            downShape = shape.y;
+            leftShape = shape.x - shape.getMinWidth() / 2;
+            rightShape = shape.x + shape.getMinWidth() / 2;
+            upShape = shape.y - shape.getMinHeight() / 2;
+            downShape = shape.y + shape.getMinHeight() / 2;
             x = shape.x;
             y = shape.y;
         }
@@ -33,10 +33,10 @@ public class ShapeGroup extends Shape {
         int maxY = Math.max(shape.y + shape.getCenterToY(), y + getCenterToY());
         int minX = Math.min(shape.x - shape.getCenterToX(), x - getCenterToX());
         int minY = Math.min(shape.y - shape.getCenterToY(), y - getCenterToY());
-        if (shape.x > rightShape) rightShape = shape.x + Shape.MIN_WIDTH;
-        if (shape.x < leftShape) leftShape = shape.x - Shape.MIN_WIDTH;
-        if (shape.y > downShape) downShape = shape.y + Shape.MIN_HEIGHT;
-        if (shape.y < upShape) upShape = shape.y - Shape.MIN_HEIGHT;
+        if (shape.x > rightShape) rightShape = shape.x + shape.getMinWidth() / 2;
+        if (shape.x < leftShape) leftShape = shape.x - shape.getMinWidth() / 2;
+        if (shape.y > downShape) downShape = shape.y + shape.getMinHeight() / 2;
+        if (shape.y < upShape) upShape = shape.y - shape.getMinHeight() / 2;
         width = maxX - minX;
         height = maxY - minY;
         int oldX = x;
@@ -126,5 +126,15 @@ public class ShapeGroup extends Shape {
             shape.disableSelection();
         }
         super.disableSelection();
+    }
+
+    @Override
+    public int getMinWidth() {
+        return rightShape - leftShape;
+    }
+
+    @Override
+    public int getMinHeight() {
+        return downShape - upShape;
     }
 }

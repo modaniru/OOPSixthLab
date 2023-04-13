@@ -7,8 +7,8 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
 public abstract class Shape {
-    public static int MIN_HEIGHT = 10;
-    public static int MIN_WIDTH = 10;
+    public static final int MIN_HEIGHT = 10;
+    public static final int MIN_WIDTH = 10;
     protected int x;
     protected int y;
     protected int width;
@@ -124,5 +124,13 @@ public abstract class Shape {
 
     public int getHeight() {
         return height;
+    }
+
+    public int getMinHeight() {
+        return MIN_HEIGHT;
+    }
+
+    public int getMinWidth() {
+        return MIN_WIDTH;
     }
 }
