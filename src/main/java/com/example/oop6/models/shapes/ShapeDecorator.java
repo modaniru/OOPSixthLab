@@ -15,7 +15,7 @@ public class ShapeDecorator extends Shape {
     }
 
     @Override
-    public Shape clone() {
+    public Shape getExample() {
         return new ShapeDecorator(instance.clone());
     }
 
@@ -26,10 +26,10 @@ public class ShapeDecorator extends Shape {
 
     @Override
     protected void drawShape(GraphicsContext graphicsContext) {
+        instance.drawShape(graphicsContext);
         graphicsContext.setLineWidth(2);
         graphicsContext.setStroke(Color.LIGHTBLUE);
         graphicsContext.strokeRect(x - getCenterToX(), y - getCenterToY(), width, height);
-        instance.drawShape(graphicsContext);
     }
 
     @Override

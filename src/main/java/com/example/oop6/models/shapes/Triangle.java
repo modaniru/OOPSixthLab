@@ -8,8 +8,8 @@ public class Triangle extends Shape {
     }
 
     @Override
-    public Shape clone() {
-        return new Triangle(width, height);
+    public Shape getExample() {
+        return new Triangle(0, 0);
     }
 
     @Override

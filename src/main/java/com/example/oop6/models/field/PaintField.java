@@ -1,4 +1,4 @@
-package com.example.oop6.models;
+package com.example.oop6.models.field;
 
 import com.example.oop6.funcInterfaces.ContainerMapFunc;
 import com.example.oop6.models.shapes.Shape;
@@ -51,6 +51,22 @@ public class PaintField {
 
     public boolean insideTheFigure(int x, int y) {
         return !getListInsideTheFigure(x, y).isEmpty();
+    }
+
+    public void selectInSection(int x0, int y0, int x1, int y1){
+        unselectAllShapes();
+        Container<Shape> news = new Container<>();
+        for (Shape shape : shapeContainer) {
+            if(shape.includeCentre(x0, y0, x1, y1)) {
+                if(shape != shape.getInstance()) continue;
+                news.add(new ShapeDecorator(shape));
+                shapeContainer.delete(shape);
+            }
+        }
+        for (Shape s : news) {
+            shapeContainer.add(s);
+        }
+        drawAllShapesInContainer();
     }
 
     //Метод выделения всех фигур, которые включает в себе точку 'x, y'
@@ -183,5 +199,13 @@ public class PaintField {
             }
         }
         drawAllShapesInContainer();
+    }
+
+    public int getFieldWidth() {
+        return fieldWidth;
+    }
+
+    public int getFieldHeight() {
+        return fieldHeight;
     }
 }

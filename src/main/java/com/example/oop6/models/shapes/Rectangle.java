@@ -9,8 +9,8 @@ public class Rectangle extends Shape {
     }
 
     @Override
-    public Shape clone() {
-        return new Rectangle(width, height);
+    public Shape getExample() {
+        return new Rectangle(0, 0);
     }
 
     @Override

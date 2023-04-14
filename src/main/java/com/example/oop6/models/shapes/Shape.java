@@ -22,7 +22,16 @@ public abstract class Shape {
     }
 
 
-    public abstract Shape clone();
+    public Shape clone(){
+        Shape shape = getExample();
+        shape.setFillColor(fillColor);
+        shape.setPosition(x, y);
+        shape.setSize(width, height);
+        return shape;
+    }
+
+    public abstract Shape getExample();
+
 
     public abstract boolean inShapeArea(int x, int y);
 
@@ -65,6 +74,8 @@ public abstract class Shape {
 
     //Вопрос
     public void setSize(int width, int height) {
+        if(width < MIN_WIDTH) width = MIN_WIDTH;
+        if(height < MIN_HEIGHT) height = MIN_HEIGHT;
         this.width = width;
         this.height = height;
     }
@@ -117,5 +128,8 @@ public abstract class Shape {
 
     public Shape getInstance() {
         return this;
+    }
+    public boolean includeCentre(int x1, int y1, int x2, int y2){
+        return x >= x1 && x <= x2 && y >= y1 && y <= y2;
     }
 }

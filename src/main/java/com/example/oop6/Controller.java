@@ -1,6 +1,6 @@
 package com.example.oop6;
 
-import com.example.oop6.models.PaintField;
+import com.example.oop6.models.field.PaintField;
 import com.example.oop6.models.ShapeSizeModel;
 import com.example.oop6.models.shapes.Circle;
 import com.example.oop6.models.shapes.Shape;
@@ -9,6 +9,10 @@ import com.example.oop6.models.shapes.Triangle;
 import com.example.oop6.models.shapes.funcs.ChangeColorAction;
 import com.example.oop6.models.shapes.funcs.MoveAction;
 import com.example.oop6.models.shapes.funcs.ResizeDeltaAction;
+import com.example.oop6.utils.instruments.CreateInstrument;
+import com.example.oop6.utils.instruments.Instrument;
+import com.example.oop6.utils.instruments.MoveInstrument;
+import com.example.oop6.utils.instruments.SelectionInstrument;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -65,6 +69,7 @@ public class Controller implements Initializable {
     private MoveAction moveAction;
     private ResizeDeltaAction resizeDeltaAction;
     private Shape shape;
+    private Instrument instrument;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -92,9 +97,14 @@ public class Controller implements Initializable {
         colorPicker.setValue(Color.LIGHTGRAY);
         //Вставка фигур в кнопки
         Shape circle = new Circle(shapeSizeModel.getWidth(), shapeSizeModel.getHeight());
+        circle.setFillColor(colorPicker.getValue());
         btnCircle.setUserData(circle);
         btnSquare.setUserData(new Rectangle(shapeSizeModel.getWidth(), shapeSizeModel.getHeight()));
         btnTriangle.setUserData(new Triangle(shapeSizeModel.getWidth(), shapeSizeModel.getHeight()));
+        instrument = new CreateInstrument(paintField);
+        btnCreate.setUserData(instrument);
+        btnSelect.setUserData(new SelectionInstrument(paintField));
+        btnPosition.setUserData(new MoveInstrument(paintField));
 
         //По дефолту круг
         shape = circle.clone();
@@ -103,13 +113,21 @@ public class Controller implements Initializable {
         btnSquare.setOnAction(this::btnShapePress);
         btnTriangle.setOnAction(this::btnShapePress);
         btnCanvasClear.setOnAction(this::btnClearCanvasAction);
+        btnCreate.setOnAction(this::btnInstrumentPress);
+        btnSelect.setOnAction(this::btnInstrumentPress);
+        btnPosition.setOnAction(this::btnInstrumentPress);
         //Белый цвет paintField
         drawField.setBackground(new Background(new BackgroundFill(Color.web("#FFFFFF"), CornerRadii.EMPTY, Insets.EMPTY)));
+    }
+
+    private void btnInstrumentPress(ActionEvent actionEvent) {
+        instrument = (Instrument) ((Button)actionEvent.getSource()).getUserData();
     }
 
     //Обработчик колор пикера
     private void colorPickerAction(ActionEvent actionEvent) {
         paintField.actionSelectedShapes(new ChangeColorAction(colorPicker.getValue()));
+        shape.setFillColor(colorPicker.getValue());
     }
 
     //Обработчики слайдеров
@@ -149,42 +167,17 @@ public class Controller implements Initializable {
     //private boolean dragEvent = false;
     //Нажатие на форму рисования
     public void mouseDownEventInPaintField(MouseEvent mouseEvent) {
-        shape.setPosition((int) mouseEvent.getX(), (int) mouseEvent.getY());
-        if (paintField.insideTheFigure(shape.getX(), shape.getY())){
-            paintField.changeSelectIfInside(shape.getX(), shape.getY());
-        }
-        else {
-            shape.setSize(shapeSizeModel.getWidth(), shapeSizeModel.getHeight());
-        }
+        shape.setFillColor(colorPicker.getValue());
+        instrument.mouseDown(shape.clone(), (int) mouseEvent.getX(), (int) mouseEvent.getY());
     }
 
     public void mouseDragEventInPaintField(MouseEvent mouseEvent) {
-        if(paintField.insideTheFigure(shape.getX(), shape.getY())){
-            moveAction.setDx((int) (mouseEvent.getX() - shape.getX()));
-            moveAction.setDy((int) (mouseEvent.getY() - shape.getY()));
-            paintField.actionSelectedShapes(moveAction);
-            //todo model for cursor position
-            shape.setPosition((int) mouseEvent.getX(), (int) mouseEvent.getY());
-        }
-        else{
-            shape.setSize((int) (Math.abs(mouseEvent.getX() - shape.getX()) * 2), (int) (Math.abs(mouseEvent.getY() - shape.getY()) * 2));
-            paintField.drawTempShape(shape);
-        }
+        instrument.drag((int) mouseEvent.getX(), (int) mouseEvent.getY());
         //промежуточная на отрисовку будующей фигуры (только с контуром)
     }
 
     public void mouseUpEventInPaintField(MouseEvent mouseEvent) {
-        if(!paintField.insideTheFigure(shape.getX(), shape.getY())){
-            Shape clone = shape.clone();
-            clone.setFillColor(colorPicker.getValue());
-            clone.setPosition(shape.getX(), shape.getY());
-            if (!(clone.getX() == mouseEvent.getX() && clone.getY() == mouseEvent.getY())) {
-                clone.setSize((int) (Math.abs(mouseEvent.getX() - clone.getX()) * 2), (int) (Math.abs(mouseEvent.getY() - clone.getY()) * 2));
-            } else {
-                clone.setSize(shapeSizeModel.getWidth(), shapeSizeModel.getHeight());
-            }
-            paintField.addOrSelectShape(clone);
-        }
+        instrument.mouseUp((int) mouseEvent.getX(), (int) mouseEvent.getY());
     }
 
     //Обработчик различных нажатий клавиш

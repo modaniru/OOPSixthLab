@@ -66,6 +66,14 @@ public class ShapeGroup extends Shape {
         }
         return shapeGroup;
     }
+    @Override
+    public Shape getExample() {
+        ShapeGroup shapeGroup = new ShapeGroup();
+        for (Shape shape : shapes) {
+            shapeGroup.addShape(shape.clone());
+        }
+        return shapeGroup;
+    }
 
     @Override
     public boolean inShapeArea(int x, int y) {

@@ -7,11 +7,9 @@ public class Circle extends Shape {
         super(width, height);
     }
 
-
-
     @Override
-    public Shape clone() {
-        return new Circle(width, height);
+    public Shape getExample() {
+        return new Circle(0, 0);
     }
 
     @Override
