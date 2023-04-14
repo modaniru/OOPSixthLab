@@ -20,10 +20,7 @@ public class Rectangle extends Shape {
 
     @Override
     public void drawShape(GraphicsContext graphicsContext) {
-        graphicsContext.setLineWidth(2);
-        graphicsContext.setStroke(getBorderColor());
         graphicsContext.setFill(getFillColor());
-        graphicsContext.strokeRect(x - (width / 2), y - (height / 2), width, height);
         graphicsContext.fillRect(x - (width / 2), y - (height / 2), width, height);
     }
 }

@@ -80,11 +80,6 @@ public class ShapeGroup extends Shape {
 
     @Override
     protected void drawShape(GraphicsContext graphicsContext) {
-        if (selection) {
-            graphicsContext.setLineWidth(1);
-            graphicsContext.setStroke(Color.LIGHTBLUE);
-            graphicsContext.strokeRect(x - getCenterToX(), y - getCenterToY(), width, height);
-        }
         for (Shape shape : shapes) {
             //Установление
             shape.setPosition(x + shape.getX(), y + shape.getY());
@@ -109,23 +104,6 @@ public class ShapeGroup extends Shape {
     public boolean entersByHeight(int height) {
         boolean res = super.entersByHeight(height);
         return res && this.height >= downShape - upShape;
-    }
-
-    @Override
-    public void changeSelection() {
-        selection = !selection;
-        for (Shape shape : shapes) {
-            shape.changeSelection();
-        }
-    }
-
-    @Override
-    public void disableSelection() {
-        selection = false;
-        for (Shape shape : shapes) {
-            shape.disableSelection();
-        }
-        super.disableSelection();
     }
 
     @Override

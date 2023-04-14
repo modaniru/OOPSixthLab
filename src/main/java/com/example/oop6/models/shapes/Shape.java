@@ -13,16 +13,13 @@ public abstract class Shape {
     protected int y;
     protected int width;
     protected int height;
-    protected boolean selection;
     private Color fillColor;
-    private final Color selectionColor = Color.ORANGERED;
 
     public Shape(int width, int height) {
         this.width = width;
         this.height = height;
-        fillColor = Color.rgb(0,0,0,0);
+        fillColor = Color.rgb(0, 0, 0, 0);
     }
-
 
 
     public abstract Shape clone();
@@ -30,11 +27,12 @@ public abstract class Shape {
     public abstract boolean inShapeArea(int x, int y);
 
     protected abstract void drawShape(GraphicsContext graphicsContext);
+
     //todo шаблонный метод рисования
-    public void draw(Canvas canvas){
+    public void draw(Canvas canvas) {
         int width = (int) canvas.getWidth();
         int height = (int) canvas.getHeight();
-        if(entersByWidth(width) && entersByHeight(height))
+        if (entersByWidth(width) && entersByHeight(height))
             drawShape(canvas.getGraphicsContext2D());
     }
 
@@ -42,19 +40,6 @@ public abstract class Shape {
     //todo можно ли этого избежать
     public Container<Shape> getShapes() {
         return new Container<>();
-    }
-
-
-    public void changeSelection() {
-        selection = !selection;
-    }
-
-    public void disableSelection() {
-        selection = false;
-    }
-
-    public boolean isSelection() {
-        return selection;
     }
 
     public final void setPosition(int x, int y) {
@@ -90,24 +75,20 @@ public abstract class Shape {
         if (!(y > height / 2 && y < fieldHeight - height / 2)) height = this.height;
         setSize(width, height);
     }
-    
+
     public void setFillColor(Color color) {
         fillColor = color;
     }
 
     //Проверяет, находится ли фигура в заданом пространстве
     public boolean entersByWidth(int width) {
-        if(this.width < MIN_WIDTH) return false;
+        if (this.width < MIN_WIDTH) return false;
         return x > getCenterToX() && x < width - getCenterToX();
     }
 
     public boolean entersByHeight(int height) {
-        if(this.height < MIN_HEIGHT) return false;
+        if (this.height < MIN_HEIGHT) return false;
         return y > getCenterToY() && y < height - getCenterToY();
-    }
-    protected final Color getBorderColor() {
-        if (selection) return selectionColor;
-        return Color.rgb(0, 0, 0, 0);
     }
 
     protected Color getFillColor() {
@@ -132,5 +113,9 @@ public abstract class Shape {
 
     public int getMinWidth() {
         return MIN_WIDTH;
+    }
+
+    public Shape getInstance() {
+        return this;
     }
 }

@@ -22,12 +22,9 @@ public class Triangle extends Shape {
 
     @Override
     public void drawShape(GraphicsContext graphicsContext) {
-        graphicsContext.setLineWidth(2);
         graphicsContext.setFill(getFillColor());
-        graphicsContext.setStroke(getBorderColor());
         double[] xCoords = new double[]{x - width / 2, x + width / 2, x};
         double[] yCoords = new double[]{y + height / 2, y + height / 2, y - height / 2};
         graphicsContext.fillPolygon(xCoords, yCoords, 3);
-        graphicsContext.strokePolygon(xCoords, yCoords, 3);
     }
 }

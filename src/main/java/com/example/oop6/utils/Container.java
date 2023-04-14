@@ -11,6 +11,8 @@ import java.util.function.Consumer;
 //Контейнер, показанный OOP3
 public class Container<T> implements Iterable<T> {
 
+
+
     /**
      * Узел, который используется в контейнере
      */
@@ -258,5 +260,20 @@ public class Container<T> implements Iterable<T> {
         for (int i = integerList.size() - 1; i >= 0; i--) {
             deleteAt(integerList.get(i));
         }
+    }
+
+    public void delete(T shape) {
+        if(size == 0) return;
+        Node temp = head;
+        while (temp != null && temp.next.value != shape){
+            temp = temp.next;
+        }
+        if(temp == null) return;
+        if(temp.next == tail){
+            tail = temp;
+        }
+        temp.next = temp.next.next;
+
+        size--;
     }
 }

@@ -168,9 +168,7 @@ public class Controller implements Initializable {
         }
         else{
             shape.setSize((int) (Math.abs(mouseEvent.getX() - shape.getX()) * 2), (int) (Math.abs(mouseEvent.getY() - shape.getY()) * 2));
-            shape.changeSelection();
             paintField.drawTempShape(shape);
-            shape.changeSelection();
         }
         //промежуточная на отрисовку будующей фигуры (только с контуром)
     }

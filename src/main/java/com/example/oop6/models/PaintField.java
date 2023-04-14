@@ -2,11 +2,11 @@ package com.example.oop6.models;
 
 import com.example.oop6.funcInterfaces.ContainerMapFunc;
 import com.example.oop6.models.shapes.Shape;
+import com.example.oop6.models.shapes.ShapeDecorator;
 import com.example.oop6.models.shapes.ShapeGroup;
 import com.example.oop6.models.shapes.funcs.ShapeAction;
 import com.example.oop6.utils.Container;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +32,7 @@ public class PaintField {
             return;
         }
         if (!multiplySelection) unselectAllShapes();
-        shape.changeSelection();
+        shape = new ShapeDecorator(shape);
         shapeContainer.add(shape);
         drawAllShapesInContainer();
     }
@@ -53,11 +53,25 @@ public class PaintField {
         return !getListInsideTheFigure(x, y).isEmpty();
     }
 
+    //Метод выделения всех фигур, которые включает в себе точку 'x, y'
     public void changeSelectIfInside(int x, int y) {
         if (!multiplySelection) unselectAllShapes();
-        List<Shape> shapes = getListInsideTheFigure(x, y);
-        for (Shape shape : shapes) {
-            shape.changeSelection();
+        Container<Shape> addShapes = new Container<>();
+        for (Shape shape : shapeContainer) {
+            if(shape.inShapeArea(x, y)) {
+                Shape newShape;
+                if(shape == shape.getInstance()){
+                    newShape = new ShapeDecorator(shape);
+                }
+                else{
+                    newShape = shape.getInstance();
+                }
+                shapeContainer.delete(shape);
+                addShapes.add(newShape);
+            }
+        }
+        for (Shape addShape : addShapes) {
+            shapeContainer.add(addShape);
         }
         drawAllShapesInContainer();
     }
@@ -74,8 +88,19 @@ public class PaintField {
 
     //Удаляет все выделенные фигуры
     public void deleteAllSelectedShapes() {
-        shapeContainer.deleteAtIndexes(getSelectedShapesIndexes());
+        for (Shape shape : getAllSelectedShapes()) {
+            shapeContainer.delete(shape);
+        }
         drawAllShapesInContainer();
+    }
+
+    public Container<Shape> getAllSelectedShapes(){
+        Container<Shape> container = new Container<>();
+        for (Shape shape : shapeContainer) {
+            if(shape != shape.getInstance())
+                container.add(shape);
+        }
+        return container;
     }
 
     //Отвечает за отрисовку, после изменения размера формы
@@ -101,7 +126,7 @@ public class PaintField {
     //Отвечает за изменения размера фигуры
     public void resizeSelectedShapes(int newWidth, int newHeight) {
         map(shape -> {
-            if (shape.isSelection()) shape.setSizeWithLimit(newWidth, newHeight, fieldWidth, fieldHeight);
+            if (shape != shape.getInstance()) shape.setSizeWithLimit(newWidth, newHeight, fieldWidth, fieldHeight);
         });
         drawAllShapesInContainer();
     }
@@ -110,27 +135,13 @@ public class PaintField {
     //Группирует выделенные объекты
     public void groupSelectedShapes() {
         ShapeGroup shapeGroup = new ShapeGroup();
-        shapeGroup.changeSelection();
-        map(shape -> {
-            if (shape.isSelection()) shapeGroup.addShape(shape);
-        });
-        deleteAllSelectedShapes();
+        Container<Shape> selectedShapes = getAllSelectedShapes();
+        for (Shape selectedShape : selectedShapes) {
+            shapeGroup.addShape(selectedShape.getInstance());
+            shapeContainer.delete(selectedShape);
+        }
         shapeContainer.add(shapeGroup);
         drawAllShapesInContainer();
-    }
-
-    //Проверяет, если ли в списке, которые могут быть выделенными по заданным координатам
-    private boolean isASelection(int x, int y) {
-        boolean global = false;
-        for (Shape shape : shapeContainer) {
-            boolean inArea = shape.inShapeArea(x, y);
-            if (inArea) {
-                global = true;
-                shape.changeSelection();
-            }
-            if (inArea && !multiplySelection) return global;
-        }
-        return global;
     }
 
     //Отрисовывает все фигуры, находящиеся в списке
@@ -141,7 +152,16 @@ public class PaintField {
 
     //Выключает выделение у всех фигур
     private void unselectAllShapes() {
-        map(Shape::disableSelection);
+        List<Shape> decorators = new ArrayList<>();
+        for (Shape shape : shapeContainer) {
+            if(shape != shape.getInstance()){
+                decorators.add(shape);
+            }
+        }
+        for (Shape decorator : decorators) {
+            shapeContainer.delete(decorator);
+            shapeContainer.add(decorator.getInstance());
+        }
     }
 
     //Очищает canvas
@@ -156,20 +176,9 @@ public class PaintField {
         }
     }
 
-    //Возвращает список индексов у фигур, которые выделены
-    private List<Integer> getSelectedShapesIndexes() {
-        List<Integer> list = new ArrayList<>();
-        int index = 0;
-        for (Shape shape : shapeContainer) {
-            if (shape.isSelection()) list.add(index);
-            index++;
-        }
-        return list;
-    }
-
     public void actionSelectedShapes(ShapeAction action) {
         for (Shape shape : shapeContainer) {
-            if(shape.isSelection()){
+            if(shape != shape.getInstance()){
                 shape.accept(action);
             }
         }
