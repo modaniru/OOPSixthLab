@@ -41,6 +41,7 @@ public class SelectionInstrument implements Instrument {
             shapeDecorator.setPosition(-10, -10);
             paintField.drawTempShape(shapeDecorator);
         }
+
     }
 
 }
