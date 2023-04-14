@@ -30,6 +30,7 @@ public class SelectionInstrument implements Instrument {
         shapeDecorator.setSize(Math.abs(x - shapeDecorator.getX()) * 2, Math.abs(y - shapeDecorator.getY()) * 2);
         paintField.selectInSection(xStart, yStart, x, y);
         paintField.drawTempShape(shapeDecorator);
+
     }
 
     @Override
