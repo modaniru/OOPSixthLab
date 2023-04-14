@@ -130,6 +130,18 @@ public abstract class Shape {
         return this;
     }
     public boolean includeCentre(int x1, int y1, int x2, int y2){
-        return x >= x1 && x <= x2 && y >= y1 && y <= y2;
+        int minX = Math.min(x1, x2);
+        int maxX = Math.max(x1, x2);
+        int minY = Math.min(y1, y2);
+        int maxY = Math.max(y1, y2);
+        return x >= minX && x <= maxX && y >= minY && y <= maxY;
     }
+    /*
+    точка
+    фигура
+
+    точка -> фигуре
+
+    точка -> Прямоугольник (углы) ->
+     */
 }

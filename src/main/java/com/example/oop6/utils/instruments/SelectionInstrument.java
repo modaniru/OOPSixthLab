@@ -34,9 +34,13 @@ public class SelectionInstrument implements Instrument {
 
     @Override
     public void mouseUp(int x, int y) {
-        shapeDecorator.setSize(0,0);
-        shapeDecorator.setPosition(-10,-10);
-        paintField.drawTempShape(shapeDecorator);
+        if (xStart == x && yStart == y) {
+            paintField.changeSelectIfInside(x, y);
+        } else {
+            shapeDecorator.setSize(0, 0);
+            shapeDecorator.setPosition(-10, -10);
+            paintField.drawTempShape(shapeDecorator);
+        }
     }
 
 }
