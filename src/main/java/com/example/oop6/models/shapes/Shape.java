@@ -11,11 +11,11 @@ public abstract class Shape {
     public static final int MIN_WIDTH = 10;
     protected int x;
     protected int y;
-    protected int width;
-    protected int height;
+    protected double width;
+    protected double height;
     private Color fillColor;
 
-    public Shape(int width, int height) {
+    public Shape(double width, double height) {
         this.width = width;
         this.height = height;
         fillColor = Color.rgb(0, 0, 0, 0);
@@ -56,11 +56,11 @@ public abstract class Shape {
         this.y = y;
     }
 
-    public final int getCenterToX() {
+    public final double getCenterToX() {
         return width / 2;
     }
 
-    public final int getCenterToY() {
+    public final double getCenterToY() {
         return height / 2;
     }
 
@@ -73,7 +73,7 @@ public abstract class Shape {
     }
 
     //Вопрос
-    public void setSize(int width, int height) {
+    public void setSize(double width, double height) {
         if(width < MIN_WIDTH) width = MIN_WIDTH;
         if(height < MIN_HEIGHT) height = MIN_HEIGHT;
         this.width = width;
@@ -81,7 +81,7 @@ public abstract class Shape {
     }
 
     //todo NEW
-    public void setSizeWithLimit(int width, int height, int fieldWidth, int fieldHeight) {
+    public void setSizeWithLimit(double width, double height, double fieldWidth, double fieldHeight) {
         if (!(x > width / 2 && x < fieldWidth - width / 2)) width = this.width;
         if (!(y > height / 2 && y < fieldHeight - height / 2)) height = this.height;
         setSize(width, height);
@@ -110,11 +110,11 @@ public abstract class Shape {
         action.shapeAction(this);
     }
 
-    public int getWidth() {
+    public double getWidth() {
         return width;
     }
 
-    public int getHeight() {
+    public double getHeight() {
         return height;
     }
 
@@ -136,12 +136,4 @@ public abstract class Shape {
         int maxY = Math.max(y1, y2);
         return x >= minX && x <= maxX && y >= minY && y <= maxY;
     }
-    /*
-    точка
-    фигура
-
-    точка -> фигуре
-
-    точка -> Прямоугольник (углы) ->
-     */
 }

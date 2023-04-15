@@ -16,8 +16,8 @@ public class ResizeDeltaAction implements ShapeAction {
 
     @Override
     public boolean shapeAction(Shape shape) {
-        int oldWidth = shape.getWidth();
-        int oldHeight = shape.getHeight();
+        double oldWidth = shape.getWidth();
+        double oldHeight = shape.getHeight();
         shape.setSize(oldWidth + dx, oldHeight + dy);
         if (!(shape.entersByWidth(width) && shape.entersByHeight(height))) {
             shape.setSize(oldWidth, oldHeight);
