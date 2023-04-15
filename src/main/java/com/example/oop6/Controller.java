@@ -9,10 +9,7 @@ import com.example.oop6.models.shapes.Triangle;
 import com.example.oop6.models.shapes.funcs.ChangeColorAction;
 import com.example.oop6.models.shapes.funcs.MoveAction;
 import com.example.oop6.models.shapes.funcs.ResizeDeltaAction;
-import com.example.oop6.utils.instruments.CreateInstrument;
-import com.example.oop6.utils.instruments.Instrument;
-import com.example.oop6.utils.instruments.MoveInstrument;
-import com.example.oop6.utils.instruments.SelectionInstrument;
+import com.example.oop6.utils.instruments.*;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -105,7 +102,7 @@ public class Controller implements Initializable {
         btnCreate.setUserData(instrument);
         btnSelect.setUserData(new SelectionInstrument(paintField));
         btnPosition.setUserData(new MoveInstrument(paintField));
-
+        btnSize.setUserData(new ResizeInstrument(paintField));
         //По дефолту круг
         shape = circle.clone();
         //Обработчики событий при нажатии на кнопку
@@ -116,6 +113,7 @@ public class Controller implements Initializable {
         btnCreate.setOnAction(this::btnInstrumentPress);
         btnSelect.setOnAction(this::btnInstrumentPress);
         btnPosition.setOnAction(this::btnInstrumentPress);
+        btnSize.setOnAction(this::btnInstrumentPress);
         //Белый цвет paintField
         drawField.setBackground(new Background(new BackgroundFill(Color.web("#FFFFFF"), CornerRadii.EMPTY, Insets.EMPTY)));
     }

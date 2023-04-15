@@ -2,17 +2,16 @@ package com.example.oop6.utils.instruments;
 
 import com.example.oop6.models.field.PaintField;
 import com.example.oop6.models.shapes.Shape;
-import com.example.oop6.models.shapes.funcs.MoveAction;
-import com.example.oop6.models.shapes.funcs.ShapeAction;
+import com.example.oop6.models.shapes.funcs.ResizeDeltaAction;
 
-public class MoveInstrument implements Instrument{
-    private final PaintField paintField;
+public class ResizeInstrument implements Instrument{
     private int startX;
     private int startY;
     private int oldX;
     private int oldY;
+    private PaintField paintField;
 
-    public MoveInstrument(PaintField paintField) {
+    public ResizeInstrument(PaintField paintField) {
         this.paintField = paintField;
     }
 
@@ -26,16 +25,16 @@ public class MoveInstrument implements Instrument{
 
     @Override
     public void drag(int x, int y) {
-        MoveAction shapeAction = new MoveAction(paintField.getFieldWidth(), paintField.getFieldHeight());
-        shapeAction.setDx(x - oldX);
-        shapeAction.setDy(y - oldY);
-        paintField.actionSelectedShapes(shapeAction);
-        oldY = y;
+        ResizeDeltaAction resizeDeltaAction = new ResizeDeltaAction(paintField.getFieldWidth(), paintField.getFieldHeight());
+        resizeDeltaAction.setDx(x - oldX);
+        resizeDeltaAction.setDy(y - oldY);
+        paintField.actionSelectedShapes(resizeDeltaAction);
         oldX = x;
+        oldY = y;
     }
 
     @Override
     public void mouseUp(int x, int y) {
-        //todo return paintFieldCommand
+        //todo return paint field resize command
     }
 }
