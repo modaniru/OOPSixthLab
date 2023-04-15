@@ -1,6 +1,7 @@
 package com.example.oop6.models.shapes.funcs;
 
 import com.example.oop6.models.shapes.Shape;
+import com.example.oop6.utils.Position;
 
 public class MoveAction implements ShapeAction {
     private int width;
@@ -15,11 +16,10 @@ public class MoveAction implements ShapeAction {
 
     @Override
     public boolean shapeAction(Shape shape) {
-        int oldX = shape.getX();
-        int oldY = shape.getY();
-        shape.setPosition(oldX + dx, oldY + dy);
+        Position position = shape.getPosition().clone();
+        shape.getPosition().changePosition(dx, dy);
         if(!(shape.entersByWidth(width) && shape.entersByHeight(height))){
-            shape.setPosition(oldX, oldY);
+            shape.setPosition(position);
             return false;
         }
         return true;

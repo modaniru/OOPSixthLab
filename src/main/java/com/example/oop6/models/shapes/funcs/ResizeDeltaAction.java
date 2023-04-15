@@ -2,6 +2,7 @@ package com.example.oop6.models.shapes.funcs;
 
 import com.example.oop6.models.shapes.Shape;
 import com.example.oop6.utils.Container;
+import com.example.oop6.utils.Position;
 
 public class ResizeDeltaAction implements ShapeAction {
     private int dx;
@@ -29,23 +30,24 @@ public class ResizeDeltaAction implements ShapeAction {
     //сначала проверять смогут ли элементы группы уменьшиться, а потом уменьшать саму группу
     @Override
     public boolean groupAction(Shape shape) {
+        Position position = shape.getPosition();
         Container<Shape> shapes = shape.getShapes();
         for (Shape s : shapes) {
             s.setSize(s.getWidth() + dx, s.getHeight() + dy);
-            s.setPosition(s.getX() + shape.getX(), s.getY() + shape.getY());
+            s.setPosition(s.getPosition().changePosition(position.getX(), position.getY()));
             if (!(s.entersByWidth(width) && s.entersByHeight(height))) {
                 s.setSize(s.getWidth() - dx, s.getHeight() - dy);
-                s.setPosition(s.getX() - shape.getX(), s.getY() - shape.getY());
+                s.setPosition(s.getPosition().changePosition(-position.getX(), -position.getY()));
                 return false;
             }
-            s.setPosition(s.getX() - shape.getX(), s.getY() - shape.getY());
+            s.setPosition(s.getPosition().changePosition(-position.getX(), -position.getY()));
             s.setSize(s.getWidth() - dx, s.getHeight() - dy);
         }
         if (!shapeAction(shape)) return false;
         for (Shape s : shapes) {
-            s.setPosition(shape.getX() + s.getX(), shape.getY() + s.getY());
+            s.setPosition(s.getPosition().changePosition(position.getX(), position.getY()));
             s.accept(this);
-            s.setPosition(s.getX() - shape.getX(), s.getY() - shape.getY());
+            s.setPosition(s.getPosition().changePosition(-position.getX(), -position.getY()));
         }
         return true;
     }

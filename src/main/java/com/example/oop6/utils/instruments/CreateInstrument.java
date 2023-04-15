@@ -3,6 +3,7 @@ package com.example.oop6.utils.instruments;
 import com.example.oop6.models.field.PaintField;
 import com.example.oop6.models.shapes.Shape;
 import com.example.oop6.models.shapes.ShapeDecorator;
+import com.example.oop6.utils.Position;
 
 public class CreateInstrument implements Instrument{
 
@@ -17,14 +18,14 @@ public class CreateInstrument implements Instrument{
     @Override
     public void mouseDown(Shape shape, int x, int y) {
         this.shape = shape;
-        shape.setPosition(x, y);
-        inShape = paintField.insideTheFigure(shape.getX(), shape.getY());
+        shape.setPosition(new Position(x, y));
+        inShape = paintField.insideTheFigure(shape.getPosition().getX(), shape.getPosition().getY());
     }
 
     @Override
     public void drag(int x, int y) {
         if(!inShape){
-            shape.setSize(Math.abs(x - shape.getX()) * 2, Math.abs(y - shape.getY()) * 2);
+            shape.setSize(Math.abs(x - shape.getPosition().getX()) * 2, Math.abs(y - shape.getPosition().getY()) * 2);
             paintField.drawTempShape(new ShapeDecorator(shape));
         }
     }

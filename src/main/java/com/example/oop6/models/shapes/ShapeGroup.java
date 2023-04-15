@@ -21,34 +21,33 @@ public class ShapeGroup extends Shape {
         if (shapes.getSize() == 0) {
             width = shape.width;
             height = shape.height;
-            leftShape = shape.x - shape.getMinWidth() / 2;
-            rightShape = shape.x + shape.getMinWidth() / 2;
-            upShape = shape.y - shape.getMinHeight() / 2;
-            downShape = shape.y + shape.getMinHeight() / 2;
-            x = shape.x;
-            y = shape.y;
+            leftShape = shape.position.getX() - shape.getMinWidth() / 2;
+            rightShape = shape.position.getX() + shape.getMinWidth() / 2;
+            upShape = shape.position.getY() - shape.getMinHeight() / 2;
+            downShape = shape.position.getY() + shape.getMinHeight() / 2;
+            position = shape.position.clone();
         }
         //Вычисление координат центра, при добавлении новой фигуры
-        int maxX = Math.max(shape.x + shape.getCenterToX(), x + getCenterToX());
-        int maxY = Math.max(shape.y + shape.getCenterToY(), y + getCenterToY());
-        int minX = Math.min(shape.x - shape.getCenterToX(), x - getCenterToX());
-        int minY = Math.min(shape.y - shape.getCenterToY(), y - getCenterToY());
-        if (shape.x > rightShape) rightShape = shape.x + shape.getMinWidth() / 2;
-        if (shape.x < leftShape) leftShape = shape.x - shape.getMinWidth() / 2;
-        if (shape.y > downShape) downShape = shape.y + shape.getMinHeight() / 2;
-        if (shape.y < upShape) upShape = shape.y - shape.getMinHeight() / 2;
+        int maxX = Math.max(shape.position.getX() + shape.getCenterToX(), position.getX() + getCenterToX());
+        int maxY = Math.max(shape.position.getY() + shape.getCenterToY(), position.getY() + getCenterToY());
+        int minX = Math.min(shape.position.getX() - shape.getCenterToX(), position.getX() - getCenterToX());
+        int minY = Math.min(shape.position.getY() - shape.getCenterToY(), position.getY() - getCenterToY());
+        if (shape.position.getX() > rightShape) rightShape = shape.position.getX() + shape.getMinWidth() / 2;
+        if (shape.position.getX() < leftShape) leftShape = shape.position.getX() - shape.getMinWidth() / 2;
+        if (shape.position.getY() > downShape) downShape = shape.position.getY() + shape.getMinHeight() / 2;
+        if (shape.position.getY() < upShape) upShape = shape.position.getY() - shape.getMinHeight() / 2;
         width = maxX - minX;
         height = maxY - minY;
-        int oldX = x;
-        int oldY = y;
-        x = minX + width / 2;
-        y = minY + height / 2;
+        int oldX = position.getX();
+        int oldY = position.getY();
+        position.setX(minX + width / 2);
+        position.setY(minY + height / 2);
         //нормализация координат относительно центра группы
         for (Shape s : shapes) {
-            s.setPosition(s.getX() - (x - oldX), s.getY() - (y - oldY));
+            s.getPosition().changePosition(- (position.getX() - oldX), - (position.getY() - oldY));
         }
         //нормализация и добавление фигуры в контейнер
-        shape.setPosition(shape.getX() - x, shape.getY() - y);
+        shape.getPosition().changePosition(-position.getX(), -position.getY());
         shapes.add(shape);
     }
 
@@ -78,9 +77,9 @@ public class ShapeGroup extends Shape {
     @Override
     public boolean inShapeArea(int x, int y) {
         for (Shape shape : shapes) {
-            shape.setPosition(this.x + shape.getX(), this.y + shape.getY());
+            shape.getPosition().changePosition(position.getX(), position.getY());
             boolean res = shape.inShapeArea(x, y);
-            shape.setPosition(shape.getX() - this.x, shape.getY() - this.y);
+            shape.getPosition().changePosition(-position.getX(), -position.getY());
             if (res) return true;
         }
         return false;
@@ -90,9 +89,9 @@ public class ShapeGroup extends Shape {
     protected void drawShape(GraphicsContext graphicsContext) {
         for (Shape shape : shapes) {
             //Установление
-            shape.setPosition(x + shape.getX(), y + shape.getY());
+            shape.getPosition().changePosition(position.getX(), position.getY());
             shape.drawShape(graphicsContext);
-            shape.setPosition(shape.getX() - x, shape.getY() - y);
+            shape.getPosition().changePosition(-position.getX(), -position.getY());
         }
     }
 

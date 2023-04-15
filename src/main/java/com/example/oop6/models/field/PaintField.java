@@ -53,11 +53,11 @@ public class PaintField {
         return !getListInsideTheFigure(x, y).isEmpty();
     }
 
-    public void selectInSection(int x0, int y0, int x1, int y1){
+    public void selectInSection(int x1, int y1, int x2, int y2){
         unselectAllShapes();
         Container<Shape> news = new Container<>();
         for (Shape shape : shapeContainer) {
-            if(shape.includeCentre(x0, y0, x1, y1)) {
+            if(shape.getPosition().inArea(x1, y1, x2, y2)) {
                 if(shape != shape.getInstance()) continue;
                 news.add(new ShapeDecorator(shape));
                 shapeContainer.delete(shape);
