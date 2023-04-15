@@ -28,10 +28,10 @@ public class ShapeGroup extends Shape {
             position = shape.position.clone();
         }
         //Вычисление координат центра, при добавлении новой фигуры
-        int maxX = Math.max(shape.position.getX() + shape.getCenterToX(), position.getX() + getCenterToX());
-        int maxY = Math.max(shape.position.getY() + shape.getCenterToY(), position.getY() + getCenterToY());
-        int minX = Math.min(shape.position.getX() - shape.getCenterToX(), position.getX() - getCenterToX());
-        int minY = Math.min(shape.position.getY() - shape.getCenterToY(), position.getY() - getCenterToY());
+        double maxX = Math.max(shape.position.getX() + shape.getCenterToX(), position.getX() + getCenterToX());
+        double maxY = Math.max(shape.position.getY() + shape.getCenterToY(), position.getY() + getCenterToY());
+        double minX = Math.min(shape.position.getX() - shape.getCenterToX(), position.getX() - getCenterToX());
+        double minY = Math.min(shape.position.getY() - shape.getCenterToY(), position.getY() - getCenterToY());
         if (shape.position.getX() > rightShape) rightShape = shape.position.getX() + shape.getMinWidth() / 2;
         if (shape.position.getX() < leftShape) leftShape = shape.position.getX() - shape.getMinWidth() / 2;
         if (shape.position.getY() > downShape) downShape = shape.position.getY() + shape.getMinHeight() / 2;
@@ -40,8 +40,8 @@ public class ShapeGroup extends Shape {
         height = maxY - minY;
         int oldX = position.getX();
         int oldY = position.getY();
-        position.setX(minX + width / 2);
-        position.setY(minY + height / 2);
+        position.setX((int) (minX + width / 2));
+        position.setY((int) (minY + height / 2));
         //нормализация координат относительно центра группы
         for (Shape s : shapes) {
             s.getPosition().changePosition(- (position.getX() - oldX), - (position.getY() - oldY));
