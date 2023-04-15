@@ -13,7 +13,7 @@ public class Triangle extends Shape {
     }
 
     @Override
-    public boolean inShapeArea(int x, int y) {
+    public boolean inShapeArea(double x, double y) {
         double first = -(width) * (position.getY() + height / 2 - y);
         double second = (position.getX() + width / 2 - x) * (-height) - (-width / 2) * (position.getY() + height / 2 - y);
         double third = (position.getX() - x) * (height) - (-width / 2) * (position.getY() - height / 2 - y);

@@ -3,14 +3,13 @@ package com.example.oop6.models.shapes;
 import com.example.oop6.models.shapes.funcs.ShapeAction;
 import com.example.oop6.utils.Container;
 import com.example.oop6.utils.Position;
-import javafx.geometry.Pos;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
 public abstract class Shape {
-    public static final int MIN_HEIGHT = 10;
-    public static final int MIN_WIDTH = 10;
+    public static final double MIN_HEIGHT = 10;
+    public static final double MIN_WIDTH = 10;
     protected Position position;
     protected double width;
     protected double height;
@@ -35,7 +34,7 @@ public abstract class Shape {
     public abstract Shape getExample();
 
 
-    public abstract boolean inShapeArea(int x, int y);
+    public abstract boolean inShapeArea(double x, double y);
 
     protected abstract void drawShape(GraphicsContext graphicsContext);
 
@@ -87,12 +86,12 @@ public abstract class Shape {
     }
 
     //Проверяет, находится ли фигура в заданом пространстве
-    public boolean entersByWidth(int width) {
+    public boolean entersByWidth(double width) {
         if (this.width < MIN_WIDTH) return false;
         return position.getX() > getCenterToX() && position.getX() < width - getCenterToX();
     }
 
-    public boolean entersByHeight(int height) {
+    public boolean entersByHeight(double height) {
         if (this.height < MIN_HEIGHT) return false;
         return position.getY() > getCenterToY() && position.getY() < height - getCenterToY();
     }
@@ -113,11 +112,11 @@ public abstract class Shape {
         return height;
     }
 
-    public int getMinHeight() {
+    public double getMinHeight() {
         return MIN_HEIGHT;
     }
 
-    public int getMinWidth() {
+    public double getMinWidth() {
         return MIN_WIDTH;
     }
 

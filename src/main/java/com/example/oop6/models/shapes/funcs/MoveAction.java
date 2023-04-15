@@ -4,12 +4,12 @@ import com.example.oop6.models.shapes.Shape;
 import com.example.oop6.utils.Position;
 
 public class MoveAction implements ShapeAction {
-    private int width;
-    private int height;
-    private int dx;
-    private int dy;
+    private double width;
+    private double height;
+    private double dx;
+    private double dy;
 
-    public MoveAction(int width, int height) {
+    public MoveAction(double width, double height) {
         this.width = width;
         this.height = height;
     }
@@ -31,19 +31,19 @@ public class MoveAction implements ShapeAction {
         return true;
     }
 
-    public void setWidth(int width) {
+    public void setWidth(double width) {
         this.width = width;
     }
 
-    public void setHeight(int height) {
+    public void setHeight(double height) {
         this.height = height;
     }
 
-    public void setDx(int dx) {
+    public void setDx(double dx) {
         this.dx = dx;
     }
 
-    public void setDy(int dy) {
+    public void setDy(double dy) {
         this.dy = dy;
     }
 }

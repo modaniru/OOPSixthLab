@@ -19,7 +19,7 @@ public class ShapeDecorator extends Shape {
     }
 
     @Override
-    public boolean inShapeArea(int x, int y) {
+    public boolean inShapeArea(double x, double y) {
         return instance.getInstance().inShapeArea(x, y);
     }
 
@@ -37,12 +37,12 @@ public class ShapeDecorator extends Shape {
     }
 
     @Override
-    public int getMinHeight() {
+    public double getMinHeight() {
         return instance.getMinHeight();
     }
 
     @Override
-    public int getMinWidth() {
+    public double getMinWidth() {
         return instance.getMinWidth();
     }
 

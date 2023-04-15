@@ -3,9 +3,9 @@ package com.example.oop6.utils;
 import javafx.geometry.Pos;
 
 public class Position {
-    private int x;
-    private int y;
-    public Position(int x, int y){
+    private double x;
+    private double y;
+    public Position(double x, double y){
         this.x = x;
         this.y = y;
     }
@@ -14,31 +14,31 @@ public class Position {
         return new Position(x, y);
     }
 
-    public int getX() {
+    public double getX() {
         return x;
     }
 
-    public void setX(int x) {
+    public void setX(double x) {
         this.x = x;
     }
 
-    public int getY() {
+    public double getY() {
         return y;
     }
 
-    public void setY(int y) {
+    public void setY(double y) {
         this.y = y;
     }
 
-    public boolean inArea(int x1, int y1, int x2, int y2){
-        int minX = Math.min(x1, x2);
-        int maxX = Math.max(x1, x2);
-        int minY = Math.min(y1, y2);
-        int maxY = Math.max(y1, y2);
+    public boolean inArea(double x1, double y1, double x2, double y2){
+        double minX = Math.min(x1, x2);
+        double maxX = Math.max(x1, x2);
+        double minY = Math.min(y1, y2);
+        double maxY = Math.max(y1, y2);
         return x >= minX && x <= maxX && y >= minY && y <= maxY;
     }
 
-    public Position changePosition(int dx, int dy){
+    public Position changePosition(double dx, double dy){
         x += dx;
         y += dy;
         return this;

@@ -14,7 +14,7 @@ public class Rectangle extends Shape {
     }
 
     @Override
-    public boolean inShapeArea(int x, int y) {
+    public boolean inShapeArea(double x, double y) {
         return (x >= (position.getX() - width / 2) && x <= (position.getX() + width / 2)) && (y >= (position.getY() - height / 2) && y <= (position.getY()  + height / 2));
     }
 

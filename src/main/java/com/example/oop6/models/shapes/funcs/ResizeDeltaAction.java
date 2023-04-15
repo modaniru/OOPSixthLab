@@ -5,12 +5,12 @@ import com.example.oop6.utils.Container;
 import com.example.oop6.utils.Position;
 
 public class ResizeDeltaAction implements ShapeAction {
-    private int dx;
-    private int dy;
-    private int width;
-    private int height;
+    private double dx;
+    private double dy;
+    private double width;
+    private double height;
 
-    public ResizeDeltaAction(int width, int height) {
+    public ResizeDeltaAction(double width, double height) {
         this.width = width;
         this.height = height;
     }
@@ -52,11 +52,11 @@ public class ResizeDeltaAction implements ShapeAction {
         return true;
     }
 
-    public void setDx(int dx) {
+    public void setDx(double dx) {
         this.dx = dx;
     }
 
-    public void setDy(int dy) {
+    public void setDy(double dy) {
         this.dy = dy;
     }
 }

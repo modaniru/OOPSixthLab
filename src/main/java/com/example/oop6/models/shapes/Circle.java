@@ -13,9 +13,9 @@ public class Circle extends Shape {
     }
 
     @Override
-    public boolean inShapeArea(int x, int y) {
-        int normalizedX = position.getX() - x;
-        int normalizedY = position.getY()  - y;
+    public boolean inShapeArea(double x, double y) {
+        double normalizedX = position.getX() - x;
+        double normalizedY = position.getY()  - y;
         return (Math.pow(normalizedX, 2) / Math.pow(width / 2, 2) + Math.pow(normalizedY, 2) / Math.pow(height / 2, 2)) <= 1;
     }
 
