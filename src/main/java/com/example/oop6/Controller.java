@@ -15,6 +15,8 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
+import javafx.scene.Cursor;
+import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
@@ -103,6 +105,8 @@ public class Controller implements Initializable {
         btnSelect.setUserData(new SelectionInstrument(paintField));
         btnPosition.setUserData(new MoveInstrument(paintField));
         btnSize.setUserData(new ResizeInstrument(paintField));
+        btnCreate.setDisable(true);
+        btnCircle.setDisable(true);
         //По дефолту круг
         shape = circle.clone();
         //Обработчики событий при нажатии на кнопку
@@ -119,7 +123,13 @@ public class Controller implements Initializable {
     }
 
     private void btnInstrumentPress(ActionEvent actionEvent) {
-        instrument = (Instrument) ((Button)actionEvent.getSource()).getUserData();
+        Button button = (Button)actionEvent.getSource();
+        btnCreate.setDisable(false);
+        btnSize.setDisable(false);
+        btnPosition.setDisable(false);
+        btnSelect.setDisable(false);
+        button.setDisable(true);
+        instrument = (Instrument) button.getUserData();
     }
 
     //Обработчик колор пикера
@@ -155,7 +165,12 @@ public class Controller implements Initializable {
 
     //Обработчики нажатия на кнопку
     private void btnShapePress(ActionEvent actionEvent) {
-        shape = ((Shape) ((Button) actionEvent.getSource()).getUserData());
+        Button button = (Button) actionEvent.getSource();
+        btnTriangle.setDisable(false);
+        btnSquare.setDisable(false);
+        btnCircle.setDisable(false);
+        button.setDisable(true);
+        shape = ((Shape) button.getUserData());
     }
 
     private void btnClearCanvasAction(ActionEvent actionEvent) {

@@ -9,21 +9,21 @@
 
 <AnchorPane fx:id="form" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="400.0" minWidth="700.0" onKeyPressed="#keyInFormDown" onKeyReleased="#keyInFormUp" prefHeight="400.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.oop6.Controller">
    <children>
-      <Pane fx:id="drawField" layoutX="11.0" layoutY="36.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseDragged="#mouseDragEventInPaintField" onMouseMoved="#mouseMoveInPaintFieldEvent" onMousePressed="#mouseDownEventInPaintField" onMouseReleased="#mouseUpEventInPaintField" prefHeight="356.0" prefWidth="507.0" style="-fx-background-color: 111;" AnchorPane.bottomAnchor="8.0" AnchorPane.leftAnchor="12.0" AnchorPane.rightAnchor="181.0" AnchorPane.topAnchor="36.0" />
-      <Button fx:id="btnCircle" layoutX="12.0" layoutY="1.0" mnemonicParsing="false" text="Эллипс" />
-      <Button fx:id="btnSquare" layoutX="74.0" layoutY="1.0" mnemonicParsing="false" text="Прямоугольник" />
-      <Button fx:id="btnTriangle" layoutX="183.0" layoutY="1.0" mnemonicParsing="false" text="Треугольник" />
-      <Slider fx:id="widthSlider" layoutX="528.0" layoutY="44.0" max="500.0" min="10.0" showTickLabels="true" showTickMarks="true" AnchorPane.rightAnchor="32.0" />
-      <Slider fx:id="heightSlider" layoutX="528.0" layoutY="98.0" max="500.0" min="10.0" showTickLabels="true" showTickMarks="true" AnchorPane.rightAnchor="32.0" />
+      <Pane fx:id="drawField" focusTraversable="true" layoutX="11.0" layoutY="36.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseDragged="#mouseDragEventInPaintField" onMouseMoved="#mouseMoveInPaintFieldEvent" onMousePressed="#mouseDownEventInPaintField" onMouseReleased="#mouseUpEventInPaintField" prefHeight="356.0" prefWidth="507.0" style="-fx-background-color: 111;" AnchorPane.bottomAnchor="8.0" AnchorPane.leftAnchor="12.0" AnchorPane.rightAnchor="181.0" AnchorPane.topAnchor="36.0" />
+      <Button fx:id="btnCircle" focusTraversable="false" layoutX="12.0" layoutY="1.0" mnemonicParsing="false" text="Эллипс" />
+      <Button fx:id="btnSquare" focusTraversable="false" layoutX="74.0" layoutY="1.0" mnemonicParsing="false" text="Прямоугольник" />
+      <Button fx:id="btnTriangle" focusTraversable="false" layoutX="183.0" layoutY="1.0" mnemonicParsing="false" text="Треугольник" />
+      <Slider fx:id="widthSlider" focusTraversable="false" layoutX="528.0" layoutY="44.0" max="500.0" min="10.0" showTickLabels="true" showTickMarks="true" AnchorPane.rightAnchor="32.0" />
+      <Slider fx:id="heightSlider" focusTraversable="false" layoutX="528.0" layoutY="98.0" max="500.0" min="10.0" showTickLabels="true" showTickMarks="true" AnchorPane.rightAnchor="32.0" />
       <Text fx:id="tWidth" layoutX="632.0" layoutY="41.0" strokeType="OUTSIDE" strokeWidth="0.0" text="width:" textAlignment="RIGHT" AnchorPane.rightAnchor="35.1064453125" />
       <Text fx:id="tHeight" layoutX="629.0" layoutY="95.0" strokeType="OUTSIDE" strokeWidth="0.0" text="height:" textAlignment="RIGHT" AnchorPane.rightAnchor="33.802734375" />
-      <ColorPicker fx:id="colorPicker" layoutX="528.0" layoutY="174.0" prefHeight="26.0" prefWidth="140.0" AnchorPane.rightAnchor="32.0" />
-      <Button fx:id="btnCanvasClear" layoutX="631.0" layoutY="361.0" mnemonicParsing="false" text="Очистить" AnchorPane.bottomAnchor="13.0" AnchorPane.rightAnchor="15.5" />
+      <ColorPicker fx:id="colorPicker" focusTraversable="false" layoutX="528.0" layoutY="174.0" prefHeight="26.0" prefWidth="140.0" AnchorPane.rightAnchor="32.0" />
+      <Button fx:id="btnCanvasClear" focusTraversable="false" layoutX="631.0" layoutY="361.0" mnemonicParsing="false" text="Очистить" AnchorPane.bottomAnchor="13.0" AnchorPane.rightAnchor="15.5" />
       <Text layoutX="528.0" layoutY="335.0" strokeType="OUTSIDE" strokeWidth="0.0" text="cursor position:" AnchorPane.rightAnchor="89.10595703125" />
       <Text fx:id="tCursorPosition" layoutX="647.0" layoutY="335.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0 0" AnchorPane.rightAnchor="34.56640625" />
-      <Button fx:id="btnCreate" layoutX="312.0" layoutY="1.0" mnemonicParsing="false" text="Создание" />
-      <Button fx:id="btnSelect" layoutX="387.0" layoutY="1.0" mnemonicParsing="false" text="Выделение" />
-      <Button fx:id="btnPosition" layoutX="469.0" layoutY="1.0" mnemonicParsing="false" text="Перемещение" />
-      <Button fx:id="btnSize" layoutX="568.0" layoutY="1.0" mnemonicParsing="false" text="Размер" />
+      <Button fx:id="btnCreate" focusTraversable="false" layoutX="312.0" layoutY="1.0" mnemonicParsing="false" text="Создание" />
+      <Button fx:id="btnSelect" focusTraversable="false" layoutX="387.0" layoutY="1.0" mnemonicParsing="false" text="Выделение" />
+      <Button fx:id="btnPosition" focusTraversable="false" layoutX="469.0" layoutY="1.0" mnemonicParsing="false" text="Перемещение" />
+      <Button fx:id="btnSize" focusTraversable="false" layoutX="568.0" layoutY="1.0" mnemonicParsing="false" text="Размер" />
    </children>
 </AnchorPane>
