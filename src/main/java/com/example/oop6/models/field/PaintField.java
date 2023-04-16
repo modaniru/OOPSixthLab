@@ -27,13 +27,24 @@ public class PaintField {
 
     //todo NEW вынес логику проверки курсора в фигуре
     //Добавляет или выделяет фигуру
-    public void addOrSelectShape(Shape shape) {
+    public void addShape(Shape shape) {
         if (!(shape.entersByWidth(fieldWidth) && shape.entersByHeight(fieldHeight))) {
             return;
         }
         if (!multiplySelection) unselectAllShapes();
         shape = new ShapeDecorator(shape);
         shapeContainer.add(shape);
+        drawAllShapesInContainer();
+        System.out.println(shapeContainer.getSize());
+    }
+
+    public void removeInstanceShape(Shape shape){
+        for (Shape s : shapeContainer) {
+            if(s.getInstance() == shape.getInstance()){
+                shape = s;
+            }
+        }
+        shapeContainer.delete(shape);
         drawAllShapesInContainer();
     }
 
@@ -149,7 +160,7 @@ public class PaintField {
 
     //todo NEW
     //Группирует выделенные объекты
-    public void groupSelectedShapes() {
+    public ShapeGroup groupSelectedShapes() {
         ShapeGroup shapeGroup = new ShapeGroup();
         Container<Shape> selectedShapes = getAllSelectedShapes();
         for (Shape selectedShape : selectedShapes) {
@@ -158,6 +169,7 @@ public class PaintField {
         }
         shapeContainer.add(shapeGroup);
         drawAllShapesInContainer();
+        return shapeGroup;
     }
 
     //Отрисовывает все фигуры, находящиеся в списке
@@ -167,7 +179,7 @@ public class PaintField {
     }
 
     //Выключает выделение у всех фигур
-    private void unselectAllShapes() {
+    public void unselectAllShapes() {
         List<Shape> decorators = new ArrayList<>();
         for (Shape shape : shapeContainer) {
             if(shape != shape.getInstance()){
@@ -207,5 +219,16 @@ public class PaintField {
 
     public int getFieldHeight() {
         return fieldHeight;
+    }
+
+    public Container<Shape> unGroupShape(Shape shape){
+        removeInstanceShape(shape);
+        shape = shape.getInstance();
+        for (Shape s : shape.getShapes()) {
+            s.getPosition().changePosition(shape.getPosition().getX(), shape.getPosition().getY());
+            addShape(s);
+        }
+        drawAllShapesInContainer();
+        return shape.getShapes();
     }
 }

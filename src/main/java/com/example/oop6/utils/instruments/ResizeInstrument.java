@@ -1,5 +1,6 @@
 package com.example.oop6.utils.instruments;
 
+import com.example.oop6.models.field.Command;
 import com.example.oop6.models.field.PaintField;
 import com.example.oop6.models.shapes.Shape;
 import com.example.oop6.models.shapes.funcs.ResizeDeltaAction;
@@ -34,7 +35,8 @@ public class ResizeInstrument implements Instrument{
     }
 
     @Override
-    public void mouseUp(int x, int y) {
+    public Command mouseUp(int x, int y) {
         //todo return paint field resize command
+        return null;
     }
 }

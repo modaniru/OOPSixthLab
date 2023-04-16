@@ -1,6 +1,6 @@
 package com.example.oop6;
 
-import com.example.oop6.models.field.PaintField;
+import com.example.oop6.models.field.*;
 import com.example.oop6.models.ShapeSizeModel;
 import com.example.oop6.models.shapes.Circle;
 import com.example.oop6.models.shapes.Shape;
@@ -28,6 +28,7 @@ import javafx.scene.text.Text;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.Stack;
 
 public class Controller implements Initializable {
     @FXML
@@ -123,7 +124,7 @@ public class Controller implements Initializable {
     }
 
     private void btnInstrumentPress(ActionEvent actionEvent) {
-        Button button = (Button)actionEvent.getSource();
+        Button button = (Button) actionEvent.getSource();
         btnCreate.setDisable(false);
         btnSize.setDisable(false);
         btnPosition.setDisable(false);
@@ -189,13 +190,27 @@ public class Controller implements Initializable {
         //промежуточная на отрисовку будующей фигуры (только с контуром)
     }
 
+    private Stack<Command> commands = new Stack<>();
+    @FXML
+    private TextArea report;
+
     public void mouseUpEventInPaintField(MouseEvent mouseEvent) {
-        instrument.mouseUp((int) mouseEvent.getX(), (int) mouseEvent.getY());
+        Command command = instrument.mouseUp((int) mouseEvent.getX(), (int) mouseEvent.getY());
+        if (command != null) {
+            commands.push(command);
+        }
+        StringBuilder sb = new StringBuilder();
+        for (Command command1 : commands) {
+            sb.append(command1.report()).append("\n");
+        }
+        report.setText(sb.toString());
     }
 
     //Обработчик различных нажатий клавиш
     public void keyInFormDown(KeyEvent keyEvent) {
-        if (keyEvent.getCode() == KeyCode.COMMAND) {
+        if (keyEvent.getCode() == KeyCode.Z) {
+            commands.pop().unExecute();
+        } else if (keyEvent.getCode() == KeyCode.COMMAND) {
             paintField.setMultiplySelection(true);
         } else if (keyEvent.getCode() == KeyCode.BACK_SPACE) {
             paintField.deleteAllSelectedShapes();
@@ -232,7 +247,23 @@ public class Controller implements Initializable {
             resizeDeltaAction.setDy(-2);
             paintField.actionSelectedShapes(resizeDeltaAction);
         } else if (keyEvent.getCode() == KeyCode.G) {
-            paintField.groupSelectedShapes();
+            Command command = new GroupCommand();
+            command.execute(paintField);
+            commands.push(command);
+            StringBuilder sb = new StringBuilder();
+            for (Command command1 : commands) {
+                sb.append(command1.report()).append("\n");
+            }
+            report.setText(sb.toString());
+        } else if (keyEvent.getCode() == KeyCode.F) {
+            Command command = new UnGroupCommand();
+            command.execute(paintField);
+            commands.push(command);
+            StringBuilder sb = new StringBuilder();
+            for (Command command1 : commands) {
+                sb.append(command1.report()).append("\n");
+            }
+            report.setText(sb.toString());
         }
     }
 
