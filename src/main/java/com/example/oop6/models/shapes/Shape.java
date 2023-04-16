@@ -2,30 +2,31 @@ package com.example.oop6.models.shapes;
 
 import com.example.oop6.models.shapes.funcs.ShapeAction;
 import com.example.oop6.utils.Container;
+import com.example.oop6.utils.Position;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
 public abstract class Shape {
-    public static final int MIN_HEIGHT = 10;
-    public static final int MIN_WIDTH = 10;
-    protected int x;
-    protected int y;
-    protected int width;
-    protected int height;
+    public static final double MIN_HEIGHT = 10;
+    public static final double MIN_WIDTH = 10;
+    protected Position position;
+    protected double width;
+    protected double height;
     private Color fillColor;
 
-    public Shape(int width, int height) {
+    public Shape(double width, double height) {
         this.width = width;
         this.height = height;
         fillColor = Color.rgb(0, 0, 0, 0);
+        position = new Position(0,0);
     }
 
 
     public Shape clone(){
         Shape shape = getExample();
         shape.setFillColor(fillColor);
-        shape.setPosition(x, y);
+        shape.setPosition(position.clone());
         shape.setSize(width, height);
         return shape;
     }
@@ -33,7 +34,7 @@ public abstract class Shape {
     public abstract Shape getExample();
 
 
-    public abstract boolean inShapeArea(int x, int y);
+    public abstract boolean inShapeArea(double x, double y);
 
     protected abstract void drawShape(GraphicsContext graphicsContext);
 
@@ -51,40 +52,33 @@ public abstract class Shape {
         return new Container<>();
     }
 
-    public final void setPosition(int x, int y) {
-        this.x = x;
-        this.y = y;
+    public final void setPosition(Position position) {
+        this.position = position.clone();
     }
 
-    public final int getCenterToX() {
+    public final double getCenterToX() {
         return width / 2;
     }
 
-    public final int getCenterToY() {
+    public final double getCenterToY() {
         return height / 2;
     }
 
-    public final int getX() {
-        return x;
-    }
-
-    public final int getY() {
-        return y;
+    public Position getPosition() {
+        return position;
     }
 
     //Вопрос
-    public void setSize(int width, int height) {
+    public void setSize(double width, double height) {
         if(width < MIN_WIDTH) width = MIN_WIDTH;
         if(height < MIN_HEIGHT) height = MIN_HEIGHT;
         this.width = width;
         this.height = height;
     }
 
-    //todo NEW
-    public void setSizeWithLimit(int width, int height, int fieldWidth, int fieldHeight) {
-        if (!(x > width / 2 && x < fieldWidth - width / 2)) width = this.width;
-        if (!(y > height / 2 && y < fieldHeight - height / 2)) height = this.height;
-        setSize(width, height);
+    public void setSizeWithLimit(double width, double height, double fieldWidth, double fieldHeight) {
+        if (!(position.getX() > width / 2 && position.getX() < fieldWidth - width / 2)) width = this.width;
+        if (!(position.getY() > height / 2 && position.getY() < fieldHeight - height / 2)) height = this.height;
     }
 
     public void setFillColor(Color color) {
@@ -92,14 +86,14 @@ public abstract class Shape {
     }
 
     //Проверяет, находится ли фигура в заданом пространстве
-    public boolean entersByWidth(int width) {
+    public boolean entersByWidth(double width) {
         if (this.width < MIN_WIDTH) return false;
-        return x > getCenterToX() && x < width - getCenterToX();
+        return position.getX() > getCenterToX() && position.getX() < width - getCenterToX();
     }
 
-    public boolean entersByHeight(int height) {
+    public boolean entersByHeight(double height) {
         if (this.height < MIN_HEIGHT) return false;
-        return y > getCenterToY() && y < height - getCenterToY();
+        return position.getY() > getCenterToY() && position.getY() < height - getCenterToY();
     }
 
     protected Color getFillColor() {
@@ -110,38 +104,23 @@ public abstract class Shape {
         action.shapeAction(this);
     }
 
-    public int getWidth() {
+    public double getWidth() {
         return width;
     }
 
-    public int getHeight() {
+    public double getHeight() {
         return height;
     }
 
-    public int getMinHeight() {
+    public double getMinHeight() {
         return MIN_HEIGHT;
     }
 
-    public int getMinWidth() {
+    public double getMinWidth() {
         return MIN_WIDTH;
     }
 
     public Shape getInstance() {
         return this;
     }
-    public boolean includeCentre(int x1, int y1, int x2, int y2){
-        int minX = Math.min(x1, x2);
-        int maxX = Math.max(x1, x2);
-        int minY = Math.min(y1, y2);
-        int maxY = Math.max(y1, y2);
-        return x >= minX && x <= maxX && y >= minY && y <= maxY;
-    }
-    /*
-    точка
-    фигура
-
-    точка -> фигуре
-
-    точка -> Прямоугольник (углы) ->
-     */
 }

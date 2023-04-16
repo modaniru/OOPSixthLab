@@ -3,14 +3,13 @@ package com.example.oop6.models.shapes;
 import com.example.oop6.models.shapes.funcs.ShapeAction;
 import com.example.oop6.utils.Container;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
 
 public class ShapeGroup extends Shape {
     private final Container<Shape> shapes;
-    private int leftShape = 0;
-    private int rightShape = 0;
-    private int upShape = 0;
-    private int downShape = 0;
+    private double leftShape = 0;
+    private double rightShape = 0;
+    private double upShape = 0;
+    private double downShape = 0;
 
     public ShapeGroup() {
         super(0, 0);
@@ -21,34 +20,33 @@ public class ShapeGroup extends Shape {
         if (shapes.getSize() == 0) {
             width = shape.width;
             height = shape.height;
-            leftShape = shape.x - shape.getMinWidth() / 2;
-            rightShape = shape.x + shape.getMinWidth() / 2;
-            upShape = shape.y - shape.getMinHeight() / 2;
-            downShape = shape.y + shape.getMinHeight() / 2;
-            x = shape.x;
-            y = shape.y;
+            leftShape = shape.position.getX() - shape.getMinWidth() / 2;
+            rightShape = shape.position.getX() + shape.getMinWidth() / 2;
+            upShape = shape.position.getY() - shape.getMinHeight() / 2;
+            downShape = shape.position.getY() + shape.getMinHeight() / 2;
+            position = shape.position.clone();
         }
         //Вычисление координат центра, при добавлении новой фигуры
-        int maxX = Math.max(shape.x + shape.getCenterToX(), x + getCenterToX());
-        int maxY = Math.max(shape.y + shape.getCenterToY(), y + getCenterToY());
-        int minX = Math.min(shape.x - shape.getCenterToX(), x - getCenterToX());
-        int minY = Math.min(shape.y - shape.getCenterToY(), y - getCenterToY());
-        if (shape.x > rightShape) rightShape = shape.x + shape.getMinWidth() / 2;
-        if (shape.x < leftShape) leftShape = shape.x - shape.getMinWidth() / 2;
-        if (shape.y > downShape) downShape = shape.y + shape.getMinHeight() / 2;
-        if (shape.y < upShape) upShape = shape.y - shape.getMinHeight() / 2;
+        double maxX = Math.max(shape.position.getX() + shape.getCenterToX(), position.getX() + getCenterToX());
+        double maxY = Math.max(shape.position.getY() + shape.getCenterToY(), position.getY() + getCenterToY());
+        double minX = Math.min(shape.position.getX() - shape.getCenterToX(), position.getX() - getCenterToX());
+        double minY = Math.min(shape.position.getY() - shape.getCenterToY(), position.getY() - getCenterToY());
+        if (shape.position.getX() > rightShape) rightShape = shape.position.getX() + shape.getMinWidth() / 2;
+        if (shape.position.getX() < leftShape) leftShape = shape.position.getX() - shape.getMinWidth() / 2;
+        if (shape.position.getY() > downShape) downShape = shape.position.getY() + shape.getMinHeight() / 2;
+        if (shape.position.getY() < upShape) upShape = shape.position.getY() - shape.getMinHeight() / 2;
         width = maxX - minX;
         height = maxY - minY;
-        int oldX = x;
-        int oldY = y;
-        x = minX + width / 2;
-        y = minY + height / 2;
+        double oldX = position.getX();
+        double oldY = position.getY();
+        position.setX((int) (minX + width / 2));
+        position.setY((int) (minY + height / 2));
         //нормализация координат относительно центра группы
         for (Shape s : shapes) {
-            s.setPosition(s.getX() - (x - oldX), s.getY() - (y - oldY));
+            s.getPosition().changePosition(- (position.getX() - oldX), - (position.getY() - oldY));
         }
         //нормализация и добавление фигуры в контейнер
-        shape.setPosition(shape.getX() - x, shape.getY() - y);
+        shape.getPosition().changePosition(-position.getX(), -position.getY());
         shapes.add(shape);
     }
 
@@ -76,11 +74,11 @@ public class ShapeGroup extends Shape {
     }
 
     @Override
-    public boolean inShapeArea(int x, int y) {
+    public boolean inShapeArea(double x, double y) {
         for (Shape shape : shapes) {
-            shape.setPosition(this.x + shape.getX(), this.y + shape.getY());
+            shape.getPosition().changePosition(position.getX(), position.getY());
             boolean res = shape.inShapeArea(x, y);
-            shape.setPosition(shape.getX() - this.x, shape.getY() - this.y);
+            shape.getPosition().changePosition(-position.getX(), -position.getY());
             if (res) return true;
         }
         return false;
@@ -90,9 +88,9 @@ public class ShapeGroup extends Shape {
     protected void drawShape(GraphicsContext graphicsContext) {
         for (Shape shape : shapes) {
             //Установление
-            shape.setPosition(x + shape.getX(), y + shape.getY());
+            shape.getPosition().changePosition(position.getX(), position.getY());
             shape.drawShape(graphicsContext);
-            shape.setPosition(shape.getX() - x, shape.getY() - y);
+            shape.getPosition().changePosition(-position.getX(), -position.getY());
         }
     }
 
@@ -103,24 +101,24 @@ public class ShapeGroup extends Shape {
 
     //переименовать
     @Override
-    public boolean entersByWidth(int width) {
+    public boolean entersByWidth(double width) {
         boolean res = super.entersByWidth(width);
         return res && this.width >= rightShape - leftShape;
     }
 
     @Override
-    public boolean entersByHeight(int height) {
+    public boolean entersByHeight(double height) {
         boolean res = super.entersByHeight(height);
         return res && this.height >= downShape - upShape;
     }
 
     @Override
-    public int getMinWidth() {
+    public double getMinWidth() {
         return rightShape - leftShape;
     }
 
     @Override
-    public int getMinHeight() {
+    public double getMinHeight() {
         return downShape - upShape;
     }
 }

@@ -39,7 +39,7 @@ public class PaintField {
 
     //todo NEW
     //Вынес логику выделения фигур в отдельный метод
-    public List<Shape> getListInsideTheFigure(int x, int y) {
+    public List<Shape> getListInsideTheFigure(double x, double y) {
         List<Shape> shapes = new ArrayList<>();
         for (Shape shape : shapeContainer) {
             if (shape.inShapeArea(x, y)) {
@@ -49,15 +49,15 @@ public class PaintField {
         return shapes;
     }
 
-    public boolean insideTheFigure(int x, int y) {
+    public boolean insideTheFigure(double x, double y) {
         return !getListInsideTheFigure(x, y).isEmpty();
     }
 
-    public void selectInSection(int x0, int y0, int x1, int y1){
+    public void selectInSection(double x1, double y1, double x2, double y2){
         unselectAllShapes();
         Container<Shape> news = new Container<>();
         for (Shape shape : shapeContainer) {
-            if(shape.includeCentre(x0, y0, x1, y1)) {
+            if(shape.getPosition().inArea(x1, y1, x2, y2)) {
                 if(shape != shape.getInstance()) continue;
                 news.add(new ShapeDecorator(shape));
                 shapeContainer.delete(shape);

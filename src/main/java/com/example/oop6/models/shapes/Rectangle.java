@@ -14,13 +14,13 @@ public class Rectangle extends Shape {
     }
 
     @Override
-    public boolean inShapeArea(int x, int y) {
-        return (x >= (this.x - width / 2) && x <= (this.x + width / 2)) && (y >= (this.y - height / 2) && y <= (this.y + height / 2));
+    public boolean inShapeArea(double x, double y) {
+        return (x >= (position.getX() - width / 2) && x <= (position.getX() + width / 2)) && (y >= (position.getY() - height / 2) && y <= (position.getY()  + height / 2));
     }
 
     @Override
     public void drawShape(GraphicsContext graphicsContext) {
         graphicsContext.setFill(getFillColor());
-        graphicsContext.fillRect(x - (width / 2), y - (height / 2), width, height);
+        graphicsContext.fillRect(position.getX()  - (width / 2), position.getY()  - (height / 2), width, height);
     }
 }

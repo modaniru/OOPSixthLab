@@ -9,8 +9,7 @@ public class ShapeDecorator extends Shape {
 
     public ShapeDecorator(Shape instance) {
         super(instance.getWidth(), instance.getHeight());
-        this.x = instance.getX();
-        this.y = instance.getY();
+        position = instance.position;
         this.instance = instance;
     }
 
@@ -20,7 +19,7 @@ public class ShapeDecorator extends Shape {
     }
 
     @Override
-    public boolean inShapeArea(int x, int y) {
+    public boolean inShapeArea(double x, double y) {
         return instance.getInstance().inShapeArea(x, y);
     }
 
@@ -29,7 +28,7 @@ public class ShapeDecorator extends Shape {
         instance.drawShape(graphicsContext);
         graphicsContext.setLineWidth(2);
         graphicsContext.setStroke(Color.LIGHTBLUE);
-        graphicsContext.strokeRect(x - getCenterToX(), y - getCenterToY(), width, height);
+        graphicsContext.strokeRect(position.getX() - getCenterToX(), position.getY() - getCenterToY(), width, height);
     }
 
     @Override
@@ -38,20 +37,18 @@ public class ShapeDecorator extends Shape {
     }
 
     @Override
-    public int getMinHeight() {
+    public double getMinHeight() {
         return instance.getMinHeight();
     }
 
     @Override
-    public int getMinWidth() {
+    public double getMinWidth() {
         return instance.getMinWidth();
     }
 
     @Override
     public void accept(ShapeAction action) {
         instance.accept(action);
-        x = instance.getX();
-        y = instance.getY();
         width = instance.getWidth();
         height = instance.getHeight();
     }
