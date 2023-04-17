@@ -7,6 +7,10 @@ public class Circle extends Shape {
         super(width, height);
     }
 
+    public Circle() {
+        super(0, 0);
+    }
+
     @Override
     public Shape getExample() {
         return new Circle(0, 0);
@@ -15,7 +19,7 @@ public class Circle extends Shape {
     @Override
     public boolean inShapeArea(double x, double y) {
         double normalizedX = position.getX() - x;
-        double normalizedY = position.getY()  - y;
+        double normalizedY = position.getY() - y;
         return (Math.pow(normalizedX, 2) / Math.pow(width / 2, 2) + Math.pow(normalizedY, 2) / Math.pow(height / 2, 2)) <= 1;
     }
 

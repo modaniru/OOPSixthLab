@@ -9,6 +9,7 @@ import com.example.oop6.models.shapes.Triangle;
 import com.example.oop6.models.shapes.funcs.ChangeColorAction;
 import com.example.oop6.models.shapes.funcs.MoveAction;
 import com.example.oop6.models.shapes.funcs.ResizeDeltaAction;
+import com.example.oop6.utils.ShapeFactory;
 import com.example.oop6.utils.instruments.*;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -25,7 +26,9 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
 
+import java.io.*;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -63,15 +66,27 @@ public class Controller implements Initializable {
     private Button btnPosition;
     @FXML
     private Button btnSize;
+    @FXML
+    private MenuBar menuBar;
+    @FXML
+    private MenuItem miSaveAs;
+    @FXML
+    private MenuItem miOpen;
     private PaintField paintField;
     private ShapeSizeModel shapeSizeModel;
     private MoveAction moveAction;
     private ResizeDeltaAction resizeDeltaAction;
     private Shape shape;
     private Instrument instrument;
+    private FileChooser fileChooser = new FileChooser();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        final String os = System.getProperty("os.name");
+        if (os != null && os.startsWith("Mac"))
+            menuBar.useSystemMenuBarProperty().set(true);
+
+
         //Работа с Canvas
         Canvas canvas = new Canvas(drawField.getPrefWidth(), drawField.getPrefHeight());
         moveAction = new MoveAction((int) drawField.getPrefWidth(), (int) drawField.getPrefHeight());
@@ -118,6 +133,23 @@ public class Controller implements Initializable {
         btnSelect.setOnAction(this::btnInstrumentPress);
         btnPosition.setOnAction(this::btnInstrumentPress);
         btnSize.setOnAction(this::btnInstrumentPress);
+        //todo Если проект принадлежит файлу уже
+        miSaveAs.setOnAction(actionEvent -> {
+            File file = fileChooser.showOpenDialog(HelloApplication.getStage());
+            try(BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file))) {
+                paintField.save(bufferedWriter);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        miOpen.setOnAction(actionEvent -> {
+            File file = fileChooser.showOpenDialog(HelloApplication.getStage());
+            try(BufferedReader bufferedReader = new BufferedReader(new FileReader(file))) {
+                paintField.load(bufferedReader, new ShapeFactory());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
         //Белый цвет paintField
         drawField.setBackground(new Background(new BackgroundFill(Color.web("#FFFFFF"), CornerRadii.EMPTY, Insets.EMPTY)));
     }
@@ -233,6 +265,13 @@ public class Controller implements Initializable {
             paintField.actionSelectedShapes(resizeDeltaAction);
         } else if (keyEvent.getCode() == KeyCode.G) {
             paintField.groupSelectedShapes();
+        } else if (keyEvent.getCode() == KeyCode.S) {
+            File file = new File("save.txt");
+            try(BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file))) {
+                paintField.save(bufferedWriter);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 

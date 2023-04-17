@@ -7,6 +7,10 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+
 public abstract class Shape {
     public static final double MIN_HEIGHT = 10;
     public static final double MIN_WIDTH = 10;
@@ -122,5 +126,50 @@ public abstract class Shape {
 
     public Shape getInstance() {
         return this;
+    }
+
+    public void load(BufferedReader bufferedReader) throws IOException {
+        //pos
+        String line = check("\tx: ", bufferedReader.readLine());
+        double x = Double.parseDouble(line.split(" ")[1]);
+        line = check("\ty: ", bufferedReader.readLine());
+        double y = Double.parseDouble(line.split(" ")[1]);
+        position = new Position(x , y);
+        //size
+        line = check("\twidth: ", bufferedReader.readLine());
+        width = Double.parseDouble(line.split(" ")[1]);
+        line = check("\theight: ", bufferedReader.readLine());
+        height = Double.parseDouble(line.split(" ")[1]);
+        //color
+        String[] s = check("\trgb: ", bufferedReader.readLine()).split(" ");
+        int red = Integer.parseInt(s[1]);
+        int green = Integer.parseInt(s[2]);
+        int blue = Integer.parseInt(s[3]);
+        fillColor = Color.rgb(red, green, blue);
+    }
+
+    public void save(BufferedWriter bufferedWriter) throws IOException {
+        bufferedWriter.write(getClass().getSimpleName() + "\n");
+        bufferedWriter.write("\tx: " + position.getX() + "\n");
+        bufferedWriter.write("\ty: " + position.getY() + "\n");
+        bufferedWriter.write("\twidth: " + width + "\n");
+        bufferedWriter.write("\theight: " + height + "\n");
+        bufferedWriter.write("\trgb: " + (int) (fillColor.getRed() * 255) + " " + (int) (fillColor.getGreen() * 255) + " " + (int) (fillColor.getBlue() * 255) + "\n");
+    }
+    private String check(String prefix, String line){
+        String[] split = line.split(" ");
+        if(!(line.startsWith(prefix) && split.length >= 2))
+            throw new IllegalArgumentException();
+        else{
+            try {
+                for (int i = 1; i < split.length; i++) {
+                    Double.parseDouble(split[i]);
+                }
+            }
+            catch (NumberFormatException e){
+                throw new IllegalArgumentException();
+            }
+        }
+        return line;
     }
 }

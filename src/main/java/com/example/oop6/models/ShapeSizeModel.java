@@ -2,6 +2,7 @@ package com.example.oop6.models;
 
 import com.example.oop6.funcInterfaces.ModelChangeEvent;
 
+@Deprecated
 public class ShapeSizeModel {
     private int width;
     private int height;
