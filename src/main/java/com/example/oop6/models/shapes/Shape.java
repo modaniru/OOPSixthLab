@@ -3,6 +3,7 @@ package com.example.oop6.models.shapes;
 import com.example.oop6.models.shapes.funcs.ShapeAction;
 import com.example.oop6.utils.Container;
 import com.example.oop6.utils.Position;
+import com.example.oop6.utils.ShapeAbstractFactory;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -128,7 +129,7 @@ public abstract class Shape {
         return this;
     }
 
-    public void load(BufferedReader bufferedReader) throws IOException {
+    public void load(BufferedReader bufferedReader, ShapeAbstractFactory factory) throws IOException {
         //pos
         String line = check("\tx: ", bufferedReader.readLine());
         double x = Double.parseDouble(line.split(" ")[1]);
@@ -156,7 +157,7 @@ public abstract class Shape {
         bufferedWriter.write("\theight: " + height + "\n");
         bufferedWriter.write("\trgb: " + (int) (fillColor.getRed() * 255) + " " + (int) (fillColor.getGreen() * 255) + " " + (int) (fillColor.getBlue() * 255) + "\n");
     }
-    private String check(String prefix, String line){
+    protected String check(String prefix, String line){
         String[] split = line.split(" ");
         if(!(line.startsWith(prefix) && split.length >= 2))
             throw new IllegalArgumentException();

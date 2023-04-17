@@ -1,9 +1,6 @@
 package com.example.oop6.utils;
 
-import com.example.oop6.models.shapes.Circle;
-import com.example.oop6.models.shapes.Rectangle;
-import com.example.oop6.models.shapes.Shape;
-import com.example.oop6.models.shapes.Triangle;
+import com.example.oop6.models.shapes.*;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -25,10 +22,13 @@ public class ShapeFactory implements ShapeAbstractFactory{
             case "Triangle":
                 shape = new Triangle();
                 break;
+            case "ShapeGroup":
+                shape = new ShapeGroup();
+                break;
             default:
                 throw new IllegalArgumentException();
         }
-        shape.load(bufferedReader);
+        shape.load(bufferedReader,  this);
         return shape;
     }
 }
