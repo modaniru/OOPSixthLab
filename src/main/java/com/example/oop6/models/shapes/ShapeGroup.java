@@ -2,7 +2,12 @@ package com.example.oop6.models.shapes;
 
 import com.example.oop6.models.shapes.funcs.ShapeAction;
 import com.example.oop6.utils.Container;
+import com.example.oop6.utils.ShapeAbstractFactory;
 import javafx.scene.canvas.GraphicsContext;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
 
 public class ShapeGroup extends Shape {
     private final Container<Shape> shapes;
@@ -120,5 +125,25 @@ public class ShapeGroup extends Shape {
     @Override
     public double getMinHeight() {
         return downShape - upShape;
+    }
+
+    @Override
+    public void load(BufferedReader bufferedReader, ShapeAbstractFactory factory) throws IOException {
+        super.load(bufferedReader, factory);
+        String line = check("\tShapes: ", bufferedReader.readLine());
+        int count = Integer.parseInt(line.split(" ")[1]);
+        for (int i = 0; i < count; i++) {
+            Shape shape = factory.createShape(bufferedReader);
+            shapes.add(shape);
+        }
+    }
+
+    @Override
+    public void save(BufferedWriter bufferedWriter) throws IOException {
+        super.save(bufferedWriter);
+        bufferedWriter.write("\tShapes: " + shapes.getSize() + "\n");
+        for (Shape shape : shapes) {
+            shape.getInstance().save(bufferedWriter);
+        }
     }
 }

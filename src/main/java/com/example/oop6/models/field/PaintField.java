@@ -6,8 +6,12 @@ import com.example.oop6.models.shapes.ShapeDecorator;
 import com.example.oop6.models.shapes.ShapeGroup;
 import com.example.oop6.models.shapes.funcs.ShapeAction;
 import com.example.oop6.utils.Container;
+import com.example.oop6.utils.ShapeAbstractFactory;
 import javafx.scene.canvas.Canvas;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -221,7 +225,7 @@ public class PaintField {
         return fieldHeight;
     }
 
-    public Container<Shape> unGroupShape(Shape shape){
+    public Container<Shape> unGroupShape(Shape shape) {
         removeInstanceShape(shape);
         shape = shape.getInstance();
         for (Shape s : shape.getShapes()) {
@@ -230,5 +234,20 @@ public class PaintField {
         }
         drawAllShapesInContainer();
         return shape.getShapes();
+    }
+    public void load(BufferedReader bufferedReader, ShapeAbstractFactory factory) throws IOException {
+        shapeContainer.clear();
+        int count = Integer.parseInt(bufferedReader.readLine());
+        for (int i = 0; i < count; i++) {
+            shapeContainer.add(factory.createShape(bufferedReader));
+        }
+        drawAllShapesInContainer();
+    }
+
+    public void save(BufferedWriter bufferedWriter) throws IOException{
+        bufferedWriter.write(shapeContainer.getSize() + "\n");
+        for (Shape shape : shapeContainer) {
+            shape.getInstance().save(bufferedWriter);
+        }
     }
 }
