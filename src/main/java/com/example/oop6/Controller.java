@@ -157,6 +157,10 @@ public class Controller implements Initializable {
 
     private void btnInstrumentPress(ActionEvent actionEvent) {
         Button button = (Button) actionEvent.getSource();
+        setInstrument(button);
+    }
+
+    private void setInstrument(Button button){
         btnCreate.setDisable(false);
         btnSize.setDisable(false);
         btnPosition.setDisable(false);
@@ -240,7 +244,12 @@ public class Controller implements Initializable {
 
     //Обработчик различных нажатий клавиш
     public void keyInFormDown(KeyEvent keyEvent) {
-        if (keyEvent.getCode() == KeyCode.Z) {
+        if(keyEvent.getCode() == KeyCode.V){
+            setInstrument(btnCreate);
+        }else if(keyEvent.getCode() == KeyCode.M){
+            setInstrument(btnPosition);
+        }
+        else if (keyEvent.getCode() == KeyCode.Z) {
             commands.pop().unExecute();
         } else if (keyEvent.getCode() == KeyCode.COMMAND) {
             paintField.setMultiplySelection(true);

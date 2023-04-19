@@ -28,6 +28,9 @@ public class MoveAction implements ShapeAction {
     @Override
     public boolean groupAction(Shape shape) {
         shapeAction(shape);
+        for (Shape s : shape.getShapes()) {
+            s.accept(this);
+        }
         return true;
     }
 

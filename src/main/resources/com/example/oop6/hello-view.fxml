@@ -7,41 +7,105 @@
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Text?>
 
-
-<AnchorPane fx:id="form" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="400.0" minWidth="700.0" onKeyPressed="#keyInFormDown" onKeyReleased="#keyInFormUp" prefHeight="427.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.oop6.Controller">
+<AnchorPane fx:id="form" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="400.0" minWidth="700.0" onKeyPressed="#keyInFormDown" onKeyReleased="#keyInFormUp" prefHeight="427.0" prefWidth="852.0" style="-fx-background-color: #f5f5f5;" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.oop6.Controller">
    <children>
-      <Pane fx:id="drawField" focusTraversable="true" layoutX="11.0" layoutY="36.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseDragged="#mouseDragEventInPaintField" onMouseMoved="#mouseMoveInPaintFieldEvent" onMousePressed="#mouseDownEventInPaintField" onMouseReleased="#mouseUpEventInPaintField" prefHeight="356.0" prefWidth="507.0" style="-fx-background-color: 111;" AnchorPane.bottomAnchor="8.0" AnchorPane.leftAnchor="12.0" AnchorPane.rightAnchor="181.0" AnchorPane.topAnchor="36.0">
+      <Pane fx:id="drawField" focusTraversable="true" layoutX="57.0" layoutY="36.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseDragged="#mouseDragEventInPaintField" onMouseMoved="#mouseMoveInPaintFieldEvent" onMousePressed="#mouseDownEventInPaintField" onMouseReleased="#mouseUpEventInPaintField" prefHeight="383.0" prefWidth="348.0" style="-fx-background-color: FFF;" AnchorPane.bottomAnchor="4.0" AnchorPane.leftAnchor="40.0" AnchorPane.rightAnchor="440.0" AnchorPane.topAnchor="4.0">
          <children>
             <MenuBar fx:id="menuBar" layoutY="355.0">
               <menus>
-                <Menu mnemonicParsing="false" text="File">
+                <Menu mnemonicParsing="false" text="Файл">
                      <items>
-                        <MenuItem fx:id="miSaveAs" mnemonicParsing="false" text="save as" />
-                        <MenuItem fx:id="miOpen" mnemonicParsing="false" text="open" />
+                        <MenuItem fx:id="miSaveAs" mnemonicParsing="false" text="Сохранить как" />
+                        <MenuItem fx:id="miOpen" mnemonicParsing="false" text="Открыть" />
                      </items>
                 </Menu>
               </menus>
             </MenuBar>
          </children></Pane>
-      <Button fx:id="btnCircle" focusTraversable="false" layoutX="12.0" layoutY="1.0" mnemonicParsing="false" text="Эллипс" />
-      <Button fx:id="btnSquare" focusTraversable="false" layoutX="74.0" layoutY="1.0" mnemonicParsing="false" text="Прямоугольник" />
-      <Button fx:id="btnTriangle" focusTraversable="false" layoutX="183.0" layoutY="1.0" mnemonicParsing="false" text="Треугольник" />
       <Slider fx:id="widthSlider" focusTraversable="false" layoutX="528.0" layoutY="44.0" max="500.0" min="10.0" showTickLabels="true" showTickMarks="true" AnchorPane.rightAnchor="32.0" />
       <Slider fx:id="heightSlider" focusTraversable="false" layoutX="528.0" layoutY="98.0" max="500.0" min="10.0" showTickLabels="true" showTickMarks="true" AnchorPane.rightAnchor="32.0" />
       <Text fx:id="tWidth" layoutX="632.0" layoutY="41.0" strokeType="OUTSIDE" strokeWidth="0.0" text="width:" textAlignment="RIGHT" AnchorPane.rightAnchor="35.1064453125" />
       <Text fx:id="tHeight" layoutX="629.0" layoutY="95.0" strokeType="OUTSIDE" strokeWidth="0.0" text="height:" textAlignment="RIGHT" AnchorPane.rightAnchor="33.802734375" />
       <ColorPicker fx:id="colorPicker" focusTraversable="false" layoutX="528.0" layoutY="174.0" prefHeight="26.0" prefWidth="140.0" AnchorPane.rightAnchor="32.0" />
-      <Button fx:id="btnCanvasClear" focusTraversable="false" layoutX="631.0" layoutY="361.0" mnemonicParsing="false" text="Очистить" AnchorPane.bottomAnchor="13.0" AnchorPane.rightAnchor="15.5" />
-      <Text layoutX="528.0" layoutY="335.0" strokeType="OUTSIDE" strokeWidth="0.0" text="cursor position:" AnchorPane.rightAnchor="89.10595703125" />
-      <Text fx:id="tCursorPosition" layoutX="647.0" layoutY="335.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0 0" AnchorPane.rightAnchor="34.56640625" />
-      <Button fx:id="btnCreate" focusTraversable="false" layoutX="312.0" layoutY="1.0" mnemonicParsing="false" text="Создание" />
-      <Button fx:id="btnSelect" focusTraversable="false" layoutX="387.0" layoutY="1.0" mnemonicParsing="false" text="Выделение" />
-      <Button fx:id="btnPosition" focusTraversable="false" layoutX="469.0" layoutY="1.0" mnemonicParsing="false" text="Перемещение" />
-      <Button fx:id="btnSize" focusTraversable="false" layoutX="568.0" layoutY="1.0" mnemonicParsing="false" text="Размер" />
-      <TextArea fx:id="report" layoutX="411.0" layoutY="36.0" prefHeight="356.0" prefWidth="243.0" />
+      <Button fx:id="btnCanvasClear" focusTraversable="false" layoutX="631.0" layoutY="361.0" mnemonicParsing="false" text="Очистить" AnchorPane.bottomAnchor="4.0" AnchorPane.rightAnchor="16.0" />
+      <Text layoutX="528.0" layoutY="335.0" strokeType="OUTSIDE" strokeWidth="0.0" text="cursor position:" AnchorPane.bottomAnchor="88.0" AnchorPane.rightAnchor="88.0" />
+      <Text fx:id="tCursorPosition" layoutX="647.0" layoutY="335.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0 0" AnchorPane.bottomAnchor="88.0" AnchorPane.rightAnchor="32.0" />
+      <TextArea fx:id="report" disable="true" focusTraversable="false" layoutX="411.0" layoutY="36.0" prefHeight="383.0" prefWidth="254.0" AnchorPane.bottomAnchor="4.0" AnchorPane.rightAnchor="184.0" AnchorPane.topAnchor="4.0" />
+      <ToolBar layoutX="12.0" layoutY="36.0" orientation="VERTICAL" prefHeight="427.0" prefWidth="18.0" style="-fx-background-color: #363e52;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <items>
+          <Button fx:id="btnCreate" focusTraversable="false" mnemonicParsing="false">
+               <graphic>
+                  <ImageView fitHeight="10.0" fitWidth="10.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@icons/cursor.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="btnSelect" focusTraversable="false" mnemonicParsing="false">
+               <graphic>
+                  <ImageView fitHeight="10.0" fitWidth="10.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@icons/selection.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="btnPosition" focusTraversable="false" mnemonicParsing="false">
+               <graphic>
+                  <ImageView fitHeight="10.0" fitWidth="10.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@icons/expand-arrows.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="btnSize" focusTraversable="false" mnemonicParsing="false">
+               <graphic>
+                  <ImageView fitHeight="10.0" fitWidth="10.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@icons/expand.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="btnSquare" focusTraversable="false" mnemonicParsing="false">
+               <graphic>
+                  <ImageView fitHeight="10.0" fitWidth="10.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@icons/square.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="btnTriangle" focusTraversable="false" mnemonicParsing="false">
+               <graphic>
+                  <ImageView fitHeight="10.0" fitWidth="10.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@icons/triangle.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="btnCircle" focusTraversable="false" mnemonicParsing="false">
+               <graphic>
+                  <ImageView fitHeight="10.0" fitWidth="10.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@icons/circle.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+        </items>
+      </ToolBar>
+      <TextField layoutX="680.0" layoutY="214.0" prefHeight="26.0" prefWidth="140.0" promptText="имя проекта" />
    </children>
 </AnchorPane>

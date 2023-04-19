@@ -75,8 +75,8 @@ public abstract class Shape {
 
     //Вопрос
     public void setSize(double width, double height) {
-        if(width < MIN_WIDTH) width = MIN_WIDTH;
-        if(height < MIN_HEIGHT) height = MIN_HEIGHT;
+//        if(width < MIN_WIDTH) width = MIN_WIDTH;
+//        if(height < MIN_HEIGHT) height = MIN_HEIGHT;
         this.width = width;
         this.height = height;
     }

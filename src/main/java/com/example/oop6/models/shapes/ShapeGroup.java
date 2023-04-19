@@ -46,12 +46,12 @@ public class ShapeGroup extends Shape {
         double oldY = position.getY();
         position.setX((int) (minX + width / 2));
         position.setY((int) (minY + height / 2));
-        //нормализация координат относительно центра группы
+        /*//нормализация координат относительно центра группы
         for (Shape s : shapes) {
             s.getPosition().changePosition(- (position.getX() - oldX), - (position.getY() - oldY));
         }
         //нормализация и добавление фигуры в контейнер
-        shape.getPosition().changePosition(-position.getX(), -position.getY());
+        shape.getPosition().changePosition(-position.getX(), -position.getY());*/
         shapes.add(shape);
     }
 
@@ -81,9 +81,9 @@ public class ShapeGroup extends Shape {
     @Override
     public boolean inShapeArea(double x, double y) {
         for (Shape shape : shapes) {
-            shape.getPosition().changePosition(position.getX(), position.getY());
+//            shape.getPosition().changePosition(position.getX(), position.getY());
             boolean res = shape.inShapeArea(x, y);
-            shape.getPosition().changePosition(-position.getX(), -position.getY());
+//            shape.getPosition().changePosition(-position.getX(), -position.getY());
             if (res) return true;
         }
         return false;
@@ -93,9 +93,9 @@ public class ShapeGroup extends Shape {
     protected void drawShape(GraphicsContext graphicsContext) {
         for (Shape shape : shapes) {
             //Установление
-            shape.getPosition().changePosition(position.getX(), position.getY());
+//            shape.getPosition().changePosition(position.getX(), position.getY());
             shape.drawShape(graphicsContext);
-            shape.getPosition().changePosition(-position.getX(), -position.getY());
+//            shape.getPosition().changePosition(-position.getX(), -position.getY());
         }
     }
 
