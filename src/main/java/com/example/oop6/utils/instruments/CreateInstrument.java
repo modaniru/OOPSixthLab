@@ -20,6 +20,7 @@ public class CreateInstrument implements Instrument{
 
     @Override
     public void mouseDown(Shape shape, int x, int y) {
+        command = null;
         this.shape = shape;
         shape.setPosition(new Position(x, y));
         inShape = paintField.insideTheFigure(shape.getPosition().getX(), shape.getPosition().getY());
@@ -36,7 +37,7 @@ public class CreateInstrument implements Instrument{
     //todo возврщать команду
     @Override
     public Command mouseUp(int x, int y) {
-        if(!inShape){
+        if(!inShape && shape.isCorrect()){
             command = new CreateCommand(shape);
             command.execute(paintField);
         }

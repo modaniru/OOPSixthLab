@@ -171,7 +171,7 @@ public class PaintField {
             shapeGroup.addShape(selectedShape.getInstance());
             shapeContainer.delete(selectedShape);
         }
-        shapeContainer.add(shapeGroup);
+        shapeContainer.add(new ShapeDecorator(shapeGroup));
         drawAllShapesInContainer();
         return shapeGroup;
     }
@@ -228,10 +228,11 @@ public class PaintField {
     public Container<Shape> unGroupShape(Shape shape) {
         removeInstanceShape(shape);
         shape = shape.getInstance();
+        multiplySelection = true;
         for (Shape s : shape.getShapes()) {
-            s.getPosition().changePosition(shape.getPosition().getX(), shape.getPosition().getY());
             addShape(s);
         }
+        multiplySelection = false;
         drawAllShapesInContainer();
         return shape.getShapes();
     }

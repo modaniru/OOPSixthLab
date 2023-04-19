@@ -28,7 +28,7 @@ public class ShapeDecorator extends Shape {
         instance.drawShape(graphicsContext);
         graphicsContext.setLineWidth(2);
         graphicsContext.setStroke(Color.LIGHTBLUE);
-        graphicsContext.strokeRect(position.getX() - getCenterToX(), position.getY() - getCenterToY(), width, height);
+        graphicsContext.strokeRect(position.getX() - getXDistanceToBorder(), position.getY() - getYDistanceToBorder(), width, height);
     }
 
     @Override

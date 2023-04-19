@@ -36,6 +36,10 @@ public abstract class Shape {
         return shape;
     }
 
+    public boolean isCorrect(){
+        return !(width < getMinWidth() || height < getMinHeight());
+    }
+
     public abstract Shape getExample();
 
 
@@ -51,7 +55,6 @@ public abstract class Shape {
             drawShape(canvas.getGraphicsContext2D());
     }
 
-    //return true if success
     //todo можно ли этого избежать
     public Container<Shape> getShapes() {
         return new Container<>();
@@ -61,11 +64,11 @@ public abstract class Shape {
         this.position = position.clone();
     }
 
-    public final double getCenterToX() {
+    public final double getXDistanceToBorder() {
         return width / 2;
     }
 
-    public final double getCenterToY() {
+    public final double getYDistanceToBorder() {
         return height / 2;
     }
 
@@ -75,8 +78,6 @@ public abstract class Shape {
 
     //Вопрос
     public void setSize(double width, double height) {
-//        if(width < MIN_WIDTH) width = MIN_WIDTH;
-//        if(height < MIN_HEIGHT) height = MIN_HEIGHT;
         this.width = width;
         this.height = height;
     }
@@ -93,12 +94,12 @@ public abstract class Shape {
     //Проверяет, находится ли фигура в заданом пространстве
     public boolean entersByWidth(double width) {
         if (this.width < MIN_WIDTH) return false;
-        return position.getX() > getCenterToX() && position.getX() < width - getCenterToX();
+        return position.getX() > getXDistanceToBorder() && position.getX() < width - getXDistanceToBorder();
     }
 
     public boolean entersByHeight(double height) {
         if (this.height < MIN_HEIGHT) return false;
-        return position.getY() > getCenterToY() && position.getY() < height - getCenterToY();
+        return position.getY() > getYDistanceToBorder() && position.getY() < height - getYDistanceToBorder();
     }
 
     protected Color getFillColor() {

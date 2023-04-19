@@ -11,6 +11,7 @@ import com.example.oop6.models.shapes.funcs.MoveAction;
 import com.example.oop6.models.shapes.funcs.ResizeDeltaAction;
 import com.example.oop6.utils.ShapeFactory;
 import com.example.oop6.utils.instruments.*;
+import com.example.oop6.utils.mvc.StackOperation;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -80,6 +81,9 @@ public class Controller implements Initializable {
     private Shape shape;
     private Instrument instrument;
     private FileChooser fileChooser = new FileChooser();
+    @FXML
+    private TextArea report;
+    private StackOperation stackOperation;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -134,10 +138,19 @@ public class Controller implements Initializable {
         btnSelect.setOnAction(this::btnInstrumentPress);
         btnPosition.setOnAction(this::btnInstrumentPress);
         btnSize.setOnAction(this::btnInstrumentPress);
+        //mvc
+        stackOperation = new StackOperation();
+        stackOperation.setModelChangeEvent((stackOperation) -> {
+            StringBuilder sb = new StringBuilder();
+            for (Command command : stackOperation) {
+                sb.append(command.report()).append("\n");
+            }
+            report.setText(sb.toString());
+        });
         //todo Если проект принадлежит файлу уже
         miSaveAs.setOnAction(actionEvent -> {
             File file = fileChooser.showOpenDialog(HelloApplication.getStage());
-            try(BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file))) {
+            try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file))) {
                 paintField.save(bufferedWriter);
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -145,7 +158,7 @@ public class Controller implements Initializable {
         });
         miOpen.setOnAction(actionEvent -> {
             File file = fileChooser.showOpenDialog(HelloApplication.getStage());
-            try(BufferedReader bufferedReader = new BufferedReader(new FileReader(file))) {
+            try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file))) {
                 paintField.load(bufferedReader, new ShapeFactory());
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -160,7 +173,7 @@ public class Controller implements Initializable {
         setInstrument(button);
     }
 
-    private void setInstrument(Button button){
+    private void setInstrument(Button button) {
         btnCreate.setDisable(false);
         btnSize.setDisable(false);
         btnPosition.setDisable(false);
@@ -212,6 +225,7 @@ public class Controller implements Initializable {
 
     private void btnClearCanvasAction(ActionEvent actionEvent) {
         paintField.clearField();
+        stackOperation.clear();
     }
 
     //private boolean dragEvent = false;
@@ -226,31 +240,20 @@ public class Controller implements Initializable {
         //промежуточная на отрисовку будующей фигуры (только с контуром)
     }
 
-    private Stack<Command> commands = new Stack<>();
-    @FXML
-    private TextArea report;
 
     public void mouseUpEventInPaintField(MouseEvent mouseEvent) {
         Command command = instrument.mouseUp((int) mouseEvent.getX(), (int) mouseEvent.getY());
-        if (command != null) {
-            commands.push(command);
-        }
-        StringBuilder sb = new StringBuilder();
-        for (Command command1 : commands) {
-            sb.append(command1.report()).append("\n");
-        }
-        report.setText(sb.toString());
+        stackOperation.push(command);
     }
 
     //Обработчик различных нажатий клавиш
     public void keyInFormDown(KeyEvent keyEvent) {
-        if(keyEvent.getCode() == KeyCode.V){
+        if (keyEvent.getCode() == KeyCode.V) {
             setInstrument(btnCreate);
-        }else if(keyEvent.getCode() == KeyCode.M){
+        } else if (keyEvent.getCode() == KeyCode.M) {
             setInstrument(btnPosition);
-        }
-        else if (keyEvent.getCode() == KeyCode.Z) {
-            commands.pop().unExecute();
+        } else if (keyEvent.getCode() == KeyCode.Z) {
+            stackOperation.pop();
         } else if (keyEvent.getCode() == KeyCode.COMMAND) {
             paintField.setMultiplySelection(true);
         } else if (keyEvent.getCode() == KeyCode.BACK_SPACE) {
@@ -290,25 +293,14 @@ public class Controller implements Initializable {
         } else if (keyEvent.getCode() == KeyCode.G) {
             Command command = new GroupCommand();
             command.execute(paintField);
-            commands.push(command);
-            StringBuilder sb = new StringBuilder();
-            for (Command command1 : commands) {
-                sb.append(command1.report()).append("\n");
-            }
-            report.setText(sb.toString());
+            stackOperation.push(command);
         } else if (keyEvent.getCode() == KeyCode.F) {
             Command command = new UnGroupCommand();
             command.execute(paintField);
-            commands.push(command);
-            StringBuilder sb = new StringBuilder();
-            for (Command command1 : commands) {
-                sb.append(command1.report()).append("\n");
-            }
-            report.setText(sb.toString());
-            paintField.groupSelectedShapes();
+            stackOperation.push(command);
         } else if (keyEvent.getCode() == KeyCode.S) {
             File file = new File("save.txt");
-            try(BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file))) {
+            try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file))) {
                 paintField.save(bufferedWriter);
             } catch (IOException e) {
                 throw new RuntimeException(e);
