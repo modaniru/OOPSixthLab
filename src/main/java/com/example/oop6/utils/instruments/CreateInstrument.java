@@ -42,7 +42,8 @@ public class CreateInstrument implements Instrument{
         if(!inShape && shape.isCorrect()){
             command = new CreateCommand(shape);
             command.execute(paintField);
+            return Optional.of(command);
         }
-        return Optional.of(command);
+        return Optional.empty();
     }
 }

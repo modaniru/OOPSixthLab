@@ -251,65 +251,84 @@ public class Controller implements Initializable {
 
     //Обработчик различных нажатий клавиш
     public void keyInFormDown(KeyEvent keyEvent) {
-        if (keyEvent.getCode() == KeyCode.V) {
-            setInstrument(btnCreate);
-        } else if (keyEvent.getCode() == KeyCode.M) {
-            setInstrument(btnPosition);
-        } else if (keyEvent.getCode() == KeyCode.Z) {
-            stackOperation.pop();
-        } else if (keyEvent.getCode() == KeyCode.COMMAND) {
-            paintField.setMultiplySelection(true);
-        } else if (keyEvent.getCode() == KeyCode.BACK_SPACE) {
-            Command command = new DeleteCommand();
-            command.execute(paintField);
-            stackOperation.push(command);
-        } else if (keyEvent.getCode() == KeyCode.RIGHT) {
-            moveAction.setDx(2);
-            moveAction.setDy(0);
-            paintField.actionSelectedShapes(moveAction);
-        } else if (keyEvent.getCode() == KeyCode.LEFT) {
-            moveAction.setDx(-2);
-            moveAction.setDy(0);
-            paintField.actionSelectedShapes(moveAction);
-        } else if (keyEvent.getCode() == KeyCode.UP) {
-            moveAction.setDx(0);
-            moveAction.setDy(-2);
-            paintField.actionSelectedShapes(moveAction);
-        } else if (keyEvent.getCode() == KeyCode.DOWN) {
-            moveAction.setDx(0);
-            moveAction.setDy(2);
-            paintField.actionSelectedShapes(moveAction);
-        } else if (keyEvent.getCode() == KeyCode.L) {
-            resizeDeltaAction.setDx(2);
-            resizeDeltaAction.setDy(0);
-            paintField.actionSelectedShapes(resizeDeltaAction);
-        } else if (keyEvent.getCode() == KeyCode.K) {
-            resizeDeltaAction.setDx(-2);
-            resizeDeltaAction.setDy(0);
-            paintField.actionSelectedShapes(resizeDeltaAction);
-        } else if (keyEvent.getCode() == KeyCode.O) {
-            resizeDeltaAction.setDx(0);
-            resizeDeltaAction.setDy(2);
-            paintField.actionSelectedShapes(resizeDeltaAction);
-        } else if (keyEvent.getCode() == KeyCode.I) {
-            resizeDeltaAction.setDx(0);
-            resizeDeltaAction.setDy(-2);
-            paintField.actionSelectedShapes(resizeDeltaAction);
-        } else if (keyEvent.getCode() == KeyCode.G) {
-            Command command = new GroupCommand();
-            command.execute(paintField);
-            stackOperation.push(command);
-        } else if (keyEvent.getCode() == KeyCode.F) {
-            Command command = new UnGroupCommand();
-            command.execute(paintField);
-            stackOperation.push(command);
-        } else if (keyEvent.getCode() == KeyCode.S) {
-            File file = new File("save.txt");
-            try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file))) {
-                paintField.save(bufferedWriter);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+        Command command;
+        switch (keyEvent.getCode()){
+            case V:
+                setInstrument(btnCreate);
+                break;
+            case M:
+                setInstrument(btnPosition);
+                break;
+                //todo with ctrl
+            case Z:
+                stackOperation.pop();
+                break;
+            case COMMAND:
+                paintField.setMultiplySelection(true);
+                break;
+            case BACK_SPACE:
+                command = new DeleteCommand();
+                command.execute(paintField);
+                stackOperation.push(command);
+                break;
+            case RIGHT:
+                moveAction.setDx(2);
+                moveAction.setDy(0);
+                paintField.actionSelectedShapes(moveAction);
+                break;
+            case LEFT:
+                moveAction.setDx(-2);
+                moveAction.setDy(0);
+                paintField.actionSelectedShapes(moveAction);
+                break;
+            case UP:
+                moveAction.setDx(0);
+                moveAction.setDy(-2);
+                paintField.actionSelectedShapes(moveAction);
+                break;
+            case DOWN:
+                moveAction.setDx(0);
+                moveAction.setDy(2);
+                paintField.actionSelectedShapes(moveAction);
+                break;
+            case L:
+                resizeDeltaAction.setDx(2);
+                resizeDeltaAction.setDy(0);
+                paintField.actionSelectedShapes(resizeDeltaAction);
+                break;
+            case K:
+                resizeDeltaAction.setDx(-2);
+                resizeDeltaAction.setDy(0);
+                paintField.actionSelectedShapes(resizeDeltaAction);
+                break;
+            case O:
+                resizeDeltaAction.setDx(0);
+                resizeDeltaAction.setDy(2);
+                paintField.actionSelectedShapes(resizeDeltaAction);
+                break;
+            case I:
+                resizeDeltaAction.setDx(0);
+                resizeDeltaAction.setDy(-2);
+                paintField.actionSelectedShapes(resizeDeltaAction);
+                break;
+            case G:
+                command = new GroupCommand();
+                command.execute(paintField);
+                stackOperation.push(command);
+                break;
+            case F:
+                command = new UnGroupCommand();
+                command.execute(paintField);
+                stackOperation.push(command);
+                break;
+            case S:
+                File file = new File("save.txt");
+                try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file))) {
+                    paintField.save(bufferedWriter);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                break;
         }
     }
 
