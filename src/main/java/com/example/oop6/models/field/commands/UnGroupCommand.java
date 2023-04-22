@@ -1,9 +1,11 @@
-package com.example.oop6.models.field;
+package com.example.oop6.models.field.commands;
 
+import com.example.oop6.models.field.PaintField;
+import com.example.oop6.models.field.commands.Command;
 import com.example.oop6.models.shapes.Shape;
 import com.example.oop6.utils.Container;
 
-public class UnGroupCommand implements Command{
+public class UnGroupCommand implements Command {
     private Container<Shape> groups;
     private final Container<Container<Shape>> unGroupShapes = new Container<>();
     private PaintField paintField;

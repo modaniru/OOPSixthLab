@@ -2,6 +2,10 @@ package com.example.oop6;
 
 import com.example.oop6.models.field.*;
 import com.example.oop6.models.ShapeSizeModel;
+import com.example.oop6.models.field.commands.Command;
+import com.example.oop6.models.field.commands.DeleteCommand;
+import com.example.oop6.models.field.commands.GroupCommand;
+import com.example.oop6.models.field.commands.UnGroupCommand;
 import com.example.oop6.models.shapes.Circle;
 import com.example.oop6.models.shapes.Shape;
 import com.example.oop6.models.shapes.Rectangle;
@@ -9,6 +13,7 @@ import com.example.oop6.models.shapes.Triangle;
 import com.example.oop6.models.shapes.funcs.ChangeColorAction;
 import com.example.oop6.models.shapes.funcs.MoveAction;
 import com.example.oop6.models.shapes.funcs.ResizeDeltaAction;
+import com.example.oop6.utils.Position;
 import com.example.oop6.utils.ShapeFactory;
 import com.example.oop6.utils.instruments.*;
 import com.example.oop6.utils.mvc.StackOperation;
@@ -17,8 +22,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
-import javafx.scene.Cursor;
-import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
@@ -31,8 +34,8 @@ import javafx.stage.FileChooser;
 
 import java.io.*;
 import java.net.URL;
+import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.Stack;
 
 public class Controller implements Initializable {
     @FXML
@@ -241,9 +244,9 @@ public class Controller implements Initializable {
     }
 
 
-    public void mouseUpEventInPaintField(MouseEvent mouseEvent) {
-        Command command = instrument.mouseUp((int) mouseEvent.getX(), (int) mouseEvent.getY());
-        stackOperation.push(command);
+    public void mouseUpEventInPaintField(MouseEvent e) {
+        Optional<Command> optionalCommand = instrument.mouseUp((int) e.getX(), (int) e.getY());
+        optionalCommand.ifPresent(command -> stackOperation.push(command));
     }
 
     //Обработчик различных нажатий клавиш
@@ -257,7 +260,9 @@ public class Controller implements Initializable {
         } else if (keyEvent.getCode() == KeyCode.COMMAND) {
             paintField.setMultiplySelection(true);
         } else if (keyEvent.getCode() == KeyCode.BACK_SPACE) {
-            paintField.deleteAllSelectedShapes();
+            Command command = new DeleteCommand();
+            command.execute(paintField);
+            stackOperation.push(command);
         } else if (keyEvent.getCode() == KeyCode.RIGHT) {
             moveAction.setDx(2);
             moveAction.setDy(0);

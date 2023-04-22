@@ -1,33 +1,27 @@
-package com.example.oop6.models.field;
+package com.example.oop6.models.field.commands;
 
+import com.example.oop6.models.field.PaintField;
 import com.example.oop6.models.shapes.Shape;
 
-import java.util.List;
+public class GroupCommand implements Command{
 
-public class CreateCommand implements Command{
-    private Shape shape;
     private PaintField paintField;
-
-    public CreateCommand(Shape shape) {
-        this.shape = shape;
-    }
-
+    private Shape group;
     @Override
     public void execute(PaintField paintField) {
-        paintField.addShape(shape);
+        this.group = paintField.groupSelectedShapes();
         this.paintField = paintField;
     }
 
     @Override
     public void unExecute() {
-        paintField.removeInstanceShape(shape);
+        paintField.unGroupShape(group);
     }
 
     @Override
     public Command clone() {
         return null;
     }
-
     @Override
     public String report() {
         return this.getClass().getSimpleName();

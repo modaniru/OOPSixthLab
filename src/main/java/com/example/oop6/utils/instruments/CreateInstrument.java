@@ -1,11 +1,13 @@
 package com.example.oop6.utils.instruments;
 
-import com.example.oop6.models.field.Command;
-import com.example.oop6.models.field.CreateCommand;
+import com.example.oop6.models.field.commands.Command;
+import com.example.oop6.models.field.commands.CreateCommand;
 import com.example.oop6.models.field.PaintField;
 import com.example.oop6.models.shapes.Shape;
 import com.example.oop6.models.shapes.ShapeDecorator;
 import com.example.oop6.utils.Position;
+
+import java.util.Optional;
 
 public class CreateInstrument implements Instrument{
 
@@ -36,11 +38,11 @@ public class CreateInstrument implements Instrument{
 
     //todo возврщать команду
     @Override
-    public Command mouseUp(int x, int y) {
+    public Optional<Command> mouseUp(int x, int y) {
         if(!inShape && shape.isCorrect()){
             command = new CreateCommand(shape);
             command.execute(paintField);
         }
-        return command;
+        return Optional.of(command);
     }
 }

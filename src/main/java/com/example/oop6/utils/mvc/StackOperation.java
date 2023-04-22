@@ -1,7 +1,6 @@
 package com.example.oop6.utils.mvc;
 
-import com.example.oop6.funcInterfaces.ModelChangeEvent;
-import com.example.oop6.models.field.Command;
+import com.example.oop6.models.field.commands.Command;
 
 import java.util.Stack;
 import java.util.function.Consumer;
@@ -15,7 +14,6 @@ public class StackOperation {
     }
 
     public void push(Command command){
-        if(command == null) return;
         commands.push(command);
         handler.accept(commands);
     }

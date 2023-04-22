@@ -1,12 +1,13 @@
 package com.example.oop6.utils.instruments;
 
-import com.example.oop6.models.field.Command;
+import com.example.oop6.models.field.commands.Command;
 import com.example.oop6.models.field.PaintField;
 import com.example.oop6.models.shapes.Rectangle;
 import com.example.oop6.models.shapes.Shape;
 import com.example.oop6.models.shapes.ShapeDecorator;
-import com.example.oop6.utils.Container;
 import com.example.oop6.utils.Position;
+
+import java.util.Optional;
 
 public class SelectionInstrument implements Instrument {
     //todo mb singlethon
@@ -34,7 +35,7 @@ public class SelectionInstrument implements Instrument {
     }
 
     @Override
-    public Command mouseUp(int x, int y) {
+    public Optional<Command> mouseUp(int x, int y) {
         if (startPosition.getX() == x && startPosition.getY() == y) {
             paintField.changeSelectIfInside(x, y);
         } else {
@@ -42,7 +43,7 @@ public class SelectionInstrument implements Instrument {
             shapeDecorator.setPosition(new Position(-10, -10));
             paintField.drawTempShape(shapeDecorator);
         }
-        return null;
+        return Optional.empty();
     }
 
 }

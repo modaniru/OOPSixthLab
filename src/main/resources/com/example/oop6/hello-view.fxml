@@ -31,10 +31,10 @@
             </MenuBar>
          </children></Pane>
       <Slider fx:id="widthSlider" focusTraversable="false" layoutX="528.0" layoutY="44.0" max="500.0" min="10.0" showTickLabels="true" showTickMarks="true" AnchorPane.rightAnchor="32.0" />
-      <Slider fx:id="heightSlider" focusTraversable="false" layoutX="528.0" layoutY="98.0" max="500.0" min="10.0" showTickLabels="true" showTickMarks="true" AnchorPane.rightAnchor="32.0" />
-      <Text fx:id="tWidth" layoutX="632.0" layoutY="41.0" strokeType="OUTSIDE" strokeWidth="0.0" text="width:" textAlignment="RIGHT" AnchorPane.rightAnchor="35.1064453125" />
+      <Slider fx:id="heightSlider" focusTraversable="false" layoutX="528.0" layoutY="98.0" max="500.0" min="10.0" showTickLabels="true" showTickMarks="true" AnchorPane.rightAnchor="32.0" AnchorPane.topAnchor="98.0" />
+      <Text fx:id="tWidth" layoutX="632.0" layoutY="41.0" strokeType="OUTSIDE" strokeWidth="0.0" text="width:" textAlignment="RIGHT" AnchorPane.rightAnchor="35.1064453125" AnchorPane.topAnchor="28.0" />
       <Text fx:id="tHeight" layoutX="629.0" layoutY="95.0" strokeType="OUTSIDE" strokeWidth="0.0" text="height:" textAlignment="RIGHT" AnchorPane.rightAnchor="33.802734375" />
-      <ColorPicker fx:id="colorPicker" focusTraversable="false" layoutX="528.0" layoutY="174.0" prefHeight="26.0" prefWidth="140.0" AnchorPane.rightAnchor="32.0" />
+      <ColorPicker fx:id="colorPicker" focusTraversable="false" layoutX="528.0" layoutY="174.0" prefHeight="26.0" prefWidth="140.0" AnchorPane.rightAnchor="32.0" AnchorPane.topAnchor="174.0" />
       <Button fx:id="btnCanvasClear" focusTraversable="false" layoutX="631.0" layoutY="361.0" mnemonicParsing="false" text="Очистить" AnchorPane.bottomAnchor="4.0" AnchorPane.rightAnchor="16.0" />
       <Text layoutX="528.0" layoutY="335.0" strokeType="OUTSIDE" strokeWidth="0.0" text="cursor position:" AnchorPane.bottomAnchor="88.0" AnchorPane.rightAnchor="88.0" />
       <Text fx:id="tCursorPosition" layoutX="647.0" layoutY="335.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0 0" AnchorPane.bottomAnchor="88.0" AnchorPane.rightAnchor="32.0" />
@@ -106,6 +106,6 @@
             </Button>
         </items>
       </ToolBar>
-      <TextField layoutX="680.0" layoutY="214.0" prefHeight="26.0" prefWidth="140.0" promptText="имя проекта" />
+      <TextField focusTraversable="false" layoutX="680.0" layoutY="214.0" prefHeight="26.0" prefWidth="140.0" promptText="имя проекта" AnchorPane.bottomAnchor="187.0" AnchorPane.rightAnchor="32.0" />
    </children>
 </AnchorPane>

@@ -27,7 +27,7 @@ public abstract class Shape {
         position = new Position(0,0);
     }
 
-
+    //temp
     public Shape clone(){
         Shape shape = getExample();
         shape.setFillColor(fillColor);
@@ -39,7 +39,7 @@ public abstract class Shape {
     public boolean isCorrect(){
         return !(width < getMinWidth() || height < getMinHeight());
     }
-
+    //do spec
     public abstract Shape getExample();
 
 
@@ -60,7 +60,7 @@ public abstract class Shape {
         return new Container<>();
     }
 
-    public final void setPosition(Position position) {
+    public void setPosition(Position position) {
         this.position = position.clone();
     }
 

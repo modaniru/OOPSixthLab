@@ -4,6 +4,7 @@ import com.example.oop6.funcInterfaces.ContainerMapFunc;
 import com.example.oop6.models.shapes.Shape;
 import com.example.oop6.models.shapes.ShapeDecorator;
 import com.example.oop6.models.shapes.ShapeGroup;
+import com.example.oop6.models.shapes.funcs.MoveAction;
 import com.example.oop6.models.shapes.funcs.ShapeAction;
 import com.example.oop6.utils.Container;
 import com.example.oop6.utils.ShapeAbstractFactory;
@@ -29,8 +30,7 @@ public class PaintField {
         this.fieldCanvas = canvas;
     }
 
-    //todo NEW вынес логику проверки курсора в фигуре
-    //Добавляет или выделяет фигуру
+    //Добавляет фигуру
     public void addShape(Shape shape) {
         if (!(shape.entersByWidth(fieldWidth) && shape.entersByHeight(fieldHeight))) {
             return;
@@ -40,6 +40,11 @@ public class PaintField {
         shapeContainer.add(shape);
         drawAllShapesInContainer();
         System.out.println(shapeContainer.getSize());
+    }
+
+    public void addShapeToContainer(Shape shape){
+        shapeContainer.add(shape);
+        drawAllShapesInContainer();
     }
 
     public void removeInstanceShape(Shape shape){
@@ -177,7 +182,7 @@ public class PaintField {
     }
 
     //Отрисовывает все фигуры, находящиеся в списке
-    private void drawAllShapesInContainer() {
+    public void drawAllShapesInContainer() {
         clearCanvas();
         map(shape -> shape.draw(fieldCanvas));
     }
@@ -217,6 +222,19 @@ public class PaintField {
         drawAllShapesInContainer();
     }
 
+    public void moveSelectedShapes(int dx, int dy){
+        moveShapes(getAllSelectedShapes(), dx, dy);
+    }
+
+    public void moveShapes(Container<Shape> shapes, int dx, int dy){
+        MoveAction shapeAction = new MoveAction(fieldWidth, fieldHeight);
+        shapeAction.setDx(dx);
+        shapeAction.setDy(dy);
+        for (Shape shape : shapes) {
+            shape.accept(shapeAction);
+        }
+        drawAllShapesInContainer();
+    }
     public int getFieldWidth() {
         return fieldWidth;
     }
@@ -224,15 +242,12 @@ public class PaintField {
     public int getFieldHeight() {
         return fieldHeight;
     }
-
     public Container<Shape> unGroupShape(Shape shape) {
         removeInstanceShape(shape);
         shape = shape.getInstance();
-        multiplySelection = true;
         for (Shape s : shape.getShapes()) {
-            addShape(s);
+            shapeContainer.add(new ShapeDecorator(s));
         }
-        multiplySelection = false;
         drawAllShapesInContainer();
         return shape.getShapes();
     }
