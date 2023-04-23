@@ -23,8 +23,10 @@
               <menus>
                 <Menu mnemonicParsing="false" text="Файл">
                      <items>
-                        <MenuItem fx:id="miSaveAs" mnemonicParsing="false" text="Сохранить как" />
+                        <MenuItem fx:id="miCreate" mnemonicParsing="false" text="Создать" />
                         <MenuItem fx:id="miOpen" mnemonicParsing="false" text="Открыть" />
+                        <MenuItem fx:id="miSave" mnemonicParsing="false" text="Сохранить" />
+                        <MenuItem fx:id="miSaveAs" mnemonicParsing="false" text="Сохранить как" />
                      </items>
                 </Menu>
               </menus>
@@ -106,6 +108,6 @@
             </Button>
         </items>
       </ToolBar>
-      <TextField focusTraversable="false" layoutX="680.0" layoutY="214.0" prefHeight="26.0" prefWidth="140.0" promptText="имя проекта" AnchorPane.bottomAnchor="187.0" AnchorPane.rightAnchor="32.0" />
+      <TextField fx:id="tfProjectName" focusTraversable="false" layoutX="680.0" layoutY="214.0" prefHeight="26.0" prefWidth="140.0" promptText="имя проекта" AnchorPane.bottomAnchor="187.0" AnchorPane.rightAnchor="32.0" />
    </children>
 </AnchorPane>

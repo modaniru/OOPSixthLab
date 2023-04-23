@@ -15,6 +15,7 @@ import com.example.oop6.models.shapes.funcs.MoveAction;
 import com.example.oop6.models.shapes.funcs.ResizeDeltaAction;
 import com.example.oop6.utils.Position;
 import com.example.oop6.utils.ShapeFactory;
+import com.example.oop6.utils.ShortCuts;
 import com.example.oop6.utils.instruments.*;
 import com.example.oop6.utils.mvc.StackOperation;
 import javafx.beans.value.ObservableValue;
@@ -77,6 +78,13 @@ public class Controller implements Initializable {
     private MenuItem miSaveAs;
     @FXML
     private MenuItem miOpen;
+    @FXML
+    private MenuItem miSave;
+    @FXML
+    private MenuItem miCreate;
+    @FXML
+    private TextField tfProjectName;
+    private String fileName;
     private PaintField paintField;
     private ShapeSizeModel shapeSizeModel;
     private MoveAction moveAction;
@@ -121,6 +129,15 @@ public class Controller implements Initializable {
         Shape circle = new Circle(shapeSizeModel.getWidth(), shapeSizeModel.getHeight());
         circle.setFillColor(colorPicker.getValue());
         btnCircle.setUserData(circle);
+        //Всплывающие подсказки к кнопками и их шорткатам
+        btnCircle.setTooltip(ShortCuts.CIRCLE.getToolTip());
+        btnSquare.setTooltip(ShortCuts.RECTANGLE.getToolTip());
+        btnTriangle.setTooltip(ShortCuts.TRIANGLE.getToolTip());
+        btnCreate.setTooltip(ShortCuts.CREATE.getToolTip());
+        btnPosition.setTooltip(ShortCuts.MOVE.getToolTip());
+        btnSize.setTooltip(ShortCuts.SIZE.getToolTip());
+        btnSelect.setTooltip(ShortCuts.SELECT.getToolTip());
+        //Вставка информации в кнопки
         btnSquare.setUserData(new Rectangle(shapeSizeModel.getWidth(), shapeSizeModel.getHeight()));
         btnTriangle.setUserData(new Triangle(shapeSizeModel.getWidth(), shapeSizeModel.getHeight()));
         instrument = new CreateInstrument(paintField);
@@ -153,6 +170,8 @@ public class Controller implements Initializable {
         //todo Если проект принадлежит файлу уже
         miSaveAs.setOnAction(actionEvent -> {
             File file = fileChooser.showOpenDialog(HelloApplication.getStage());
+            //todo оповещать пользователя
+            if(!file.getName().endsWith(".mdp")) return;
             try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file))) {
                 paintField.save(bufferedWriter);
             } catch (IOException e) {
@@ -161,12 +180,37 @@ public class Controller implements Initializable {
         });
         miOpen.setOnAction(actionEvent -> {
             File file = fileChooser.showOpenDialog(HelloApplication.getStage());
+            System.out.println(file.getName());
+            if(!file.getName().endsWith(".mdp")) return;
+            StringBuilder stringBuilder = new StringBuilder(file.getName());
+            stringBuilder.delete(stringBuilder.length() - 4, stringBuilder.length());
+            tfProjectName.setText(stringBuilder.toString());
             try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file))) {
                 paintField.load(bufferedReader, new ShapeFactory());
+                stackOperation.clear();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         });
+        miSave.setOnAction(actionEvent -> {
+            File file = new File(fileName + ".mdp");
+            //todo сообщать путь сохранения
+            try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file))) {
+                paintField.save(bufferedWriter);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        //todo мб сделать уведомление
+        miCreate.setOnAction(actionEvent -> {
+            paintField.clearField();
+            stackOperation.clear();
+            tfProjectName.setText("");
+        });
+        tfProjectName.textProperty().addListener((o, oldV, newV) -> {
+            fileName = newV.trim();
+        });
+        tfProjectName.setOnAction(actionEvent -> {drawField.requestFocus();});
         //Белый цвет paintField
         drawField.setBackground(new Background(new BackgroundFill(Color.web("#FFFFFF"), CornerRadii.EMPTY, Insets.EMPTY)));
     }
