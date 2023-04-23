@@ -14,6 +14,7 @@ public enum ShortCuts {
     DELETE(KeyCode.BACK_SPACE, "Удалить"),
     STEP_BACK(KeyCode.Z, "Шаг назад"),
     STEP_FORWARD(KeyCode.X, "Шаг вперед"),
+    SAVE(KeyCode.S, "Сохранить быстро"),
     CIRCLE(KeyCode.DIGIT1, "Эллипс"),
     RECTANGLE(KeyCode.DIGIT2, "Прямоугольник"),
     TRIANGLE(KeyCode.DIGIT3, "Треугольник");
@@ -31,4 +32,7 @@ public enum ShortCuts {
         return new Tooltip(toolName + " '" + keyCode.getName() + "'");
     }
 
+    public KeyCode getKeyCode() {
+        return keyCode;
+    }
 }

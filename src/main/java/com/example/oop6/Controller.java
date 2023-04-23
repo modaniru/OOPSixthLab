@@ -2,10 +2,7 @@ package com.example.oop6;
 
 import com.example.oop6.models.field.*;
 import com.example.oop6.models.ShapeSizeModel;
-import com.example.oop6.models.field.commands.Command;
-import com.example.oop6.models.field.commands.DeleteCommand;
-import com.example.oop6.models.field.commands.GroupCommand;
-import com.example.oop6.models.field.commands.UnGroupCommand;
+import com.example.oop6.models.field.commands.*;
 import com.example.oop6.models.shapes.Circle;
 import com.example.oop6.models.shapes.Shape;
 import com.example.oop6.models.shapes.Rectangle;
@@ -13,7 +10,6 @@ import com.example.oop6.models.shapes.Triangle;
 import com.example.oop6.models.shapes.funcs.ChangeColorAction;
 import com.example.oop6.models.shapes.funcs.MoveAction;
 import com.example.oop6.models.shapes.funcs.ResizeDeltaAction;
-import com.example.oop6.utils.Position;
 import com.example.oop6.utils.ShapeFactory;
 import com.example.oop6.utils.ShortCuts;
 import com.example.oop6.utils.instruments.*;
@@ -84,6 +80,8 @@ public class Controller implements Initializable {
     private MenuItem miCreate;
     @FXML
     private TextField tfProjectName;
+    @FXML
+    private TextArea report;
     private String fileName;
     private PaintField paintField;
     private ShapeSizeModel shapeSizeModel;
@@ -92,8 +90,7 @@ public class Controller implements Initializable {
     private Shape shape;
     private Instrument instrument;
     private FileChooser fileChooser = new FileChooser();
-    @FXML
-    private TextArea report;
+
     private StackOperation stackOperation;
 
     @Override
@@ -171,7 +168,7 @@ public class Controller implements Initializable {
         miSaveAs.setOnAction(actionEvent -> {
             File file = fileChooser.showOpenDialog(HelloApplication.getStage());
             //todo оповещать пользователя
-            if(!file.getName().endsWith(".mdp")) return;
+            if (!file.getName().endsWith(".mdp")) return;
             try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file))) {
                 paintField.save(bufferedWriter);
             } catch (IOException e) {
@@ -181,7 +178,7 @@ public class Controller implements Initializable {
         miOpen.setOnAction(actionEvent -> {
             File file = fileChooser.showOpenDialog(HelloApplication.getStage());
             System.out.println(file.getName());
-            if(!file.getName().endsWith(".mdp")) return;
+            if (!file.getName().endsWith(".mdp")) return;
             StringBuilder stringBuilder = new StringBuilder(file.getName());
             stringBuilder.delete(stringBuilder.length() - 4, stringBuilder.length());
             tfProjectName.setText(stringBuilder.toString());
@@ -210,7 +207,9 @@ public class Controller implements Initializable {
         tfProjectName.textProperty().addListener((o, oldV, newV) -> {
             fileName = newV.trim();
         });
-        tfProjectName.setOnAction(actionEvent -> {drawField.requestFocus();});
+        tfProjectName.setOnAction(actionEvent -> {
+            drawField.requestFocus();
+        });
         //Белый цвет paintField
         drawField.setBackground(new Background(new BackgroundFill(Color.web("#FFFFFF"), CornerRadii.EMPTY, Insets.EMPTY)));
     }
@@ -231,7 +230,9 @@ public class Controller implements Initializable {
 
     //Обработчик колор пикера
     private void colorPickerAction(ActionEvent actionEvent) {
-        paintField.actionSelectedShapes(new ChangeColorAction(colorPicker.getValue()));
+        ColorCommand command = new ColorCommand(colorPicker.getValue());
+        command.execute(paintField);
+        stackOperation.push(command);
         shape.setFillColor(colorPicker.getValue());
     }
 
@@ -296,83 +297,85 @@ public class Controller implements Initializable {
     //Обработчик различных нажатий клавиш
     public void keyInFormDown(KeyEvent keyEvent) {
         Command command;
-        switch (keyEvent.getCode()){
-            case V:
-                setInstrument(btnCreate);
-                break;
-            case M:
-                setInstrument(btnPosition);
-                break;
-                //todo with ctrl
-            case Z:
-                stackOperation.pop();
-                break;
-            case COMMAND:
-                paintField.setMultiplySelection(true);
-                break;
-            case BACK_SPACE:
-                command = new DeleteCommand();
-                command.execute(paintField);
-                stackOperation.push(command);
-                break;
-            case RIGHT:
-                moveAction.setDx(2);
-                moveAction.setDy(0);
-                paintField.actionSelectedShapes(moveAction);
-                break;
-            case LEFT:
-                moveAction.setDx(-2);
-                moveAction.setDy(0);
-                paintField.actionSelectedShapes(moveAction);
-                break;
-            case UP:
-                moveAction.setDx(0);
-                moveAction.setDy(-2);
-                paintField.actionSelectedShapes(moveAction);
-                break;
-            case DOWN:
-                moveAction.setDx(0);
-                moveAction.setDy(2);
-                paintField.actionSelectedShapes(moveAction);
-                break;
-            case L:
-                resizeDeltaAction.setDx(2);
-                resizeDeltaAction.setDy(0);
-                paintField.actionSelectedShapes(resizeDeltaAction);
-                break;
-            case K:
-                resizeDeltaAction.setDx(-2);
-                resizeDeltaAction.setDy(0);
-                paintField.actionSelectedShapes(resizeDeltaAction);
-                break;
-            case O:
-                resizeDeltaAction.setDx(0);
-                resizeDeltaAction.setDy(2);
-                paintField.actionSelectedShapes(resizeDeltaAction);
-                break;
-            case I:
-                resizeDeltaAction.setDx(0);
-                resizeDeltaAction.setDy(-2);
-                paintField.actionSelectedShapes(resizeDeltaAction);
-                break;
-            case G:
-                command = new GroupCommand();
-                command.execute(paintField);
-                stackOperation.push(command);
-                break;
-            case F:
-                command = new UnGroupCommand();
-                command.execute(paintField);
-                stackOperation.push(command);
-                break;
-            case S:
-                File file = new File("save.txt");
-                try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file))) {
-                    paintField.save(bufferedWriter);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
+        KeyCode keyCode = keyEvent.getCode();
+        if (keyCode.equals(ShortCuts.CREATE.getKeyCode()))
+            setInstrument(btnCreate);
+        else if (keyCode.equals(ShortCuts.MOVE.getKeyCode()))
+            setInstrument(btnPosition);
+        else if (keyCode.equals(ShortCuts.SIZE.getKeyCode()))
+            setInstrument(btnSize);
+        else if (keyCode.equals(ShortCuts.SELECT.getKeyCode()))
+            setInstrument(btnSelect);
+        else if (keyCode.equals(ShortCuts.STEP_BACK.getKeyCode())){
+            Optional<Command> op = stackOperation.popUnExecute();
+        }
+        else if (keyCode.equals(ShortCuts.STEP_FORWARD.getKeyCode())) {
+            //todo
+        } else if (keyCode.equals(KeyCode.COMMAND))
+            paintField.setMultiplySelection(true);
+        else if (keyCode.equals(ShortCuts.DELETE.getKeyCode())) {
+            command = new DeleteCommand();
+            command.execute(paintField);
+            stackOperation.push(command);
+        } else if (keyCode.equals(ShortCuts.GROUP.getKeyCode())) {
+            command = new GroupCommand();
+            command.execute(paintField);
+            stackOperation.push(command);
+        } else if (keyCode.equals(ShortCuts.UNGROUP.getKeyCode())) {
+            command = new UnGroupCommand();
+            command.execute(paintField);
+            stackOperation.push(command);
+        } else if (keyCode.equals(ShortCuts.SAVE.getKeyCode())) {
+            File file = new File("save.mdp");
+            try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file))) {
+                paintField.save(bufferedWriter);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        else{
+            switch (keyEvent.getCode()) {
+                case RIGHT -> {
+                    moveAction.setDx(2);
+                    moveAction.setDy(0);
+                    paintField.actionSelectedShapes(moveAction);
                 }
-                break;
+                case LEFT -> {
+                    moveAction.setDx(-2);
+                    moveAction.setDy(0);
+                    paintField.actionSelectedShapes(moveAction);
+                }
+                case UP -> {
+                    moveAction.setDx(0);
+                    moveAction.setDy(-2);
+                    paintField.actionSelectedShapes(moveAction);
+                }
+                case DOWN -> {
+                    moveAction.setDx(0);
+                    moveAction.setDy(2);
+                    paintField.actionSelectedShapes(moveAction);
+                }
+                case L -> {
+                    resizeDeltaAction.setDx(2);
+                    resizeDeltaAction.setDy(0);
+                    paintField.actionSelectedShapes(resizeDeltaAction);
+                }
+                case K -> {
+                    resizeDeltaAction.setDx(-2);
+                    resizeDeltaAction.setDy(0);
+                    paintField.actionSelectedShapes(resizeDeltaAction);
+                }
+                case O -> {
+                    resizeDeltaAction.setDx(0);
+                    resizeDeltaAction.setDy(2);
+                    paintField.actionSelectedShapes(resizeDeltaAction);
+                }
+                case I -> {
+                    resizeDeltaAction.setDx(0);
+                    resizeDeltaAction.setDy(-2);
+                    paintField.actionSelectedShapes(resizeDeltaAction);
+                }
+            }
         }
     }
 

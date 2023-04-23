@@ -39,7 +39,7 @@ public class CreateInstrument implements Instrument{
     //todo возврщать команду
     @Override
     public Optional<Command> mouseUp(int x, int y) {
-        if(!inShape && shape.isCorrect()){
+        if(!inShape && shape.isCorrect() && shape.entersByWidth(paintField.getFieldWidth()) && shape.entersByHeight(paintField.getFieldHeight())){
             command = new CreateCommand(shape);
             command.execute(paintField);
             return Optional.of(command);

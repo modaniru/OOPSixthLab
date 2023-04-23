@@ -102,7 +102,7 @@ public abstract class Shape {
         return position.getY() > getYDistanceToBorder() && position.getY() < height - getYDistanceToBorder();
     }
 
-    protected Color getFillColor() {
+    public Color getFillColor() {
         return fillColor;
     }
 
