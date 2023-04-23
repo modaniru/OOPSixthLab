@@ -1,6 +1,7 @@
 package com.example.oop6.models.shapes;
 
 import com.example.oop6.models.shapes.funcs.ShapeAction;
+import com.example.oop6.utils.Position;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
@@ -28,7 +29,7 @@ public class ShapeDecorator extends Shape {
         instance.drawShape(graphicsContext);
         graphicsContext.setLineWidth(2);
         graphicsContext.setStroke(Color.LIGHTBLUE);
-        graphicsContext.strokeRect(position.getX() - getCenterToX(), position.getY() - getCenterToY(), width, height);
+        graphicsContext.strokeRect(position.getX() - getXDistanceToBorder(), position.getY() - getYDistanceToBorder(), width, height);
     }
 
     @Override
@@ -51,5 +52,17 @@ public class ShapeDecorator extends Shape {
         instance.accept(action);
         width = instance.getWidth();
         height = instance.getHeight();
+    }
+
+    @Override
+    public void setPosition(Position position) {
+        getInstance().setPosition(position.clone());
+        this.position = getInstance().getPosition();
+    }
+
+    @Override
+    public void setSize(double width, double height) {
+        getInstance().setSize(width, height);
+        super.setSize(width, height);
     }
 }

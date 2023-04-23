@@ -1,7 +1,8 @@
 package com.example.oop6;
 
-import com.example.oop6.models.field.PaintField;
+import com.example.oop6.models.field.*;
 import com.example.oop6.models.ShapeSizeModel;
+import com.example.oop6.models.field.commands.*;
 import com.example.oop6.models.shapes.Circle;
 import com.example.oop6.models.shapes.Shape;
 import com.example.oop6.models.shapes.Rectangle;
@@ -9,14 +10,15 @@ import com.example.oop6.models.shapes.Triangle;
 import com.example.oop6.models.shapes.funcs.ChangeColorAction;
 import com.example.oop6.models.shapes.funcs.MoveAction;
 import com.example.oop6.models.shapes.funcs.ResizeDeltaAction;
+import com.example.oop6.utils.ShapeFactory;
+import com.example.oop6.utils.ShortCuts;
 import com.example.oop6.utils.instruments.*;
+import com.example.oop6.utils.mvc.StackOperation;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
-import javafx.scene.Cursor;
-import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
@@ -25,8 +27,11 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
 
+import java.io.*;
 import java.net.URL;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class Controller implements Initializable {
@@ -63,15 +68,38 @@ public class Controller implements Initializable {
     private Button btnPosition;
     @FXML
     private Button btnSize;
+    @FXML
+    private MenuBar menuBar;
+    @FXML
+    private MenuItem miSaveAs;
+    @FXML
+    private MenuItem miOpen;
+    @FXML
+    private MenuItem miSave;
+    @FXML
+    private MenuItem miCreate;
+    @FXML
+    private TextField tfProjectName;
+    @FXML
+    private TextArea report;
+    private String fileName;
     private PaintField paintField;
     private ShapeSizeModel shapeSizeModel;
     private MoveAction moveAction;
     private ResizeDeltaAction resizeDeltaAction;
     private Shape shape;
     private Instrument instrument;
+    private FileChooser fileChooser = new FileChooser();
+
+    private StackOperation stackOperation;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        final String os = System.getProperty("os.name");
+        if (os != null && os.startsWith("Mac"))
+            menuBar.useSystemMenuBarProperty().set(true);
+
+
         //Работа с Canvas
         Canvas canvas = new Canvas(drawField.getPrefWidth(), drawField.getPrefHeight());
         moveAction = new MoveAction((int) drawField.getPrefWidth(), (int) drawField.getPrefHeight());
@@ -98,6 +126,15 @@ public class Controller implements Initializable {
         Shape circle = new Circle(shapeSizeModel.getWidth(), shapeSizeModel.getHeight());
         circle.setFillColor(colorPicker.getValue());
         btnCircle.setUserData(circle);
+        //Всплывающие подсказки к кнопками и их шорткатам
+        btnCircle.setTooltip(ShortCuts.CIRCLE.getToolTip());
+        btnSquare.setTooltip(ShortCuts.RECTANGLE.getToolTip());
+        btnTriangle.setTooltip(ShortCuts.TRIANGLE.getToolTip());
+        btnCreate.setTooltip(ShortCuts.CREATE.getToolTip());
+        btnPosition.setTooltip(ShortCuts.MOVE.getToolTip());
+        btnSize.setTooltip(ShortCuts.SIZE.getToolTip());
+        btnSelect.setTooltip(ShortCuts.SELECT.getToolTip());
+        //Вставка информации в кнопки
         btnSquare.setUserData(new Rectangle(shapeSizeModel.getWidth(), shapeSizeModel.getHeight()));
         btnTriangle.setUserData(new Triangle(shapeSizeModel.getWidth(), shapeSizeModel.getHeight()));
         instrument = new CreateInstrument(paintField);
@@ -118,12 +155,71 @@ public class Controller implements Initializable {
         btnSelect.setOnAction(this::btnInstrumentPress);
         btnPosition.setOnAction(this::btnInstrumentPress);
         btnSize.setOnAction(this::btnInstrumentPress);
+        //mvc
+        stackOperation = new StackOperation();
+        stackOperation.setModelChangeEvent((stackOperation) -> {
+            StringBuilder sb = new StringBuilder();
+            for (Command command : stackOperation) {
+                sb.append(command.report()).append("\n");
+            }
+            report.setText(sb.toString());
+        });
+        //todo Если проект принадлежит файлу уже
+        miSaveAs.setOnAction(actionEvent -> {
+            File file = fileChooser.showOpenDialog(HelloApplication.getStage());
+            //todo оповещать пользователя
+            if (!file.getName().endsWith(".mdp")) return;
+            try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file))) {
+                paintField.save(bufferedWriter);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        miOpen.setOnAction(actionEvent -> {
+            File file = fileChooser.showOpenDialog(HelloApplication.getStage());
+            System.out.println(file.getName());
+            if (!file.getName().endsWith(".mdp")) return;
+            StringBuilder stringBuilder = new StringBuilder(file.getName());
+            stringBuilder.delete(stringBuilder.length() - 4, stringBuilder.length());
+            tfProjectName.setText(stringBuilder.toString());
+            try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file))) {
+                paintField.load(bufferedReader, new ShapeFactory());
+                stackOperation.clear();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        miSave.setOnAction(actionEvent -> {
+            File file = new File(fileName + ".mdp");
+            //todo сообщать путь сохранения
+            try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file))) {
+                paintField.save(bufferedWriter);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        //todo мб сделать уведомление
+        miCreate.setOnAction(actionEvent -> {
+            paintField.clearField();
+            stackOperation.clear();
+            tfProjectName.setText("");
+        });
+        tfProjectName.textProperty().addListener((o, oldV, newV) -> {
+            fileName = newV.trim();
+        });
+        tfProjectName.setOnAction(actionEvent -> {
+            drawField.requestFocus();
+        });
         //Белый цвет paintField
         drawField.setBackground(new Background(new BackgroundFill(Color.web("#FFFFFF"), CornerRadii.EMPTY, Insets.EMPTY)));
     }
 
     private void btnInstrumentPress(ActionEvent actionEvent) {
-        Button button = (Button)actionEvent.getSource();
+        Button button = (Button) actionEvent.getSource();
+        setInstrument(button);
+    }
+
+    private void setInstrument(Button button) {
         btnCreate.setDisable(false);
         btnSize.setDisable(false);
         btnPosition.setDisable(false);
@@ -134,7 +230,9 @@ public class Controller implements Initializable {
 
     //Обработчик колор пикера
     private void colorPickerAction(ActionEvent actionEvent) {
-        paintField.actionSelectedShapes(new ChangeColorAction(colorPicker.getValue()));
+        ColorCommand command = new ColorCommand(colorPicker.getValue());
+        command.execute(paintField);
+        stackOperation.push(command);
         shape.setFillColor(colorPicker.getValue());
     }
 
@@ -175,6 +273,7 @@ public class Controller implements Initializable {
 
     private void btnClearCanvasAction(ActionEvent actionEvent) {
         paintField.clearField();
+        stackOperation.clear();
     }
 
     //private boolean dragEvent = false;
@@ -189,50 +288,94 @@ public class Controller implements Initializable {
         //промежуточная на отрисовку будующей фигуры (только с контуром)
     }
 
-    public void mouseUpEventInPaintField(MouseEvent mouseEvent) {
-        instrument.mouseUp((int) mouseEvent.getX(), (int) mouseEvent.getY());
+
+    public void mouseUpEventInPaintField(MouseEvent e) {
+        Optional<Command> optionalCommand = instrument.mouseUp((int) e.getX(), (int) e.getY());
+        optionalCommand.ifPresent(command -> stackOperation.push(command));
     }
 
     //Обработчик различных нажатий клавиш
     public void keyInFormDown(KeyEvent keyEvent) {
-        if (keyEvent.getCode() == KeyCode.COMMAND) {
+        Command command;
+        KeyCode keyCode = keyEvent.getCode();
+        if (keyCode.equals(ShortCuts.CREATE.getKeyCode()))
+            setInstrument(btnCreate);
+        else if (keyCode.equals(ShortCuts.MOVE.getKeyCode()))
+            setInstrument(btnPosition);
+        else if (keyCode.equals(ShortCuts.SIZE.getKeyCode()))
+            setInstrument(btnSize);
+        else if (keyCode.equals(ShortCuts.SELECT.getKeyCode()))
+            setInstrument(btnSelect);
+        else if (keyCode.equals(ShortCuts.STEP_BACK.getKeyCode())){
+            Optional<Command> op = stackOperation.popUnExecute();
+        }
+        else if (keyCode.equals(ShortCuts.STEP_FORWARD.getKeyCode())) {
+            //todo
+        } else if (keyCode.equals(KeyCode.COMMAND))
             paintField.setMultiplySelection(true);
-        } else if (keyEvent.getCode() == KeyCode.BACK_SPACE) {
-            paintField.deleteAllSelectedShapes();
-        } else if (keyEvent.getCode() == KeyCode.RIGHT) {
-            moveAction.setDx(2);
-            moveAction.setDy(0);
-            paintField.actionSelectedShapes(moveAction);
-        } else if (keyEvent.getCode() == KeyCode.LEFT) {
-            moveAction.setDx(-2);
-            moveAction.setDy(0);
-            paintField.actionSelectedShapes(moveAction);
-        } else if (keyEvent.getCode() == KeyCode.UP) {
-            moveAction.setDx(0);
-            moveAction.setDy(-2);
-            paintField.actionSelectedShapes(moveAction);
-        } else if (keyEvent.getCode() == KeyCode.DOWN) {
-            moveAction.setDx(0);
-            moveAction.setDy(2);
-            paintField.actionSelectedShapes(moveAction);
-        } else if (keyEvent.getCode() == KeyCode.L) {
-            resizeDeltaAction.setDx(2);
-            resizeDeltaAction.setDy(0);
-            paintField.actionSelectedShapes(resizeDeltaAction);
-        } else if (keyEvent.getCode() == KeyCode.K) {
-            resizeDeltaAction.setDx(-2);
-            resizeDeltaAction.setDy(0);
-            paintField.actionSelectedShapes(resizeDeltaAction);
-        } else if (keyEvent.getCode() == KeyCode.O) {
-            resizeDeltaAction.setDx(0);
-            resizeDeltaAction.setDy(2);
-            paintField.actionSelectedShapes(resizeDeltaAction);
-        } else if (keyEvent.getCode() == KeyCode.I) {
-            resizeDeltaAction.setDx(0);
-            resizeDeltaAction.setDy(-2);
-            paintField.actionSelectedShapes(resizeDeltaAction);
-        } else if (keyEvent.getCode() == KeyCode.G) {
-            paintField.groupSelectedShapes();
+        else if (keyCode.equals(ShortCuts.DELETE.getKeyCode())) {
+            command = new DeleteCommand();
+            command.execute(paintField);
+            stackOperation.push(command);
+        } else if (keyCode.equals(ShortCuts.GROUP.getKeyCode())) {
+            command = new GroupCommand();
+            command.execute(paintField);
+            stackOperation.push(command);
+        } else if (keyCode.equals(ShortCuts.UNGROUP.getKeyCode())) {
+            command = new UnGroupCommand();
+            command.execute(paintField);
+            stackOperation.push(command);
+        } else if (keyCode.equals(ShortCuts.SAVE.getKeyCode())) {
+            File file = new File("save.mdp");
+            try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file))) {
+                paintField.save(bufferedWriter);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        else{
+            switch (keyEvent.getCode()) {
+                case RIGHT -> {
+                    moveAction.setDx(2);
+                    moveAction.setDy(0);
+                    paintField.actionSelectedShapes(moveAction);
+                }
+                case LEFT -> {
+                    moveAction.setDx(-2);
+                    moveAction.setDy(0);
+                    paintField.actionSelectedShapes(moveAction);
+                }
+                case UP -> {
+                    moveAction.setDx(0);
+                    moveAction.setDy(-2);
+                    paintField.actionSelectedShapes(moveAction);
+                }
+                case DOWN -> {
+                    moveAction.setDx(0);
+                    moveAction.setDy(2);
+                    paintField.actionSelectedShapes(moveAction);
+                }
+                case L -> {
+                    resizeDeltaAction.setDx(2);
+                    resizeDeltaAction.setDy(0);
+                    paintField.actionSelectedShapes(resizeDeltaAction);
+                }
+                case K -> {
+                    resizeDeltaAction.setDx(-2);
+                    resizeDeltaAction.setDy(0);
+                    paintField.actionSelectedShapes(resizeDeltaAction);
+                }
+                case O -> {
+                    resizeDeltaAction.setDx(0);
+                    resizeDeltaAction.setDy(2);
+                    paintField.actionSelectedShapes(resizeDeltaAction);
+                }
+                case I -> {
+                    resizeDeltaAction.setDx(0);
+                    resizeDeltaAction.setDy(-2);
+                    paintField.actionSelectedShapes(resizeDeltaAction);
+                }
+            }
         }
     }
 

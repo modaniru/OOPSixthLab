@@ -2,7 +2,12 @@ package com.example.oop6.models.shapes;
 
 import com.example.oop6.models.shapes.funcs.ShapeAction;
 import com.example.oop6.utils.Container;
+import com.example.oop6.utils.ShapeAbstractFactory;
 import javafx.scene.canvas.GraphicsContext;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
 
 public class ShapeGroup extends Shape {
     private final Container<Shape> shapes;
@@ -27,10 +32,10 @@ public class ShapeGroup extends Shape {
             position = shape.position.clone();
         }
         //Вычисление координат центра, при добавлении новой фигуры
-        double maxX = Math.max(shape.position.getX() + shape.getCenterToX(), position.getX() + getCenterToX());
-        double maxY = Math.max(shape.position.getY() + shape.getCenterToY(), position.getY() + getCenterToY());
-        double minX = Math.min(shape.position.getX() - shape.getCenterToX(), position.getX() - getCenterToX());
-        double minY = Math.min(shape.position.getY() - shape.getCenterToY(), position.getY() - getCenterToY());
+        double maxX = Math.max(shape.position.getX() + shape.getXDistanceToBorder(), position.getX() + getXDistanceToBorder());
+        double maxY = Math.max(shape.position.getY() + shape.getYDistanceToBorder(), position.getY() + getYDistanceToBorder());
+        double minX = Math.min(shape.position.getX() - shape.getXDistanceToBorder(), position.getX() - getXDistanceToBorder());
+        double minY = Math.min(shape.position.getY() - shape.getYDistanceToBorder(), position.getY() - getYDistanceToBorder());
         if (shape.position.getX() > rightShape) rightShape = shape.position.getX() + shape.getMinWidth() / 2;
         if (shape.position.getX() < leftShape) leftShape = shape.position.getX() - shape.getMinWidth() / 2;
         if (shape.position.getY() > downShape) downShape = shape.position.getY() + shape.getMinHeight() / 2;
@@ -41,12 +46,6 @@ public class ShapeGroup extends Shape {
         double oldY = position.getY();
         position.setX((int) (minX + width / 2));
         position.setY((int) (minY + height / 2));
-        //нормализация координат относительно центра группы
-        for (Shape s : shapes) {
-            s.getPosition().changePosition(- (position.getX() - oldX), - (position.getY() - oldY));
-        }
-        //нормализация и добавление фигуры в контейнер
-        shape.getPosition().changePosition(-position.getX(), -position.getY());
         shapes.add(shape);
     }
 
@@ -72,25 +71,20 @@ public class ShapeGroup extends Shape {
         }
         return shapeGroup;
     }
-
+    //Если обернуть в visitor, то будут выполняться ненужные итерации
     @Override
     public boolean inShapeArea(double x, double y) {
         for (Shape shape : shapes) {
-            shape.getPosition().changePosition(position.getX(), position.getY());
             boolean res = shape.inShapeArea(x, y);
-            shape.getPosition().changePosition(-position.getX(), -position.getY());
             if (res) return true;
         }
         return false;
     }
-
+    //Реализован через template method
     @Override
     protected void drawShape(GraphicsContext graphicsContext) {
         for (Shape shape : shapes) {
-            //Установление
-            shape.getPosition().changePosition(position.getX(), position.getY());
             shape.drawShape(graphicsContext);
-            shape.getPosition().changePosition(-position.getX(), -position.getY());
         }
     }
 
@@ -120,5 +114,25 @@ public class ShapeGroup extends Shape {
     @Override
     public double getMinHeight() {
         return downShape - upShape;
+    }
+
+    @Override
+    public void load(BufferedReader bufferedReader, ShapeAbstractFactory factory) throws IOException {
+        super.load(bufferedReader, factory);
+        String line = check("\tShapes: ", bufferedReader.readLine());
+        int count = Integer.parseInt(line.split(" ")[1]);
+        for (int i = 0; i < count; i++) {
+            Shape shape = factory.createShape(bufferedReader);
+            shapes.add(shape);
+        }
+    }
+
+    @Override
+    public void save(BufferedWriter bufferedWriter) throws IOException {
+        super.save(bufferedWriter);
+        bufferedWriter.write("\tShapes: " + shapes.getSize() + "\n");
+        for (Shape shape : shapes) {
+            shape.getInstance().save(bufferedWriter);
+        }
     }
 }

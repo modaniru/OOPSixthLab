@@ -7,6 +7,10 @@ public class Triangle extends Shape {
         super(width, height);
     }
 
+    public Triangle() {
+        super(0, 0);
+    }
+
     @Override
     public Shape getExample() {
         return new Triangle(0, 0);
