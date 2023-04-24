@@ -5,8 +5,6 @@ module com.example.oop6 {
 
     opens com.example.oop6 to javafx.fxml;
     exports com.example.oop6;
-    exports com.example.oop6.models;
-    opens com.example.oop6.models to javafx.fxml;
     exports com.example.oop6.models.field;
     opens com.example.oop6.models.field to javafx.fxml;
     exports com.example.oop6.models.field.commands;

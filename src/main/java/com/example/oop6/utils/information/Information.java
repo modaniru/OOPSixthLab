@@ -1,5 +1,6 @@
 package com.example.oop6.utils.information;
 
+/* Класс содержащий в себе константы*/
 public class Information {
     public static final double DEFAULT_WIDTH = 40;
     public static final double DEFAULT_HEIGHT = 40;

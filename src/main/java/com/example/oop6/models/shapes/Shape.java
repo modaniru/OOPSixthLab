@@ -11,7 +11,7 @@ import javafx.scene.paint.Color;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
-
+/* Абстрактный класс фигуры */
 public abstract class Shape {
     public static final double MIN_HEIGHT = 10;
     public static final double MIN_WIDTH = 10;
@@ -24,11 +24,12 @@ public abstract class Shape {
         this.width = width;
         this.height = height;
         fillColor = Color.rgb(0, 0, 0, 0);
-        position = new Position(0,0);
+        position = new Position(0, 0);
     }
 
-    //temp
-    public Shape clone(){
+    /* Метод клонирования объекта объявлен как шаблонный, экземпляр класса получается
+    * благодаря абстрактному методу getExample()*/
+    public Shape clone() {
         Shape shape = getExample();
         shape.setFillColor(fillColor);
         shape.setPosition(position.clone());
@@ -36,9 +37,10 @@ public abstract class Shape {
         return shape;
     }
 
-    public boolean isCorrect(){
+    public boolean isCorrect() {
         return !(width < getMinWidth() || height < getMinHeight());
     }
+
     //do spec
     public abstract Shape getExample();
 
@@ -136,7 +138,7 @@ public abstract class Shape {
         double x = Double.parseDouble(line.split(" ")[1]);
         line = check("\ty: ", bufferedReader.readLine());
         double y = Double.parseDouble(line.split(" ")[1]);
-        position = new Position(x , y);
+        position = new Position(x, y);
         //size
         line = check("\twidth: ", bufferedReader.readLine());
         width = Double.parseDouble(line.split(" ")[1]);
@@ -158,17 +160,17 @@ public abstract class Shape {
         bufferedWriter.write("\theight: " + height + "\n");
         bufferedWriter.write("\trgb: " + (int) (fillColor.getRed() * 255) + " " + (int) (fillColor.getGreen() * 255) + " " + (int) (fillColor.getBlue() * 255) + "\n");
     }
-    protected String check(String prefix, String line){
+
+    protected String check(String prefix, String line) {
         String[] split = line.split(" ");
-        if(!(line.startsWith(prefix) && split.length >= 2))
+        if (!(line.startsWith(prefix) && split.length >= 2))
             throw new IllegalArgumentException();
-        else{
+        else {
             try {
                 for (int i = 1; i < split.length; i++) {
                     Double.parseDouble(split[i]);
                 }
-            }
-            catch (NumberFormatException e){
+            } catch (NumberFormatException e) {
                 throw new IllegalArgumentException();
             }
         }

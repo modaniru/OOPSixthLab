@@ -6,6 +6,7 @@ import com.example.oop6.models.shapes.Circle;
 import com.example.oop6.models.shapes.Shape;
 import com.example.oop6.models.shapes.Rectangle;
 import com.example.oop6.models.shapes.Triangle;
+import com.example.oop6.utils.Position;
 import com.example.oop6.utils.ShapeFactory;
 import com.example.oop6.utils.ShortCuts;
 import com.example.oop6.utils.information.Information;
@@ -15,7 +16,6 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Insets;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
@@ -53,13 +53,7 @@ public class Controller implements Initializable {
     private Button btnSize;
     // Список всех кнопок с инструментами
     List<Button> instrumentsButtons = new ArrayList<>();
-    @FXML
-    private Button btnCanvasClear;
     /* --- text views --- */
-    @FXML
-    private Text tWidth;
-    @FXML
-    private Text tHeight;
     @FXML
     private Text tCursorPosition;
     @FXML
@@ -161,10 +155,9 @@ public class Controller implements Initializable {
             report.setText(sb.toString());
         });
         /* Обработчик нажатия на кнопку 'Сохранить как' */
-        //todo Если проект принадлежит файлу уже
         miSaveAs.setOnAction(actionEvent -> {
-            File file = fileChooser.showOpenDialog(HelloApplication.getStage());
-            //todo оповещать пользователя
+            File file = getFileFromDialog();
+            if (file == null) return;
             if (!file.getName().endsWith(Information.EXTENSION)) return;
             try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file))) {
                 paintField.save(bufferedWriter);
@@ -174,8 +167,8 @@ public class Controller implements Initializable {
         });
         /* Обработчик нажатия на кнопку 'Открыть' */
         miOpen.setOnAction(actionEvent -> {
-            File file = fileChooser.showOpenDialog(HelloApplication.getStage());
-            System.out.println(file.getName());
+            File file = getFileFromDialog();
+            if (file == null) return;
             if (!file.getName().endsWith(Information.EXTENSION)) return;
             StringBuilder stringBuilder = new StringBuilder(file.getName());
             stringBuilder.delete(stringBuilder.length() - Information.EXTENSION.length(), stringBuilder.length());
@@ -185,12 +178,14 @@ public class Controller implements Initializable {
                 stackOperation.clear();
             } catch (IOException e) {
                 throw new RuntimeException(e);
+            } catch (IllegalArgumentException e) {
+                paintField.clearField();
+                new Alert(Alert.AlertType.ERROR, "Ошибка загрузки.").show();
             }
         });
         /* Обработчик нажатия на кнопку 'Сохранить' */
         miSave.setOnAction(actionEvent -> {
             File file = new File(fileName + Information.EXTENSION);
-            //todo сообщать путь сохранения
             try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file))) {
                 paintField.save(bufferedWriter);
             } catch (IOException e) {
@@ -198,7 +193,6 @@ public class Controller implements Initializable {
             }
         });
         /* Обработчик нажатия на кнопку 'Создать' */
-        //todo мб сделать уведомление о не сохранении предыдущего проекта
         miCreate.setOnAction(actionEvent -> {
             paintField.clearField();
             stackOperation.clear();
@@ -212,6 +206,11 @@ public class Controller implements Initializable {
         tfProjectName.setOnAction(actionEvent -> {
             drawField.requestFocus();
         });
+    }
+
+    /* Возвращает файл из диалога */
+    private File getFileFromDialog() {
+        return fileChooser.showOpenDialog(HelloApplication.getStage());
     }
 
     /* Обработчик выбора цвета */
@@ -250,12 +249,17 @@ public class Controller implements Initializable {
 
     /* Обработка нажатия кнопки с шейпом */
     public void btnShapePress(ActionEvent actionEvent) {
+        Button button = (Button) actionEvent.getSource();
+        setShape(button);
+    }
+
+    private void setShape(Button button) {
         for (Button shapeButton : shapeButtons) {
             shapeButton.setDisable(false);
         }
-        Button button = (Button) actionEvent.getSource();
         button.setDisable(true);
         shape = ((Shape) button.getUserData());
+        shape.setFillColor(colorPicker.getValue());
     }
 
     /* Очистка формы */
@@ -270,18 +274,18 @@ public class Controller implements Initializable {
     }
 
     /* Нажатие клавиши мыши */
-    public void mouseDownEventInPaintField(MouseEvent mouseEvent) {
-        instrument.mouseDown(shape.clone(), (int) mouseEvent.getX(), (int) mouseEvent.getY());
+    public void mouseDownEventInPaintField(MouseEvent e) {
+        instrument.mouseDown(shape.clone(), new Position(e.getX(), e.getY()));
     }
 
     /* Удержание клавиши мыши*/
-    public void mouseDragEventInPaintField(MouseEvent mouseEvent) {
-        instrument.drag((int) mouseEvent.getX(), (int) mouseEvent.getY());
+    public void mouseDragEventInPaintField(MouseEvent e) {
+        instrument.drag(new Position(e.getX(), e.getY()));
     }
 
     /* Отжатие клавиши мыши */
     public void mouseUpEventInPaintField(MouseEvent e) {
-        Optional<Command> optionalCommand = instrument.mouseUp((int) e.getX(), (int) e.getY());
+        Optional<Command> optionalCommand = instrument.mouseUp(new Position(e.getX(), e.getY()));
         optionalCommand.ifPresent(command -> stackOperation.push(command));
     }
 
@@ -322,32 +326,22 @@ public class Controller implements Initializable {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-        } else {
+        } else if (keyCode.equals(ShortCuts.CIRCLE.getKeyCode()))
+            setShape(btnCircle);
+        else if (keyCode.equals(ShortCuts.RECTANGLE.getKeyCode()))
+            setShape(btnSquare);
+        else if (keyCode.equals(ShortCuts.TRIANGLE.getKeyCode()))
+            setShape(btnTriangle);
+        else {
             switch (keyEvent.getCode()) {
-                case RIGHT -> {
-                    command = new MoveCommand(Information.DELTA, 0);
-                }
-                case LEFT -> {
-                    command = new MoveCommand(-Information.DELTA, 0);
-                }
-                case UP -> {
-                    command = new MoveCommand(0, -Information.DELTA);
-                }
-                case DOWN -> {
-                    command = new MoveCommand(0, Information.DELTA);
-                }
-                case L -> {
-                    command = new ResizeCommand(Information.DELTA, 0);
-                }
-                case K -> {
-                    command = new ResizeCommand(-Information.DELTA, 0);
-                }
-                case O -> {
-                    command = new ResizeCommand(0, Information.DELTA);
-                }
-                case I -> {
-                    command = new ResizeCommand(0, -Information.DELTA);
-                }
+                case RIGHT -> command = new MoveCommand(new Position(Information.DELTA, 0));
+                case LEFT -> command = new MoveCommand(new Position(-Information.DELTA, 0));
+                case UP -> command = new MoveCommand(new Position(0, -Information.DELTA));
+                case DOWN -> command = new MoveCommand(new Position(0, Information.DELTA));
+                case L -> command = new ResizeCommand(Information.DELTA, 0);
+                case K -> command = new ResizeCommand(-Information.DELTA, 0);
+                case O -> command = new ResizeCommand(0, Information.DELTA);
+                case I -> command = new ResizeCommand(0, -Information.DELTA);
             }
             if (command != null) {
                 command.execute(paintField);

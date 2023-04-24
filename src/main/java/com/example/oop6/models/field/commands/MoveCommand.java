@@ -2,22 +2,19 @@ package com.example.oop6.models.field.commands;
 
 import com.example.oop6.models.field.PaintField;
 import com.example.oop6.models.shapes.Shape;
-import com.example.oop6.models.shapes.funcs.MoveAction;
 import com.example.oop6.utils.Container;
 import com.example.oop6.utils.Position;
 
 import java.util.Iterator;
 
 public class MoveCommand implements Command{
-    private double dx;
-    private double dy;
+    private Position deltaPosition;
     private PaintField paintField;
     private Container<Position> posUndo;
     private Container<Shape> selected;
 
-    public MoveCommand(double dx, double dy) {
-        this.dx = dx;
-        this.dy = dy;
+    public MoveCommand(Position position) {
+        deltaPosition = position.clone();
     }
 
     @Override
@@ -29,7 +26,7 @@ public class MoveCommand implements Command{
             posUndo.add(shape.getInstance().getPosition().clone());
             selected.add(shape);
         }
-        paintField.moveSelectedShapes(dx, dy);
+        paintField.moveSelectedShapes(deltaPosition);
     }
 
     @Override
@@ -55,11 +52,7 @@ public class MoveCommand implements Command{
         return "MoveCommand";
     }
 
-    public void setDx(int dx) {
-        this.dx = dx;
-    }
-
-    public void setDy(int dy) {
-        this.dy = dy;
+    public void setDeltaPosition(Position position){
+        deltaPosition = position.clone();
     }
 }

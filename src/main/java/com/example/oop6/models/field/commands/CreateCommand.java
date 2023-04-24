@@ -2,10 +2,13 @@ package com.example.oop6.models.field.commands;
 
 import com.example.oop6.models.field.PaintField;
 import com.example.oop6.models.shapes.Shape;
+import com.example.oop6.models.shapes.ShapeDecorator;
+import com.example.oop6.utils.Container;
 
 public class CreateCommand implements Command{
     private Shape shape;
     private PaintField paintField;
+    private Container<Shape> selectedBeforeShapes = new Container<>();
 
     public CreateCommand(Shape shape) {
         this.shape = shape;
@@ -13,6 +16,7 @@ public class CreateCommand implements Command{
 
     @Override
     public void execute(PaintField paintField) {
+        selectedBeforeShapes = paintField.getAllSelectedShapes();
         paintField.addShape(shape);
         this.paintField = paintField;
     }
@@ -20,6 +24,10 @@ public class CreateCommand implements Command{
     @Override
     public void unExecute() {
         paintField.removeInstanceShape(shape);
+        for (Shape shape : selectedBeforeShapes) {
+            paintField.removeInstanceShape(shape);
+            paintField.addShapeToContainer(new ShapeDecorator(shape));
+        }
     }
 
     @Override

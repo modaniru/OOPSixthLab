@@ -1,12 +1,13 @@
 package com.example.oop6.utils;
 
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
+//todo
+/* Перечисление всех иконок (пока не использовал)*/
 public enum Images {
     CREATE(new Object() {
         Image evaluate() {

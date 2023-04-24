@@ -7,6 +7,7 @@ import com.example.oop6.models.shapes.ShapeGroup;
 import com.example.oop6.models.shapes.funcs.MoveAction;
 import com.example.oop6.models.shapes.funcs.ShapeAction;
 import com.example.oop6.utils.Container;
+import com.example.oop6.utils.Position;
 import com.example.oop6.utils.ShapeAbstractFactory;
 import javafx.scene.canvas.Canvas;
 
@@ -73,28 +74,28 @@ public class PaintField {
         return !getListInsideTheFigure(x, y).isEmpty();
     }
 
-    public void selectInSection(double x1, double y1, double x2, double y2){
+    public void selectInSection(Position f, Position s){
         unselectAllShapes();
         Container<Shape> news = new Container<>();
         for (Shape shape : shapeContainer) {
-            if(shape.getPosition().inArea(x1, y1, x2, y2)) {
+            if(shape.getPosition().inArea(f, s)) {
                 if(shape != shape.getInstance()) continue;
                 news.add(new ShapeDecorator(shape));
                 shapeContainer.delete(shape);
             }
         }
-        for (Shape s : news) {
-            shapeContainer.add(s);
+        for (Shape shape : news) {
+            shapeContainer.add(shape);
         }
         drawAllShapesInContainer();
     }
 
     //Метод выделения всех фигур, которые включает в себе точку 'x, y'
-    public void changeSelectIfInside(int x, int y) {
+    public void changeSelectIfInside(Position position) {
         if (!multiplySelection) unselectAllShapes();
         Container<Shape> addShapes = new Container<>();
         for (Shape shape : shapeContainer) {
-            if(shape.inShapeArea(x, y)) {
+            if(shape.inShapeArea(position.getX(), position.getY())) {
                 Shape newShape;
                 if(shape == shape.getInstance()){
                     newShape = new ShapeDecorator(shape);
@@ -222,8 +223,8 @@ public class PaintField {
         drawAllShapesInContainer();
     }
 
-    public void moveSelectedShapes(double dx, double dy){
-        moveShapes(getAllSelectedShapes(), dx, dy);
+    public void moveSelectedShapes(Position position){
+        moveShapes(getAllSelectedShapes(), position.getX(), position.getY());
     }
 
     public void moveShapes(Container<Shape> shapes, double dx, double dy){
