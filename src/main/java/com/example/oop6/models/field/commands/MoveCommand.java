@@ -3,7 +3,9 @@ package com.example.oop6.models.field.commands;
 import com.example.oop6.models.field.PaintField;
 import com.example.oop6.models.shapes.Shape;
 import com.example.oop6.utils.Container;
+import com.example.oop6.utils.Images;
 import com.example.oop6.utils.Position;
+import javafx.scene.image.Image;
 
 import java.util.Iterator;
 
@@ -54,5 +56,9 @@ public class MoveCommand implements Command{
 
     public void setDeltaPosition(Position position){
         deltaPosition = position.clone();
+    }
+    @Override
+    public Image getImage() {
+        return Images.MOVE.getImage();
     }
 }

@@ -4,6 +4,8 @@ import com.example.oop6.models.field.PaintField;
 import com.example.oop6.models.shapes.Shape;
 import com.example.oop6.models.shapes.funcs.ChangeColorAction;
 import com.example.oop6.utils.Container;
+import com.example.oop6.utils.Images;
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
 import java.util.Iterator;
@@ -48,5 +50,10 @@ public class ColorCommand implements Command{
     @Override
     public String report() {
         return "ColorCommand";
+    }
+
+    @Override
+    public Image getImage() {
+        return Images.COLOR.getImage();
     }
 }

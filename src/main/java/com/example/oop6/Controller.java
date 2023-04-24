@@ -1,10 +1,10 @@
 package com.example.oop6;
 
-import com.example.oop6.models.field.*;
+import com.example.oop6.models.field.PaintField;
 import com.example.oop6.models.field.commands.*;
 import com.example.oop6.models.shapes.Circle;
-import com.example.oop6.models.shapes.Shape;
 import com.example.oop6.models.shapes.Rectangle;
+import com.example.oop6.models.shapes.Shape;
 import com.example.oop6.models.shapes.Triangle;
 import com.example.oop6.utils.Position;
 import com.example.oop6.utils.ShapeFactory;
@@ -18,10 +18,12 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
+import javafx.scene.effect.ColorAdjust;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.*;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
@@ -56,8 +58,6 @@ public class Controller implements Initializable {
     /* --- text views --- */
     @FXML
     private Text tCursorPosition;
-    @FXML
-    private TextArea report;
     /* --- text fields --- */
     @FXML
     private TextField tfProjectName;
@@ -91,9 +91,31 @@ public class Controller implements Initializable {
     private final FileChooser fileChooser = new FileChooser();
     // Моделька стека операций
     private StackOperation stackOperation;
+    @FXML
+    private ListView<Command> lvReport;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        /* Создание класса обертки стека операций */
+        stackOperation = new StackOperation();
+        stackOperation.setModelChangeEvent((stackOperation) -> {
+            lvReport.setCellFactory(e -> new ListCell<>(){
+                @Override
+                protected void updateItem(Command command, boolean b) {
+                    setStyle("-fx-background-color: " + " #363e52");
+                    if(command == null) return;
+                    super.updateItem(command, b);
+                    ColorAdjust colorAdjust = new ColorAdjust();
+                    colorAdjust.setBrightness(1);
+                    ImageView imageView = new ImageView(command.getImage());
+                    imageView.setFitWidth(10);
+                    imageView.setFitHeight(10);
+                    imageView.setEffect(colorAdjust);
+                    setGraphic(imageView);
+                }
+            });
+            lvReport.setItems(stackOperation);
+        });
         /* Заполнение массива кнопок с шейпами */
         shapeButtons.add(btnCircle);
         shapeButtons.add(btnTriangle);
@@ -105,8 +127,9 @@ public class Controller implements Initializable {
         instrumentsButtons.add(btnCreate);
         /* Установка Menu Bar */
         final String os = System.getProperty("os.name");
-        if (os != null && os.startsWith("Mac"))
+        if (os != null && os.startsWith("Mac")) {
             menuBar.useSystemMenuBarProperty().set(true);
+        }
         /* Создание paintField с вставкой Canvas */
         Canvas canvas = new Canvas(drawField.getPrefWidth(), drawField.getPrefHeight());
         drawField.getChildren().add(canvas);
@@ -145,15 +168,6 @@ public class Controller implements Initializable {
         btnSelect.setUserData(new SelectionInstrument(paintField));
         btnPosition.setUserData(new MoveInstrument(paintField));
         btnSize.setUserData(new ResizeInstrument(paintField));
-        /* Создание класса обертки стека операций */
-        stackOperation = new StackOperation();
-        stackOperation.setModelChangeEvent((stackOperation) -> {
-            StringBuilder sb = new StringBuilder();
-            for (Command command : stackOperation) {
-                sb.append(command.report()).append("\n");
-            }
-            report.setText(sb.toString());
-        });
         /* Обработчик нажатия на кнопку 'Сохранить как' */
         miSaveAs.setOnAction(actionEvent -> {
             File file = getFileFromDialog();

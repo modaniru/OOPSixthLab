@@ -12,7 +12,7 @@ public enum Images {
     CREATE(new Object() {
         Image evaluate() {
             try {
-                return new Image(new FileInputStream(new File("com/example/oop6/icons/cursor.png")));
+                return new Image(new FileInputStream(new File("src/main/resources/com/example/oop6/icons/cursor.png")));
             } catch (FileNotFoundException e) {
                 throw new RuntimeException(e);
             }
@@ -21,7 +21,7 @@ public enum Images {
     SELECT(new Object() {
         Image evaluate() {
             try {
-                return new Image(new FileInputStream(new File("com/example/oop6/icons/selection.png")));
+                return new Image(new FileInputStream(new File("src/main/resources/com/example/oop6/icons/selection.png")));
             } catch (FileNotFoundException e) {
                 throw new RuntimeException(e);
             }
@@ -30,7 +30,7 @@ public enum Images {
     MOVE(new Object() {
         Image evaluate() {
             try {
-                return new Image(new FileInputStream(new File("com/example/oop6/icons/expand-arrows.png")));
+                return new Image(new FileInputStream(new File("src/main/resources/com/example/oop6/icons/expand-arrows.png")));
             } catch (FileNotFoundException e) {
                 throw new RuntimeException(e);
             }
@@ -39,7 +39,7 @@ public enum Images {
     SIZE(new Object() {
         Image evaluate() {
             try {
-                return new Image(new FileInputStream(new File("com/example/oop6/icons/expand.png")));
+                return new Image(new FileInputStream(new File("src/main/resources/com/example/oop6/icons/expand.png")));
             } catch (FileNotFoundException e) {
                 throw new RuntimeException(e);
             }
@@ -48,7 +48,7 @@ public enum Images {
     COLOR(new Object() {
         Image evaluate() {
             try {
-                return new Image(new FileInputStream(new File("com/example/oop6/icons/cursor.png")));
+                return new Image(new FileInputStream(new File("src/main/resources/com/example/oop6/icons/cursor.png")));
             } catch (FileNotFoundException e) {
                 throw new RuntimeException(e);
             }

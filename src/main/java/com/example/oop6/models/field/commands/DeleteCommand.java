@@ -4,10 +4,13 @@ import com.example.oop6.models.field.PaintField;
 import com.example.oop6.models.shapes.Shape;
 import com.example.oop6.models.shapes.ShapeDecorator;
 import com.example.oop6.utils.Container;
+import com.example.oop6.utils.Images;
+import javafx.scene.image.Image;
 
-public class DeleteCommand implements Command{
+public class DeleteCommand implements Command {
     private Container<Shape> deletedShapes;
     private PaintField paintField;
+
     @Override
     public void execute(PaintField paintField) {
         this.deletedShapes = paintField.getAllSelectedShapes();
@@ -30,5 +33,10 @@ public class DeleteCommand implements Command{
     @Override
     public String report() {
         return "DeleteCommand";
+    }
+
+    @Override
+    public Image getImage() {
+        return Images.COLOR.getImage();
     }
 }
