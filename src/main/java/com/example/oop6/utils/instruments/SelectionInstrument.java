@@ -9,6 +9,7 @@ import com.example.oop6.models.shapes.ShapeDecorator;
 import com.example.oop6.utils.Position;
 
 import java.util.Optional;
+
 /* Инструмент, который отвечает за выделение фигур */
 public class SelectionInstrument extends PositionInstrument {
     private ShapeDecorator shapeDecorator;
@@ -38,6 +39,7 @@ public class SelectionInstrument extends PositionInstrument {
     public Optional<Command> mouseUp(Position position) {
         command.setSecondPosition(position);
         command.execute(paintField);
+        if(command.selectAndOldSelectIsEmpty()) return Optional.empty();
         paintField.drawAllShapesInContainer();
         return Optional.of(command);
     }

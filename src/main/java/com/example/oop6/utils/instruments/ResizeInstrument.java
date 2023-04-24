@@ -36,6 +36,7 @@ public class ResizeInstrument extends PositionInstrument {
 
     @Override
     public Optional<Command> mouseUp(Position position) {
+        if(paintField.getAllSelectedShapes().size() == 0) return Optional.empty();
         resizeCommand.setDx(position.getX() - startPosition.getX());
         resizeCommand.setDy(position.getY() - startPosition.getY());
         return Optional.of(resizeCommand);

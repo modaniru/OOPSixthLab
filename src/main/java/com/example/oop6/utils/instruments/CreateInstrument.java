@@ -10,7 +10,7 @@ import com.example.oop6.utils.Position;
 import java.util.Optional;
 
 /* Инструмент, который отвечает за создание фигур */
-public class CreateInstrument implements Instrument{
+public class CreateInstrument implements Instrument {
 
     private final PaintField paintField;
     private Shape shape;
@@ -29,7 +29,7 @@ public class CreateInstrument implements Instrument{
 
     @Override
     public void drag(Position position) {
-        if(!inShape){
+        if (!inShape) {
             shape.setSize(Math.abs(position.getX() - shape.getPosition().getX()) * 2, Math.abs(position.getY() - shape.getPosition().getY()) * 2);
             paintField.drawTempShape(new ShapeDecorator(shape));
         }
@@ -37,7 +37,7 @@ public class CreateInstrument implements Instrument{
 
     @Override
     public Optional<Command> mouseUp(Position position) {
-        if(!inShape && shape.isCorrect() && shape.entersByWidth(paintField.getFieldWidth()) && shape.entersByHeight(paintField.getFieldHeight())){
+        if (!inShape && shape.entersByWidth(paintField.getFieldWidth()) && shape.entersByHeight(paintField.getFieldHeight())) {
             Command command = new CreateCommand(shape);
             command.execute(paintField);
             return Optional.of(command);

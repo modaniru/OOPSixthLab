@@ -37,13 +37,8 @@ public abstract class Shape {
         return shape;
     }
 
-    public boolean isCorrect() {
-        return !(width < getMinWidth() || height < getMinHeight());
-    }
-
-    //do spec
+    /* Возвращает экземпляр наследника класса Shape */
     public abstract Shape getExample();
-
 
     public abstract boolean inShapeArea(double x, double y);
 

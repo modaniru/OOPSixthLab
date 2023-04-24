@@ -34,6 +34,7 @@ public class MoveInstrument extends PositionInstrument {
 
     @Override
     public Optional<Command> mouseUp(Position position) {
+        if(paintField.getAllSelectedShapes().size() == 0) return Optional.empty();
         startPosition.minusDeltaPosition(position);
         command.setDeltaPosition(startPosition);
         return Optional.of(command);

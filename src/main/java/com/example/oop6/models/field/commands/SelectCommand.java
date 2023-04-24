@@ -58,4 +58,8 @@ public class SelectCommand implements Command{
     public void setSecondPosition(Position secondPosition) {
         this.secondPosition = secondPosition.clone();
     }
+
+    public boolean selectAndOldSelectIsEmpty(){
+        return oldSelected.size() == 0 && paintField.getAllSelectedShapes().size() == 0;
+    }
 }
