@@ -3,7 +3,7 @@ package com.example.oop6.models.shapes;
 import javafx.scene.canvas.GraphicsContext;
 
 public class Triangle extends Shape {
-    public Triangle(int width, int height) {
+    public Triangle(double width, double height) {
         super(width, height);
     }
 

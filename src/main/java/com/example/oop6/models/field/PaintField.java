@@ -222,11 +222,11 @@ public class PaintField {
         drawAllShapesInContainer();
     }
 
-    public void moveSelectedShapes(int dx, int dy){
+    public void moveSelectedShapes(double dx, double dy){
         moveShapes(getAllSelectedShapes(), dx, dy);
     }
 
-    public void moveShapes(Container<Shape> shapes, int dx, int dy){
+    public void moveShapes(Container<Shape> shapes, double dx, double dy){
         MoveAction shapeAction = new MoveAction(fieldWidth, fieldHeight);
         shapeAction.setDx(dx);
         shapeAction.setDy(dy);

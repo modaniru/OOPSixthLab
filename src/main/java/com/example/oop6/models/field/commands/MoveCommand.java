@@ -9,13 +9,13 @@ import com.example.oop6.utils.Position;
 import java.util.Iterator;
 
 public class MoveCommand implements Command{
-    private int dx;
-    private int dy;
+    private double dx;
+    private double dy;
     private PaintField paintField;
     private Container<Position> posUndo;
     private Container<Shape> selected;
 
-    public MoveCommand(int dx, int dy) {
+    public MoveCommand(double dx, double dy) {
         this.dx = dx;
         this.dy = dy;
     }

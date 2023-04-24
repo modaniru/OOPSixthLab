@@ -8,6 +8,7 @@ import com.example.oop6.models.shapes.Rectangle;
 import com.example.oop6.models.shapes.Triangle;
 import com.example.oop6.utils.ShapeFactory;
 import com.example.oop6.utils.ShortCuts;
+import com.example.oop6.utils.information.Information;
 import com.example.oop6.utils.instruments.*;
 import com.example.oop6.utils.mvc.StackOperation;
 import javafx.beans.value.ObservableValue;
@@ -123,16 +124,15 @@ public class Controller implements Initializable {
         colorPicker.setOnAction(this::colorPickerAction);
         colorPicker.setValue(Color.LIGHTGRAY);
         /* Вставка в кнопки пользовательскую информацию (Фигуры) */
-        //todo может вынести высоту и ширину в отдельный класс?
-        Shape circle = new Circle(40, 40);
+        Shape circle = new Circle(Information.DEFAULT_WIDTH, Information.DEFAULT_HEIGHT);
         //Установка текущего цвета colorPicker'a
         circle.setFillColor(colorPicker.getValue());
         //По умолчанию выбран эллипс
         shape = circle.clone();
         btnCircle.setDisable(true);
         btnCircle.setUserData(circle);
-        btnSquare.setUserData(new Rectangle(40, 40));
-        btnTriangle.setUserData(new Triangle(40, 40));
+        btnSquare.setUserData(new Rectangle(Information.DEFAULT_WIDTH, Information.DEFAULT_HEIGHT));
+        btnTriangle.setUserData(new Triangle(Information.DEFAULT_WIDTH, Information.DEFAULT_HEIGHT));
         /* Установка подсказок всем кнопкам */
         /* --- Сделал некоторые шорткаты через enum, чтобы изменяя информацию о них,
         не перекомпилировать этот класс --- */
@@ -165,7 +165,7 @@ public class Controller implements Initializable {
         miSaveAs.setOnAction(actionEvent -> {
             File file = fileChooser.showOpenDialog(HelloApplication.getStage());
             //todo оповещать пользователя
-            if (!file.getName().endsWith(".mdp")) return;
+            if (!file.getName().endsWith(Information.EXTENSION)) return;
             try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file))) {
                 paintField.save(bufferedWriter);
             } catch (IOException e) {
@@ -176,9 +176,9 @@ public class Controller implements Initializable {
         miOpen.setOnAction(actionEvent -> {
             File file = fileChooser.showOpenDialog(HelloApplication.getStage());
             System.out.println(file.getName());
-            if (!file.getName().endsWith(".mdp")) return;
+            if (!file.getName().endsWith(Information.EXTENSION)) return;
             StringBuilder stringBuilder = new StringBuilder(file.getName());
-            stringBuilder.delete(stringBuilder.length() - 4, stringBuilder.length());
+            stringBuilder.delete(stringBuilder.length() - Information.EXTENSION.length(), stringBuilder.length());
             tfProjectName.setText(stringBuilder.toString());
             try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file))) {
                 paintField.load(bufferedReader, new ShapeFactory());
@@ -189,7 +189,7 @@ public class Controller implements Initializable {
         });
         /* Обработчик нажатия на кнопку 'Сохранить' */
         miSave.setOnAction(actionEvent -> {
-            File file = new File(fileName + ".mdp");
+            File file = new File(fileName + Information.EXTENSION);
             //todo сообщать путь сохранения
             try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file))) {
                 paintField.save(bufferedWriter);
@@ -325,28 +325,28 @@ public class Controller implements Initializable {
         } else {
             switch (keyEvent.getCode()) {
                 case RIGHT -> {
-                    command = new MoveCommand(2, 0);
+                    command = new MoveCommand(Information.DELTA, 0);
                 }
                 case LEFT -> {
-                    command = new MoveCommand(-2, 0);
+                    command = new MoveCommand(-Information.DELTA, 0);
                 }
                 case UP -> {
-                    command = new MoveCommand(0, -2);
+                    command = new MoveCommand(0, -Information.DELTA);
                 }
                 case DOWN -> {
-                    command = new MoveCommand(0, 2);
+                    command = new MoveCommand(0, Information.DELTA);
                 }
                 case L -> {
-                    command = new ResizeCommand(2, 0);
+                    command = new ResizeCommand(Information.DELTA, 0);
                 }
                 case K -> {
-                    command = new ResizeCommand(-2, 0);
+                    command = new ResizeCommand(-Information.DELTA, 0);
                 }
                 case O -> {
-                    command = new ResizeCommand(0, 2);
+                    command = new ResizeCommand(0, Information.DELTA);
                 }
                 case I -> {
-                    command = new ResizeCommand(0, -2);
+                    command = new ResizeCommand(0, -Information.DELTA);
                 }
             }
             if (command != null) {

@@ -20,10 +20,10 @@ public class ResizeCommand implements Command{
         }
     }
     private Container<Size> oldSize;
-    private int dx;
-    private int dy;
+    private double dx;
+    private double dy;
 
-    public ResizeCommand(int dx, int dy) {
+    public ResizeCommand(double dx, double dy) {
         this.dx = dx;
         this.dy = dy;
     }

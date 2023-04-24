@@ -4,7 +4,7 @@ import javafx.scene.canvas.GraphicsContext;
 
 public class Rectangle extends Shape {
 
-    public Rectangle(int width, int height) {
+    public Rectangle(double width, double height) {
         super(width, height);
     }
 
