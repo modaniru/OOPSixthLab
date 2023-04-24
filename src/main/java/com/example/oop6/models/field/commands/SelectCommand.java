@@ -23,7 +23,7 @@ public class SelectCommand implements Command{
     @Override
     public void execute(PaintField paintField) {
         this.paintField = paintField;
-        if (oldSelected.getSize()==0)
+        if (oldSelected.size()==0)
             oldSelected = paintField.getAllSelectedShapes();
         if(x1 == x2 && y1 == y2){
             paintField.changeSelectIfInside(x1, y1);

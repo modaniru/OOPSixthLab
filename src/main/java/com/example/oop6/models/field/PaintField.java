@@ -39,7 +39,7 @@ public class PaintField {
         shape = new ShapeDecorator(shape);
         shapeContainer.add(shape);
         drawAllShapesInContainer();
-        System.out.println(shapeContainer.getSize());
+        System.out.println(shapeContainer.size());
     }
 
     public void addShapeToContainer(Shape shape){
@@ -261,7 +261,7 @@ public class PaintField {
     }
 
     public void save(BufferedWriter bufferedWriter) throws IOException{
-        bufferedWriter.write(shapeContainer.getSize() + "\n");
+        bufferedWriter.write(shapeContainer.size() + "\n");
         for (Shape shape : shapeContainer) {
             shape.getInstance().save(bufferedWriter);
         }

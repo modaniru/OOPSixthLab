@@ -1,12 +1,7 @@
 package com.example.oop6.utils;
 
-import com.example.oop6.funcInterfaces.ContainerMapFunc;
-import com.example.oop6.models.shapes.Shape;
-
 import java.util.Iterator;
 import java.util.List;
-import java.util.Objects;
-import java.util.function.Consumer;
 
 //Контейнер, показанный OOP3
 public class Container<T> implements Iterable<T> {
@@ -200,7 +195,7 @@ public class Container<T> implements Iterable<T> {
      *
      * @return size
      */
-    public Integer getSize() {
+    public Integer size() {
         return size;
     }
 

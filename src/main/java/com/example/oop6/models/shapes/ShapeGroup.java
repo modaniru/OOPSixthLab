@@ -22,7 +22,7 @@ public class ShapeGroup extends Shape {
     }
 
     public void addShape(Shape shape) {
-        if (shapes.getSize() == 0) {
+        if (shapes.size() == 0) {
             width = shape.width;
             height = shape.height;
             leftShape = shape.position.getX() - shape.getMinWidth() / 2;
@@ -130,7 +130,7 @@ public class ShapeGroup extends Shape {
     @Override
     public void save(BufferedWriter bufferedWriter) throws IOException {
         super.save(bufferedWriter);
-        bufferedWriter.write("\tShapes: " + shapes.getSize() + "\n");
+        bufferedWriter.write("\tShapes: " + shapes.size() + "\n");
         for (Shape shape : shapes) {
             shape.getInstance().save(bufferedWriter);
         }

@@ -2,13 +2,14 @@ package com.example.oop6.utils.mvc;
 
 import com.example.oop6.models.field.PaintField;
 import com.example.oop6.models.field.commands.Command;
+import com.example.oop6.utils.Container;
 
 import java.util.Optional;
 import java.util.Stack;
 import java.util.function.Consumer;
 
 public class StackOperation {
-    private Stack<Command> commands;
+    private final Stack<Command> commands;
     private Consumer<Stack<Command>> handler;
 
     public StackOperation() {
@@ -16,6 +17,7 @@ public class StackOperation {
     }
 
     public void push(Command command){
+        if(commands.size() > 32) commands.remove(0);
         commands.push(command);
         handler.accept(commands);
     }
