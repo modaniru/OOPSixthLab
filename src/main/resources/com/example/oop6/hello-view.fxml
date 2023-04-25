@@ -103,7 +103,7 @@
         </items>
       </ToolBar>
       <TextField fx:id="tfProjectName" focusTraversable="false" layoutX="680.0" layoutY="214.0" prefHeight="26.0" prefWidth="140.0" promptText="имя проекта" AnchorPane.bottomAnchor="187.0" AnchorPane.rightAnchor="32.0" />
-      <ListView fx:id="lvReport" fixedCellSize="16.0" focusTraversable="false" layoutX="536.0" layoutY="4.0" prefHeight="413.0" prefWidth="40.0" style="-fx-background-color: #363e52;" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="272.0" AnchorPane.topAnchor="0.0" />
-      <ListView fx:id="lvReDo" fixedCellSize="16.0" focusTraversable="false" layoutX="589.0" layoutY="7.0" prefHeight="413.0" prefWidth="40.0" style="-fx-background-color: #363e52;" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="228.0" AnchorPane.topAnchor="0.0" />
+      <ListView fx:id="lvReport" fixedCellSize="16.0" focusTraversable="false" layoutX="536.0" layoutY="4.0" prefHeight="445.0" prefWidth="28.0" style="-fx-background-color: #363e52;" AnchorPane.bottomAnchor="-18.0" AnchorPane.rightAnchor="272.0" AnchorPane.topAnchor="0.0" />
+      <ListView fx:id="lvReDo" fixedCellSize="16.0" focusTraversable="false" layoutX="589.0" layoutY="7.0" prefHeight="445.0" prefWidth="28.0" style="-fx-background-color: #363e52;" AnchorPane.bottomAnchor="-18.0" AnchorPane.rightAnchor="236.0" AnchorPane.topAnchor="0.0" />
    </children>
 </AnchorPane>

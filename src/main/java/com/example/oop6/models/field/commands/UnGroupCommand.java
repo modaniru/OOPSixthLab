@@ -41,6 +41,6 @@ public class UnGroupCommand implements Command {
     }
     @Override
     public Image getImage() {
-        return Images.COLOR.getImage();
+        return Images.UNGROUPING.getImage();
     }
 }

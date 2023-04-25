@@ -34,9 +34,8 @@ public class DeleteCommand implements Command {
     public String report() {
         return "DeleteCommand";
     }
-
     @Override
     public Image getImage() {
-        return Images.COLOR.getImage();
+        return Images.DELETE.getImage();
     }
 }

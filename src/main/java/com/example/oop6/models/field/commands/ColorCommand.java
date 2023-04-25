@@ -13,7 +13,7 @@ import java.util.Iterator;
 public class ColorCommand implements Command{
     private PaintField paintField;
     private Container<Color> oldColors = new Container<>();
-    private Container<Shape> selected = new Container<>();
+    private final Container<Shape> allSelectedShapes = new Container<>();
     private Color newColor;
 
     public ColorCommand(Color newColor) {
@@ -24,9 +24,9 @@ public class ColorCommand implements Command{
     public void execute(PaintField paintField) {
         this.paintField = paintField;
         for (Shape shape : paintField.getAllSelectedShapes()) {
-            selected.add(shape.getInstance());
+            getAllShapes(shape.getInstance());
         }
-        for (Shape shape : selected) {
+        for (Shape shape : allSelectedShapes) {
             oldColors.add(shape.getFillColor());
         }
         paintField.actionSelectedShapes(new ChangeColorAction(newColor));
@@ -35,7 +35,7 @@ public class ColorCommand implements Command{
     @Override
     public void unExecute() {
         Iterator<Color> iterator = oldColors.iterator();
-        for (Shape shape : selected) {
+        for (Shape shape : allSelectedShapes) {
             Color next = iterator.next();
             shape.setFillColor(next);
         }
@@ -55,5 +55,16 @@ public class ColorCommand implements Command{
     @Override
     public Image getImage() {
         return Images.COLOR.getImage();
+    }
+    /* Обходим древовидную структуру группу, если она нам попалась */
+    private void getAllShapes(Shape shape){
+        // Крайний случай рекурсии
+        if(shape.getShapes().size() == 0)
+            allSelectedShapes.add(shape);
+        else{
+            for (Shape s : shape.getShapes()) {
+                getAllShapes(s);
+            }
+        }
     }
 }

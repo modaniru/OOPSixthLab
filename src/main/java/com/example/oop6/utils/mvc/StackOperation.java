@@ -15,7 +15,7 @@ public class StackOperation {
     private final ObservableList<Command> commands = FXCollections.observableArrayList();
 
     public void push(Command command) {
-        if (commands.size() > 32) commands.remove(0);
+        if (commands.size() > 25) commands.remove(0);
         commands.add(command);
         handler.accept(commands);
     }

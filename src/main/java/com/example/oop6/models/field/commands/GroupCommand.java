@@ -30,6 +30,6 @@ public class GroupCommand implements Command{
     }
     @Override
     public Image getImage() {
-        return Images.COLOR.getImage();
+        return Images.GROUPING.getImage();
     }
 }
