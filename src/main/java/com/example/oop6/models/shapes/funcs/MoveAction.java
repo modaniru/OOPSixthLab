@@ -16,9 +16,9 @@ public class MoveAction implements ShapeAction {
     @Override
     public boolean shapeAction(Shape shape) {
         System.out.println(dx + " " + dy);
-        shape.getInstance().getPosition().changePosition(dx, dy);
-        if(!(shape.getInstance().entersByWidth(width) && shape.getInstance().entersByHeight(height))){
-            shape.getInstance().getPosition().changePosition(-dx, -dy);
+        shape.getPosition().changePosition(dx, dy);
+        if(!(shape.entersByWidth(width) && shape.entersByHeight(height))){
+            shape.getPosition().changePosition(-dx, -dy);
             return false;
         }
         return true;

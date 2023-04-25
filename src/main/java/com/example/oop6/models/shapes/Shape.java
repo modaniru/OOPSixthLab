@@ -90,12 +90,12 @@ public abstract class Shape {
 
     //Проверяет, находится ли фигура в заданом пространстве
     public boolean entersByWidth(double width) {
-        if (this.width < MIN_WIDTH) return false;
+        if (this.width < getMinWidth()) return false;
         return position.getX() > getXDistanceToBorder() && position.getX() < width - getXDistanceToBorder();
     }
 
     public boolean entersByHeight(double height) {
-        if (this.height < MIN_HEIGHT) return false;
+        if (this.height < getMinHeight()) return false;
         return position.getY() > getYDistanceToBorder() && position.getY() < height - getYDistanceToBorder();
     }
 

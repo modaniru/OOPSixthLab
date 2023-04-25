@@ -62,6 +62,10 @@ public class ShapeGroup extends Shape {
         for (Shape shape : shapes) {
             shapeGroup.addShape(shape.clone());
         }
+        shapeGroup.leftShape = leftShape;
+        shapeGroup.rightShape = rightShape;
+        shapeGroup.upShape = upShape;
+        shapeGroup.downShape = downShape;
         return shapeGroup;
     }
     @Override
@@ -97,14 +101,24 @@ public class ShapeGroup extends Shape {
     //переименовать
     @Override
     public boolean entersByWidth(double width) {
-        boolean res = super.entersByWidth(width);
-        return res && this.width >= rightShape - leftShape;
+        if (!super.entersByWidth(width)) {
+            return false;
+        }
+        for (Shape shape : shapes) {
+            if(!shape.entersByWidth(width)) return false;
+        }
+        return true;
     }
 
     @Override
     public boolean entersByHeight(double height) {
-        boolean res = super.entersByHeight(height);
-        return res && this.height >= downShape - upShape;
+        if (!super.entersByHeight(height)) {
+            return false;
+        }
+        for (Shape shape : shapes) {
+            if(!shape.entersByHeight(height)) return false;
+        }
+        return true;
     }
 
     @Override

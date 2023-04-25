@@ -55,6 +55,16 @@ public class ShapeDecorator extends Shape {
     }
 
     @Override
+    public boolean entersByWidth(double width) {
+        return instance.entersByWidth(width);
+    }
+
+    @Override
+    public boolean entersByHeight(double height) {
+        return instance.entersByHeight(height);
+    }
+
+    @Override
     public void setPosition(Position position) {
         getInstance().setPosition(position.clone());
         this.position = getInstance().getPosition();
