@@ -1,7 +1,6 @@
 package com.example.oop6.models.shapes.funcs;
 
 import com.example.oop6.models.shapes.Shape;
-import com.example.oop6.utils.Position;
 
 public class MoveAction implements ShapeAction {
     private double width;
@@ -27,7 +26,7 @@ public class MoveAction implements ShapeAction {
 
     @Override
     public boolean groupAction(Shape shape) {
-        shapeAction(shape);
+        if(!shapeAction(shape)) return false;
         for (Shape s : shape.getShapes()) {
             s.accept(this);
         }

@@ -36,10 +36,7 @@ public class MoveCommand implements Command{
         Iterator<Position> iterator = posUndo.iterator();
         for (Shape shape : selected) {
             Position next = iterator.next();
-            shape.getPosition()
-                            .changePosition(
-                                    next.getX() - shape.getPosition().getX(),
-                                    next.getY() - shape.getPosition().getY());
+            shape.setPosition(next);
         }
         paintField.drawAllShapesInContainer();
     }

@@ -28,7 +28,7 @@ public class CreateCommand implements Command {
         paintField.removeInstanceShape(shape);
         for (Shape shape : selectedBeforeShapes) {
             paintField.removeInstanceShape(shape);
-            paintField.addShapeToContainer(new ShapeDecorator(shape));
+            paintField.addShapeToContainer(new ShapeDecorator(shape.getInstance()));
         }
     }
 

@@ -2,6 +2,7 @@ package com.example.oop6.models.field.commands;
 
 import com.example.oop6.models.field.PaintField;
 import com.example.oop6.models.shapes.Shape;
+import com.example.oop6.models.shapes.ShapeDecorator;
 import com.example.oop6.utils.Container;
 import com.example.oop6.utils.Images;
 import com.example.oop6.utils.Position;
@@ -43,7 +44,7 @@ public class SelectCommand implements Command{
         }
         for (Shape shape : oldSelected) {
             paintField.removeInstanceShape(shape);
-            paintField.addShapeToContainer(shape);
+            paintField.addShapeToContainer(new ShapeDecorator(shape.getInstance()));
         }
     }
 

@@ -2,6 +2,7 @@ package com.example.oop6.models.shapes;
 
 import com.example.oop6.models.shapes.funcs.ShapeAction;
 import com.example.oop6.utils.Container;
+import com.example.oop6.utils.Position;
 import com.example.oop6.utils.ShapeAbstractFactory;
 import javafx.scene.canvas.GraphicsContext;
 
@@ -133,6 +134,18 @@ public class ShapeGroup extends Shape {
         bufferedWriter.write("\tShapes: " + shapes.size() + "\n");
         for (Shape shape : shapes) {
             shape.getInstance().save(bufferedWriter);
+        }
+    }
+
+    @Override
+    public void setPosition(Position position) {
+        double dx = position.getX() - this.position.getX();
+        double dy = position.getY() - this.position.getY();
+        super.setPosition(position);
+        for (Shape shape : shapes) {
+            Position p = shape.getPosition().clone();
+            p.changePosition(dx, dy);
+            shape.setPosition(p);
         }
     }
 }
