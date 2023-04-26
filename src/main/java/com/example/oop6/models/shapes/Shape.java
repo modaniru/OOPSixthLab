@@ -1,105 +1,158 @@
 package com.example.oop6.models.shapes;
 
+import com.example.oop6.models.shapes.funcs.ShapeAction;
+import com.example.oop6.utils.Container;
+import com.example.oop6.utils.Position;
+import com.example.oop6.utils.ShapeAbstractFactory;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+/* Абстрактный класс фигуры */
 public abstract class Shape {
-    private static int MIN_HEIGHT = 10;
-    private static int MIN_WIDTH = 10;
-    protected int x;
-    protected int y;
-    protected int width;
-    protected int height;
-    protected boolean selection;
+    //Минимально возможный размер
+    public static final double MIN_HEIGHT = 10;
+    public static final double MIN_WIDTH = 10;
+    protected Position position;
+    protected double width;
+    protected double height;
     private Color fillColor;
-    private final Color selectionColor = Color.ORANGERED;
 
-    public Shape(int width, int height) {
+    public Shape(double width, double height) {
+        this.width = width;
+        this.height = height;
+        fillColor = Color.rgb(0, 0, 0, 0);
+        position = new Position(0, 0);
+    }
+
+    /* Метод клонирования объекта объявлен как шаблонный, экземпляр класса получается
+    * благодаря абстрактному методу getExample()*/
+    public Shape clone() {
+        Shape shape = getExample();
+        shape.setFillColor(fillColor);
+        shape.setPosition(position.clone());
+        shape.setSize(width, height);
+        return shape;
+    }
+
+    /* Возвращает экземпляр наследника класса Shape */
+    public abstract Shape getExample();
+    /* Возвращает булево значение если точка находится в фигуре */
+    public abstract boolean inShapeArea(double x, double y);
+    /* Уникальный для всех метод рисования */
+    protected abstract void drawShape(GraphicsContext graphicsContext);
+    /* Шаблонный метод */
+    public void draw(Canvas canvas) {
+        int width = (int) canvas.getWidth();
+        int height = (int) canvas.getHeight();
+        if (entersByWidth(width) && entersByHeight(height))
+            drawShape(canvas.getGraphicsContext2D());
+    }
+    /* Возвращает есть ли фигуры в этом шейпе (для группы (можно ли этого избежать?)) */
+    public Container<Shape> getShapes() {
+        return new Container<>();
+    }
+    /* Устанавливает позицию */
+    public void setPosition(Position position) {
+        this.position = position.clone();
+    }
+    public Position getPosition() {
+        return position;
+    }
+    /* Устанавливает размер */
+    public void setSize(double width, double height) {
         this.width = width;
         this.height = height;
     }
-
-    public abstract Shape clone();
-
-    public abstract boolean inShapeArea(int x, int y);
-
-    public abstract void draw(GraphicsContext graphicsContext);
-
-
-    public final void changeSelection() {
-        selection = !selection;
+    /* Устанавливает цвет */
+    public void setFillColor(Color color) {
+        fillColor = color;
+    }
+    /* Находится ли фигура целиком в заданном отрезке */
+    public boolean entersByWidth(double width) {
+        if (this.width < getMinWidth()) return false;
+        return position.getX() > getWidth() / 2 && position.getX() < width - getWidth() / 2;
     }
 
-    public final void disableSelection() {
-        selection = false;
+    public boolean entersByHeight(double height) {
+        if (this.height < getMinHeight()) return false;
+        return position.getY() > getHeight() / 2 && position.getY() < height - getHeight() / 2 ;
     }
 
-    public final boolean isSelection() {
-        return selection;
+    public Color getFillColor() {
+        return fillColor;
+    }
+    /* Для методов-посетителей */
+    public void accept(ShapeAction action) {
+        action.shapeAction(this);
     }
 
-    public final void setPosition(int x, int y) {
-        this.x = x;
-        this.y = y;
-    }
-
-    public final int getCenterToX() {
-        return width / 2;
-    }
-
-    public final int getCenterToY() {
-        return height / 2;
-    }
-
-    public final int getX() {
-        return x;
-    }
-
-    public final int getY() {
-        return y;
-    }
-
-    //Вопрос
-    public final void setSize(int width, int height) {
-        if (width >= MIN_WIDTH)
-            this.width = width;
-        if (height >= MIN_HEIGHT) {
-            this.height = height;
-        }
-    }
-
-    public void increaseSize(int dx, int dy) {
-        this.width += dx * 2;
-        this.height += dy * 2;
-    }
-
-    public int getWidth() {
+    public double getWidth() {
         return width;
     }
 
-    public int getHeight() {
+    public double getHeight() {
         return height;
     }
 
-
-    public final void setFillColor(Color color) {
-        fillColor = color;
+    public double getMinHeight() {
+        return MIN_HEIGHT;
     }
 
-    //Проверяет, находится ли фигура в заданом пространстве
-    public boolean isItIncludedWidth(int width){
-        return x > getCenterToX() && x < width - getCenterToX();
+    public double getMinWidth() {
+        return MIN_WIDTH;
     }
-    public boolean isItIncludedHeight(int height){
-        return y > getCenterToY() && y < height - getCenterToY();
-    }
-
-    protected final Color getBorderColor() {
-        if (selection) return selectionColor;
-        return Color.rgb(0, 0, 0, 0);
+    /* Возвращает текущий объект */
+    public Shape getInstance() {
+        return this;
     }
 
-    protected Color getFillColor() {
-        return fillColor;
+    /* Методы загрузки и сохранения */
+    public void load(BufferedReader bufferedReader, ShapeAbstractFactory factory) throws IOException {
+        //pos
+        String line = check("\tx: ", bufferedReader.readLine());
+        double x = Double.parseDouble(line.split(" ")[1]);
+        line = check("\ty: ", bufferedReader.readLine());
+        double y = Double.parseDouble(line.split(" ")[1]);
+        position = new Position(x, y);
+        //size
+        line = check("\twidth: ", bufferedReader.readLine());
+        width = Double.parseDouble(line.split(" ")[1]);
+        line = check("\theight: ", bufferedReader.readLine());
+        height = Double.parseDouble(line.split(" ")[1]);
+        //color
+        String[] s = check("\trgb: ", bufferedReader.readLine()).split(" ");
+        int red = Integer.parseInt(s[1]);
+        int green = Integer.parseInt(s[2]);
+        int blue = Integer.parseInt(s[3]);
+        fillColor = Color.rgb(red, green, blue);
+    }
+
+    public void save(BufferedWriter bufferedWriter) throws IOException {
+        bufferedWriter.write(getClass().getSimpleName() + "\n");
+        bufferedWriter.write("\tx: " + position.getX() + "\n");
+        bufferedWriter.write("\ty: " + position.getY() + "\n");
+        bufferedWriter.write("\twidth: " + width + "\n");
+        bufferedWriter.write("\theight: " + height + "\n");
+        bufferedWriter.write("\trgb: " + (int) (fillColor.getRed() * 255) + " " + (int) (fillColor.getGreen() * 255) + " " + (int) (fillColor.getBlue() * 255) + "\n");
+    }
+
+    protected String check(String prefix, String line) {
+        String[] split = line.split(" ");
+        if (!(line.startsWith(prefix) && split.length >= 2))
+            throw new IllegalArgumentException();
+        else {
+            try {
+                for (int i = 1; i < split.length; i++) {
+                    Double.parseDouble(split[i]);
+                }
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException();
+            }
+        }
+        return line;
     }
 }

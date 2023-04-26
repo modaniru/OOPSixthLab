@@ -1,15 +1,10 @@
 package com.example.oop6.utils;
 
-import com.example.oop6.funcInterfaces.ContainerMapFunc;
-import com.example.oop6.models.shapes.Shape;
-
 import java.util.Iterator;
-import java.util.Objects;
-import java.util.function.Consumer;
+import java.util.List;
 
-//Контейнер, показанный OOP3
+// Контейнер, показанный OOP3
 public class Container<T> implements Iterable<T> {
-
     /**
      * Узел, который используется в контейнере
      */
@@ -197,7 +192,7 @@ public class Container<T> implements Iterable<T> {
      *
      * @return size
      */
-    public Integer getSize() {
+    public Integer size() {
         return size;
     }
 
@@ -251,5 +246,26 @@ public class Container<T> implements Iterable<T> {
         head.next = null;
         size = 0;
         tail = head;
+    }
+
+    public void deleteAtIndexes(List<Integer> integerList) {
+        for (int i = integerList.size() - 1; i >= 0; i--) {
+            deleteAt(integerList.get(i));
+        }
+    }
+
+    public void delete(T shape) {
+        if (size == 0) return;
+        Node temp = head;
+        while (temp != null && temp.next.value != shape) {
+            temp = temp.next;
+        }
+        if (temp == null) return;
+        if (temp.next == tail) {
+            tail = temp;
+        }
+        temp.next = temp.next.next;
+
+        size--;
     }
 }
