@@ -326,6 +326,7 @@ public class Controller implements Initializable {
             command.execute(paintField);
             stackOperation.push(command);
         } else if (keyCode.equals(ShortCuts.GROUP.getKeyCode())) {
+            if(paintField.getAllSelectedShapes().size() <= 1) return;
             command = new GroupCommand();
             command.execute(paintField);
             stackOperation.push(command);

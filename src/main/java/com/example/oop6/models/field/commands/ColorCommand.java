@@ -10,11 +10,14 @@ import javafx.scene.paint.Color;
 
 import java.util.Iterator;
 
-public class ColorCommand implements Command{
+/* Команда отвечающая за изменение цвета выделенных фигур */
+public class ColorCommand implements Command {
     private PaintField paintField;
-    private Container<Color> oldColors = new Container<>();
+    /* Старые цвета фигур */
+    private final Container<Color> oldColors = new Container<>();
+    /* Все выделенные фигуры */
     private final Container<Shape> allSelectedShapes = new Container<>();
-    private Color newColor;
+    private final Color newColor;
 
     public ColorCommand(Color newColor) {
         this.newColor = newColor;
@@ -43,25 +46,16 @@ public class ColorCommand implements Command{
     }
 
     @Override
-    public Command clone() {
-        return null;
-    }
-
-    @Override
-    public String report() {
-        return "ColorCommand";
-    }
-
-    @Override
     public Image getImage() {
         return Images.COLOR.getImage();
     }
-    /* Обходим древовидную структуру группу, если она нам попалась */
-    private void getAllShapes(Shape shape){
+
+    /* Получаем все ФИГУРЫ (без групп), т.к. у группы могут быть фигуры разных цветов */
+    private void getAllShapes(Shape shape) {
         // Крайний случай рекурсии
-        if(shape.getShapes().size() == 0)
+        if (shape.getShapes().size() == 0)
             allSelectedShapes.add(shape);
-        else{
+        else {
             for (Shape s : shape.getShapes()) {
                 getAllShapes(s);
             }

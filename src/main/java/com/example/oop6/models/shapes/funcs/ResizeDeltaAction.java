@@ -3,6 +3,7 @@ package com.example.oop6.models.shapes.funcs;
 import com.example.oop6.models.shapes.Shape;
 import com.example.oop6.utils.Container;
 
+/* Класс посетитель по изменению размера */
 public class ResizeDeltaAction implements ShapeAction {
     private double dx;
     private double dy;

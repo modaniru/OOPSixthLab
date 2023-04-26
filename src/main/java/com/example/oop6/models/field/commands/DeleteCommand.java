@@ -7,7 +7,9 @@ import com.example.oop6.utils.Container;
 import com.example.oop6.utils.Images;
 import javafx.scene.image.Image;
 
+/* Команда удаления фигуры */
 public class DeleteCommand implements Command {
+    /* Все удаленные фигуры */
     private Container<Shape> deletedShapes;
     private PaintField paintField;
 
@@ -25,15 +27,6 @@ public class DeleteCommand implements Command {
         }
     }
 
-    @Override
-    public Command clone() {
-        return null;
-    }
-
-    @Override
-    public String report() {
-        return "DeleteCommand";
-    }
     @Override
     public Image getImage() {
         return Images.DELETE.getImage();

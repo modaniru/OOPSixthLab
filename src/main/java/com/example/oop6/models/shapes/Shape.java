@@ -13,6 +13,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 /* Абстрактный класс фигуры */
 public abstract class Shape {
+    //Минимально возможный размер
     public static final double MIN_HEIGHT = 10;
     public static final double MIN_WIDTH = 10;
     protected Position position;
@@ -39,70 +40,52 @@ public abstract class Shape {
 
     /* Возвращает экземпляр наследника класса Shape */
     public abstract Shape getExample();
-
+    /* Возвращает булево значение если точка находится в фигуре */
     public abstract boolean inShapeArea(double x, double y);
-
+    /* Уникальный для всех метод рисования */
     protected abstract void drawShape(GraphicsContext graphicsContext);
-
-    //todo шаблонный метод рисования
+    /* Шаблонный метод */
     public void draw(Canvas canvas) {
         int width = (int) canvas.getWidth();
         int height = (int) canvas.getHeight();
         if (entersByWidth(width) && entersByHeight(height))
             drawShape(canvas.getGraphicsContext2D());
     }
-
-    //todo можно ли этого избежать
+    /* Возвращает есть ли фигуры в этом шейпе (для группы (можно ли этого избежать?)) */
     public Container<Shape> getShapes() {
         return new Container<>();
     }
-
+    /* Устанавливает позицию */
     public void setPosition(Position position) {
         this.position = position.clone();
     }
-
-    public final double getXDistanceToBorder() {
-        return width / 2;
-    }
-
-    public final double getYDistanceToBorder() {
-        return height / 2;
-    }
-
     public Position getPosition() {
         return position;
     }
-
-    //Вопрос
+    /* Устанавливает размер */
     public void setSize(double width, double height) {
         this.width = width;
         this.height = height;
     }
-
-    public void setSizeWithLimit(double width, double height, double fieldWidth, double fieldHeight) {
-        if (!(position.getX() > width / 2 && position.getX() < fieldWidth - width / 2)) width = this.width;
-        if (!(position.getY() > height / 2 && position.getY() < fieldHeight - height / 2)) height = this.height;
-    }
-
+    /* Устанавливает цвет */
     public void setFillColor(Color color) {
         fillColor = color;
     }
-
-    //Проверяет, находится ли фигура в заданом пространстве
+    /* Находится ли фигура целиком в заданном отрезке */
     public boolean entersByWidth(double width) {
         if (this.width < getMinWidth()) return false;
-        return position.getX() > getXDistanceToBorder() && position.getX() < width - getXDistanceToBorder();
+        return position.getX() > getWidth() / 2 && position.getX() < width - getWidth() / 2;
     }
 
     public boolean entersByHeight(double height) {
         if (this.height < getMinHeight()) return false;
-        return position.getY() > getYDistanceToBorder() && position.getY() < height - getYDistanceToBorder();
+        return position.getY() > getHeight() / 2 && position.getY() < height - getHeight() / 2 ;
     }
 
     public Color getFillColor() {
         return fillColor;
     }
-
+    /* Для методов-посетителей */
     public void accept(ShapeAction action) {
         action.shapeAction(this);
     }
@@ -122,11 +105,12 @@ public abstract class Shape {
     public double getMinWidth() {
         return MIN_WIDTH;
     }
-
+    /* Возвращает текущий объект */
     public Shape getInstance() {
         return this;
     }
 
+    /* Методы загрузки и сохранения */
     public void load(BufferedReader bufferedReader, ShapeAbstractFactory factory) throws IOException {
         //pos
         String line = check("\tx: ", bufferedReader.readLine());

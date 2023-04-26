@@ -27,7 +27,7 @@ public class ResizeInstrument extends PositionInstrument {
 
     @Override
     public void drag(Position position) {
-        ResizeDeltaAction resizeDeltaAction = new ResizeDeltaAction(paintField.getFieldWidth(), paintField.getFieldHeight());
+        ResizeDeltaAction resizeDeltaAction = new ResizeDeltaAction(paintField.getWidth(), paintField.getHeight());
         resizeDeltaAction.setDx(position.getX() - oldPosition.getX());
         resizeDeltaAction.setDy(position.getY() - oldPosition.getY());
         paintField.actionSelectedShapes(resizeDeltaAction);

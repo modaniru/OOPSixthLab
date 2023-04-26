@@ -33,20 +33,25 @@ public class ShapeGroup extends Shape {
             position = shape.position.clone();
         }
         //Вычисление координат центра, при добавлении новой фигуры
-        double maxX = Math.max(shape.position.getX() + shape.getXDistanceToBorder(), position.getX() + getXDistanceToBorder());
-        double maxY = Math.max(shape.position.getY() + shape.getYDistanceToBorder(), position.getY() + getYDistanceToBorder());
-        double minX = Math.min(shape.position.getX() - shape.getXDistanceToBorder(), position.getX() - getXDistanceToBorder());
-        double minY = Math.min(shape.position.getY() - shape.getYDistanceToBorder(), position.getY() - getYDistanceToBorder());
-        if (shape.position.getX() > rightShape) rightShape = shape.position.getX() + shape.getMinWidth() / 2;
-        if (shape.position.getX() < leftShape) leftShape = shape.position.getX() - shape.getMinWidth() / 2;
-        if (shape.position.getY() > downShape) downShape = shape.position.getY() + shape.getMinHeight() / 2;
-        if (shape.position.getY() < upShape) upShape = shape.position.getY() - shape.getMinHeight() / 2;
+        double maxX = Math.max(shape.position.getX() + shape.getWidth() / 2,
+                position.getX() + getWidth() / 2);
+        double maxY = Math.max(shape.position.getY() + shape.getHeight() / 2,
+                position.getY() + getHeight() / 2);
+        double minX = Math.min(shape.position.getX() - shape.getWidth() / 2,
+                position.getX() - getWidth() / 2);
+        double minY = Math.min(shape.position.getY() - shape.getHeight() / 2,
+                position.getY() - getHeight() / 2);
+        if (shape.position.getX() > rightShape)
+            rightShape = shape.position.getX() + shape.getMinWidth() / 2;
+        if (shape.position.getX() < leftShape)
+            leftShape = shape.position.getX() - shape.getMinWidth() / 2;
+        if (shape.position.getY() > downShape)
+            downShape = shape.position.getY() + shape.getMinHeight() / 2;
+        if (shape.position.getY() < upShape)
+            upShape = shape.position.getY() - shape.getMinHeight() / 2;
         width = maxX - minX;
         height = maxY - minY;
-        double oldX = position.getX();
-        double oldY = position.getY();
-        position.setX((int) (minX + width / 2));
-        position.setY((int) (minY + height / 2));
+        position = new Position(minX + width / 2, minY + height / 2);
         shapes.add(shape);
     }
 
@@ -62,19 +67,11 @@ public class ShapeGroup extends Shape {
         for (Shape shape : shapes) {
             shapeGroup.addShape(shape.clone());
         }
-        shapeGroup.leftShape = leftShape;
-        shapeGroup.rightShape = rightShape;
-        shapeGroup.upShape = upShape;
-        shapeGroup.downShape = downShape;
         return shapeGroup;
     }
     @Override
     public Shape getExample() {
-        ShapeGroup shapeGroup = new ShapeGroup();
-        for (Shape shape : shapes) {
-            shapeGroup.addShape(shape.clone());
-        }
-        return shapeGroup;
+        return new ShapeGroup();
     }
     //Если обернуть в visitor, то будут выполняться ненужные итерации
     @Override
@@ -86,6 +83,7 @@ public class ShapeGroup extends Shape {
         return false;
     }
     //Реализован через template method
+    //todo
     @Override
     protected void drawShape(GraphicsContext graphicsContext) {
         for (Shape shape : shapes) {

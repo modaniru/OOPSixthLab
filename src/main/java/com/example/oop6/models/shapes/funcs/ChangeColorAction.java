@@ -4,6 +4,7 @@ import com.example.oop6.models.shapes.Shape;
 import com.example.oop6.utils.Container;
 import javafx.scene.paint.Color;
 
+/* Класс посетитель по смене цвета */
 public class ChangeColorAction implements ShapeAction{
     private Color color;
 

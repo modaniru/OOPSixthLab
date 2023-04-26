@@ -8,6 +8,7 @@ import com.example.oop6.utils.Images;
 import com.example.oop6.utils.Position;
 import javafx.scene.image.Image;
 
+/* Команда выделения фигур */
 public class SelectCommand implements Command{
     private Position firstPosition;
     private Position secondPosition;
@@ -46,16 +47,6 @@ public class SelectCommand implements Command{
             paintField.removeInstanceShape(shape);
             paintField.addShapeToContainer(new ShapeDecorator(shape.getInstance()));
         }
-    }
-
-    @Override
-    public Command clone() {
-        return null;
-    }
-
-    @Override
-    public String report() {
-        return "SelectCommand";
     }
 
     public void setSecondPosition(Position secondPosition) {

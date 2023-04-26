@@ -1,7 +1,7 @@
 package com.example.oop6.models.shapes;
 
 import javafx.scene.canvas.GraphicsContext;
-
+/* Эллипс */
 public class Circle extends Shape {
     public Circle(double width, double height) {
         super(width, height);

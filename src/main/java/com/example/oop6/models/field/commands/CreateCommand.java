@@ -7,6 +7,7 @@ import com.example.oop6.utils.Container;
 import com.example.oop6.utils.Images;
 import javafx.scene.image.Image;
 
+/* Команда создания фигуры */
 public class CreateCommand implements Command {
     private Shape shape;
     private PaintField paintField;
@@ -30,16 +31,6 @@ public class CreateCommand implements Command {
             paintField.removeInstanceShape(shape);
             paintField.addShapeToContainer(new ShapeDecorator(shape.getInstance()));
         }
-    }
-
-    @Override
-    public Command clone() {
-        return null;
-    }
-
-    @Override
-    public String report() {
-        return this.getClass().getSimpleName();
     }
 
     @Override
