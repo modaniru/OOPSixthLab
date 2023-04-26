@@ -29,7 +29,7 @@ public class ShapeDecorator extends Shape {
         instance.drawShape(graphicsContext);
         graphicsContext.setLineWidth(2);
         graphicsContext.setStroke(Color.LIGHTBLUE);
-        graphicsContext.strokeRect(position.getX() - getXDistanceToBorder(), position.getY() - getYDistanceToBorder(), width, height);
+        graphicsContext.strokeRect(position.getX() - getWidth() / 2, position.getY() - getHeight() / 2, width, height);
     }
 
     @Override
@@ -52,6 +52,16 @@ public class ShapeDecorator extends Shape {
         instance.accept(action);
         width = instance.getWidth();
         height = instance.getHeight();
+    }
+
+    @Override
+    public boolean entersByWidth(double width) {
+        return instance.entersByWidth(width);
+    }
+
+    @Override
+    public boolean entersByHeight(double height) {
+        return instance.entersByHeight(height);
     }
 
     @Override

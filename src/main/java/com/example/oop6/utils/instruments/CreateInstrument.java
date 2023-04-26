@@ -9,38 +9,36 @@ import com.example.oop6.utils.Position;
 
 import java.util.Optional;
 
-public class CreateInstrument implements Instrument{
+/* Инструмент, который отвечает за создание фигур */
+public class CreateInstrument implements Instrument {
 
     private final PaintField paintField;
     private Shape shape;
     private boolean inShape = false;
-    private Command command;
 
     public CreateInstrument(PaintField paintField) {
         this.paintField = paintField;
     }
 
     @Override
-    public void mouseDown(Shape shape, int x, int y) {
-        command = null;
+    public void mouseDown(Shape shape, Position position) {
         this.shape = shape;
-        shape.setPosition(new Position(x, y));
+        shape.setPosition(position.clone());
         inShape = paintField.insideTheFigure(shape.getPosition().getX(), shape.getPosition().getY());
     }
 
     @Override
-    public void drag(int x, int y) {
-        if(!inShape){
-            shape.setSize(Math.abs(x - shape.getPosition().getX()) * 2, Math.abs(y - shape.getPosition().getY()) * 2);
+    public void drag(Position position) {
+        if (!inShape) {
+            shape.setSize(Math.abs(position.getX() - shape.getPosition().getX()) * 2, Math.abs(position.getY() - shape.getPosition().getY()) * 2);
             paintField.drawTempShape(new ShapeDecorator(shape));
         }
     }
 
-    //todo возврщать команду
     @Override
-    public Optional<Command> mouseUp(int x, int y) {
-        if(!inShape && shape.isCorrect() && shape.entersByWidth(paintField.getFieldWidth()) && shape.entersByHeight(paintField.getFieldHeight())){
-            command = new CreateCommand(shape);
+    public Optional<Command> mouseUp(Position position) {
+        if (!inShape && shape.entersByWidth(paintField.getWidth()) && shape.entersByHeight(paintField.getHeight())) {
+            Command command = new CreateCommand(shape);
             command.execute(paintField);
             return Optional.of(command);
         }

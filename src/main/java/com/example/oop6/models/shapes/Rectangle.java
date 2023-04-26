@@ -1,10 +1,10 @@
 package com.example.oop6.models.shapes;
 
 import javafx.scene.canvas.GraphicsContext;
-
+/* Прямоугольник */
 public class Rectangle extends Shape {
 
-    public Rectangle(int width, int height) {
+    public Rectangle(double width, double height) {
         super(width, height);
     }
 

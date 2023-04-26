@@ -2,14 +2,17 @@ package com.example.oop6.models.field.commands;
 
 import com.example.oop6.models.field.PaintField;
 import com.example.oop6.models.shapes.Shape;
+import com.example.oop6.models.shapes.ShapeDecorator;
 import com.example.oop6.models.shapes.funcs.ResizeDeltaAction;
 import com.example.oop6.utils.Container;
+import com.example.oop6.utils.Images;
+import javafx.scene.image.Image;
 
 import java.util.Iterator;
-
+/* Команда изменения размера фигуры */
 public class ResizeCommand implements Command{
     private PaintField paintField;
-    private Container<Shape> resizedShapes;
+    private Container<Shape> resizedShapes = new Container<>();
     private class Size{
         private double width;
         private double height;
@@ -20,10 +23,11 @@ public class ResizeCommand implements Command{
         }
     }
     private Container<Size> oldSize;
-    private int dx;
-    private int dy;
+    private Container<Shape> delete;
+    private double dx;
+    private double dy;
 
-    public ResizeCommand(int dx, int dy) {
+    public ResizeCommand(double dx, double dy) {
         this.dx = dx;
         this.dy = dy;
     }
@@ -31,16 +35,25 @@ public class ResizeCommand implements Command{
     @Override
     public void execute(PaintField paintField) {
         this.paintField = paintField;
-        resizedShapes = paintField.getAllSelectedShapes();
+        delete = paintField.getAllSelectedShapes();
+        for (Shape shape : delete) {
+            getAllShapes(shape.getInstance());
+        }
         oldSize = new Container<>();
         for (Shape s : resizedShapes) {
-            s = s.getInstance();
             oldSize.add(new Size(s.getWidth(), s.getHeight()));
         }
-        ResizeDeltaAction action = new ResizeDeltaAction(paintField.getFieldWidth(), paintField.getFieldHeight());
+        ResizeDeltaAction action = new ResizeDeltaAction(paintField.getWidth(), paintField.getHeight());
         action.setDx(dx);
         action.setDy(dy);
         paintField.actionSelectedShapes(action);
+    }
+
+    private void getAllShapes(Shape shape){
+        resizedShapes.add(shape);
+        for (Shape s : shape.getInstance().getShapes()) {
+            getAllShapes(s);
+        }
     }
 
     @Override
@@ -50,24 +63,23 @@ public class ResizeCommand implements Command{
             Size next = iterator.next();
             s.setSize(next.width, next.height);
         }
+        for (Shape shape : delete) {
+            paintField.removeInstanceShape(shape);
+            paintField.addShapeToContainer(new ShapeDecorator(shape.getInstance()));
+        }
         paintField.drawAllShapesInContainer();
     }
 
-    @Override
-    public Command clone() {
-        return null;
-    }
 
-    @Override
-    public String report() {
-        return "ResizeCommand";
-    }
-
-    public void setDx(int dx) {
+    public void setDx(double dx) {
         this.dx = dx;
     }
 
-    public void setDy(int dy) {
+    public void setDy(double dy) {
         this.dy = dy;
+    }
+    @Override
+    public Image getImage() {
+        return Images.SIZE.getImage();
     }
 }

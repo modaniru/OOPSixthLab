@@ -1,65 +1,50 @@
 package com.example.oop6;
 
-import com.example.oop6.models.field.*;
-import com.example.oop6.models.ShapeSizeModel;
+import com.example.oop6.models.field.PaintField;
 import com.example.oop6.models.field.commands.*;
 import com.example.oop6.models.shapes.Circle;
-import com.example.oop6.models.shapes.Shape;
 import com.example.oop6.models.shapes.Rectangle;
+import com.example.oop6.models.shapes.Shape;
 import com.example.oop6.models.shapes.Triangle;
-import com.example.oop6.models.shapes.funcs.ChangeColorAction;
-import com.example.oop6.models.shapes.funcs.MoveAction;
-import com.example.oop6.models.shapes.funcs.ResizeDeltaAction;
+import com.example.oop6.utils.Position;
 import com.example.oop6.utils.ShapeFactory;
 import com.example.oop6.utils.ShortCuts;
+import com.example.oop6.utils.information.Information;
 import com.example.oop6.utils.instruments.*;
 import com.example.oop6.utils.mvc.StackOperation;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Insets;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
+import javafx.scene.effect.ColorAdjust;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.*;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 
 import java.io.*;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class Controller implements Initializable {
-    @FXML
-    private AnchorPane form;
-    @FXML
-    private Pane drawField;
+    /* --- Кнопки ---*/
     @FXML
     private Button btnCircle;
     @FXML
     private Button btnSquare;
     @FXML
     private Button btnTriangle;
-    @FXML
-    private Button btnCanvasClear;
-    @FXML
-    private Slider widthSlider;
-    @FXML
-    private Slider heightSlider;
-    @FXML
-    private ColorPicker colorPicker;
-    @FXML
-    private Text tWidth;
-    @FXML
-    private Text tHeight;
-    @FXML
-    private Text tCursorPosition;
-    //todo сделать команды для кнопок
+    // Список всех кнопок с шейпами
+    List<Button> shapeButtons = new ArrayList<>();
     @FXML
     private Button btnCreate;
     @FXML
@@ -68,6 +53,15 @@ public class Controller implements Initializable {
     private Button btnPosition;
     @FXML
     private Button btnSize;
+    // Список всех кнопок с инструментами
+    List<Button> instrumentsButtons = new ArrayList<>();
+    /* --- text views --- */
+    @FXML
+    private Text tCursorPosition;
+    /* --- text fields --- */
+    @FXML
+    private TextField tfProjectName;
+    /* --- menu items ---*/
     @FXML
     private MenuBar menuBar;
     @FXML
@@ -78,55 +72,87 @@ public class Controller implements Initializable {
     private MenuItem miSave;
     @FXML
     private MenuItem miCreate;
+    /* --- color picker --- */
     @FXML
-    private TextField tfProjectName;
+    private ColorPicker colorPicker;
+    /* --- pane --- */
     @FXML
-    private TextArea report;
+    private Pane drawField;
+    /* --- other classes --- */
+    // Имя текущего файла
     private String fileName;
+    // Объект поля для рисования
     private PaintField paintField;
-    private ShapeSizeModel shapeSizeModel;
-    private MoveAction moveAction;
-    private ResizeDeltaAction resizeDeltaAction;
+    // Текущая фигура
     private Shape shape;
+    // Текущий инструмент
     private Instrument instrument;
-    private FileChooser fileChooser = new FileChooser();
-
+    // File dialog
+    private final FileChooser fileChooser = new FileChooser();
+    // Моделька стека операций
     private StackOperation stackOperation;
+    @FXML
+    private ListView<Command> lvReport;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        /* Создание класса обертки стека операций */
+        stackOperation = new StackOperation();
+        stackOperation.setModelChangeEvent((stackOperation) -> {
+            lvReport.setCellFactory(e -> new ListCell<>(){
+                @Override
+                protected void updateItem(Command command, boolean b) {
+                    setStyle("-fx-background-color: " + " #363e52");
+                    if(command == null) return;
+                    super.updateItem(command, b);
+                    ColorAdjust colorAdjust = new ColorAdjust();
+                    colorAdjust.setBrightness(1);
+                    ImageView imageView = new ImageView(command.getImage());
+                    imageView.setFitWidth(10);
+                    imageView.setFitHeight(10);
+                    imageView.setEffect(colorAdjust);
+                    setGraphic(imageView);
+                }
+            });
+            lvReport.setItems(stackOperation);
+        });
+        /* Заполнение массива кнопок с шейпами */
+        shapeButtons.add(btnCircle);
+        shapeButtons.add(btnTriangle);
+        shapeButtons.add(btnSquare);
+        /* Заполнение массива кнопок с инструментами */
+        instrumentsButtons.add(btnSize);
+        instrumentsButtons.add(btnSelect);
+        instrumentsButtons.add(btnPosition);
+        instrumentsButtons.add(btnCreate);
+        /* Установка Menu Bar */
         final String os = System.getProperty("os.name");
-        if (os != null && os.startsWith("Mac"))
+        if (os != null && os.startsWith("Mac")) {
             menuBar.useSystemMenuBarProperty().set(true);
-
-
-        //Работа с Canvas
+        }
+        /* Создание paintField с вставкой Canvas */
         Canvas canvas = new Canvas(drawField.getPrefWidth(), drawField.getPrefHeight());
-        moveAction = new MoveAction((int) drawField.getPrefWidth(), (int) drawField.getPrefHeight());
-        resizeDeltaAction = new ResizeDeltaAction((int) drawField.getPrefWidth(), (int) drawField.getPrefHeight());
         drawField.getChildren().add(canvas);
         paintField = new PaintField(canvas);
-        //Обработчики событий при изменении размера окна
+        /* Установка слушателей для формы */
         drawField.widthProperty().addListener(this::formChangeWidthEvent);
         drawField.heightProperty().addListener(this::formChangeHeightEvent);
-        //Моделька
-        shapeSizeModel = new ShapeSizeModel(40, 40);
-        shapeSizeModel.setModelChangeEvent(this::changeModel);
-        widthSlider.setValue(shapeSizeModel.getWidth());
-        heightSlider.setValue(shapeSizeModel.getHeight());
-        tWidth.setText("width: " + shapeSizeModel.getWidth());
-        tHeight.setText("height: " + shapeSizeModel.getHeight());
-        //Слайдеры, для выбора размера фигуры
-        heightSlider.valueProperty().addListener(this::heightSliderChangeEvent);
-        widthSlider.valueProperty().addListener(this::widthSliderChangeEvent);
-        //Колор пикер
+        /* Установка слушателя для colorPicker */
         colorPicker.setOnAction(this::colorPickerAction);
         colorPicker.setValue(Color.LIGHTGRAY);
-        //Вставка фигур в кнопки
-        Shape circle = new Circle(shapeSizeModel.getWidth(), shapeSizeModel.getHeight());
+        /* Вставка в кнопки пользовательскую информацию (Фигуры) */
+        Shape circle = new Circle(Information.DEFAULT_WIDTH, Information.DEFAULT_HEIGHT);
+        //Установка текущего цвета colorPicker'a
         circle.setFillColor(colorPicker.getValue());
+        //По умолчанию выбран эллипс
+        shape = circle.clone();
+        btnCircle.setDisable(true);
         btnCircle.setUserData(circle);
-        //Всплывающие подсказки к кнопками и их шорткатам
+        btnSquare.setUserData(new Rectangle(Information.DEFAULT_WIDTH, Information.DEFAULT_HEIGHT));
+        btnTriangle.setUserData(new Triangle(Information.DEFAULT_WIDTH, Information.DEFAULT_HEIGHT));
+        /* Установка подсказок всем кнопкам */
+        /* --- Сделал некоторые шорткаты через enum, чтобы изменяя информацию о них,
+        не перекомпилировать этот класс --- */
         btnCircle.setTooltip(ShortCuts.CIRCLE.getToolTip());
         btnSquare.setTooltip(ShortCuts.RECTANGLE.getToolTip());
         btnTriangle.setTooltip(ShortCuts.TRIANGLE.getToolTip());
@@ -134,101 +160,74 @@ public class Controller implements Initializable {
         btnPosition.setTooltip(ShortCuts.MOVE.getToolTip());
         btnSize.setTooltip(ShortCuts.SIZE.getToolTip());
         btnSelect.setTooltip(ShortCuts.SELECT.getToolTip());
-        //Вставка информации в кнопки
-        btnSquare.setUserData(new Rectangle(shapeSizeModel.getWidth(), shapeSizeModel.getHeight()));
-        btnTriangle.setUserData(new Triangle(shapeSizeModel.getWidth(), shapeSizeModel.getHeight()));
+        /* Вставка в кнопки пользовательскую информацию (Инструменты) */
+        // Инструмент по умолчанию
         instrument = new CreateInstrument(paintField);
         btnCreate.setUserData(instrument);
+        btnCreate.setDisable(true);
         btnSelect.setUserData(new SelectionInstrument(paintField));
         btnPosition.setUserData(new MoveInstrument(paintField));
         btnSize.setUserData(new ResizeInstrument(paintField));
-        btnCreate.setDisable(true);
-        btnCircle.setDisable(true);
-        //По дефолту круг
-        shape = circle.clone();
-        //Обработчики событий при нажатии на кнопку
-        btnCircle.setOnAction(this::btnShapePress);
-        btnSquare.setOnAction(this::btnShapePress);
-        btnTriangle.setOnAction(this::btnShapePress);
-        btnCanvasClear.setOnAction(this::btnClearCanvasAction);
-        btnCreate.setOnAction(this::btnInstrumentPress);
-        btnSelect.setOnAction(this::btnInstrumentPress);
-        btnPosition.setOnAction(this::btnInstrumentPress);
-        btnSize.setOnAction(this::btnInstrumentPress);
-        //mvc
-        stackOperation = new StackOperation();
-        stackOperation.setModelChangeEvent((stackOperation) -> {
-            StringBuilder sb = new StringBuilder();
-            for (Command command : stackOperation) {
-                sb.append(command.report()).append("\n");
-            }
-            report.setText(sb.toString());
-        });
-        //todo Если проект принадлежит файлу уже
+        /* Обработчик нажатия на кнопку 'Сохранить как' */
         miSaveAs.setOnAction(actionEvent -> {
-            File file = fileChooser.showOpenDialog(HelloApplication.getStage());
-            //todo оповещать пользователя
-            if (!file.getName().endsWith(".mdp")) return;
+            File file = getFileFromDialog();
+            if (file == null) return;
+            if (!file.getName().endsWith(Information.EXTENSION)) return;
             try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file))) {
                 paintField.save(bufferedWriter);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         });
+        /* Обработчик нажатия на кнопку 'Открыть' */
         miOpen.setOnAction(actionEvent -> {
-            File file = fileChooser.showOpenDialog(HelloApplication.getStage());
-            System.out.println(file.getName());
-            if (!file.getName().endsWith(".mdp")) return;
+            File file = getFileFromDialog();
+            if (file == null) return;
+            if (!file.getName().endsWith(Information.EXTENSION)) return;
             StringBuilder stringBuilder = new StringBuilder(file.getName());
-            stringBuilder.delete(stringBuilder.length() - 4, stringBuilder.length());
+            stringBuilder.delete(stringBuilder.length() - Information.EXTENSION.length(), stringBuilder.length());
             tfProjectName.setText(stringBuilder.toString());
             try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file))) {
                 paintField.load(bufferedReader, new ShapeFactory());
                 stackOperation.clear();
             } catch (IOException e) {
                 throw new RuntimeException(e);
+            } catch (IllegalArgumentException e) {
+                paintField.clearField();
+                new Alert(Alert.AlertType.ERROR, "Ошибка загрузки.").show();
             }
         });
+        /* Обработчик нажатия на кнопку 'Сохранить' */
         miSave.setOnAction(actionEvent -> {
-            File file = new File(fileName + ".mdp");
-            //todo сообщать путь сохранения
+            File file = new File(fileName + Information.EXTENSION);
             try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file))) {
                 paintField.save(bufferedWriter);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         });
-        //todo мб сделать уведомление
+        /* Обработчик нажатия на кнопку 'Создать' */
         miCreate.setOnAction(actionEvent -> {
             paintField.clearField();
             stackOperation.clear();
             tfProjectName.setText("");
         });
+        /* Обработчик изменения значения TextField */
         tfProjectName.textProperty().addListener((o, oldV, newV) -> {
             fileName = newV.trim();
         });
+        /* Обработчик нажатия Enter в TextField */
         tfProjectName.setOnAction(actionEvent -> {
             drawField.requestFocus();
         });
-        //Белый цвет paintField
-        drawField.setBackground(new Background(new BackgroundFill(Color.web("#FFFFFF"), CornerRadii.EMPTY, Insets.EMPTY)));
     }
 
-    private void btnInstrumentPress(ActionEvent actionEvent) {
-        Button button = (Button) actionEvent.getSource();
-        setInstrument(button);
+    /* Возвращает файл из диалога */
+    private File getFileFromDialog() {
+        return fileChooser.showOpenDialog(HelloApplication.getStage());
     }
 
-    private void setInstrument(Button button) {
-        btnCreate.setDisable(false);
-        btnSize.setDisable(false);
-        btnPosition.setDisable(false);
-        btnSelect.setDisable(false);
-        button.setDisable(true);
-        instrument = (Instrument) button.getUserData();
-    }
-
-    //Обработчик колор пикера
+    /* Обработчик выбора цвета */
     private void colorPickerAction(ActionEvent actionEvent) {
         ColorCommand command = new ColorCommand(colorPicker.getValue());
         command.execute(paintField);
@@ -236,67 +235,77 @@ public class Controller implements Initializable {
         shape.setFillColor(colorPicker.getValue());
     }
 
-    //Обработчики слайдеров
-    private void heightSliderChangeEvent(ObservableValue<? extends Number> o, Number oldValue, Number newValue) {
-        shapeSizeModel.setHeight(newValue.intValue());
-    }
-
-    private void widthSliderChangeEvent(ObservableValue<? extends Number> o, Number oldValue, Number newValue) {
-        shapeSizeModel.setWidth(newValue.intValue());
-    }
-
-    //Обработчики изменения размера окна
+    /* Обработчик изменения ширины формы */
     public void formChangeWidthEvent(ObservableValue<? extends Number> o, Number oldValue, Number newValue) {
-        moveAction.setWidth(newValue.intValue());
         paintField.resizeWidth(newValue.intValue());
     }
 
+    /* Обработчик изменения высоты формы */
+
     public void formChangeHeightEvent(ObservableValue<? extends Number> o, Number oldValue, Number newValue) {
-        moveAction.setHeight(newValue.intValue());
         paintField.resizeHeight(newValue.intValue());
     }
 
-    //todo NEW
-    public void mouseMoveInPaintFieldEvent(MouseEvent mouseEvent) {
-        tCursorPosition.setText((int) mouseEvent.getX() + " " + (int) mouseEvent.getY());
+    /* Обработка нажатия на кнопку с инструментом */
+    public void btnInstrumentPress(ActionEvent actionEvent) {
+        Button button = (Button) actionEvent.getSource();
+        setInstrument(button);
     }
 
-    //Обработчики нажатия на кнопку
-    private void btnShapePress(ActionEvent actionEvent) {
+    /* Установка инструмента в активное состояние */
+    private void setInstrument(Button button) {
+        for (Button instrumentButton : instrumentsButtons) {
+            instrumentButton.setDisable(false);
+        }
+        button.setDisable(true);
+        instrument = (Instrument) button.getUserData();
+    }
+
+    /* Обработка нажатия кнопки с шейпом */
+    public void btnShapePress(ActionEvent actionEvent) {
         Button button = (Button) actionEvent.getSource();
-        btnTriangle.setDisable(false);
-        btnSquare.setDisable(false);
-        btnCircle.setDisable(false);
+        setShape(button);
+    }
+
+    private void setShape(Button button) {
+        for (Button shapeButton : shapeButtons) {
+            shapeButton.setDisable(false);
+        }
         button.setDisable(true);
         shape = ((Shape) button.getUserData());
+        shape.setFillColor(colorPicker.getValue());
     }
 
-    private void btnClearCanvasAction(ActionEvent actionEvent) {
+    /* Очистка формы */
+    public void btnClearCanvasAction(ActionEvent actionEvent) {
         paintField.clearField();
         stackOperation.clear();
     }
 
-    //private boolean dragEvent = false;
-    //Нажатие на форму рисования
-    public void mouseDownEventInPaintField(MouseEvent mouseEvent) {
-        shape.setFillColor(colorPicker.getValue());
-        instrument.mouseDown(shape.clone(), (int) mouseEvent.getX(), (int) mouseEvent.getY());
+    /* Перемещение мыши на форме */
+    public void mouseMoveInPaintFieldEvent(MouseEvent mouseEvent) {
+        tCursorPosition.setText((int) mouseEvent.getX() + " " + (int) mouseEvent.getY());
     }
 
-    public void mouseDragEventInPaintField(MouseEvent mouseEvent) {
-        instrument.drag((int) mouseEvent.getX(), (int) mouseEvent.getY());
-        //промежуточная на отрисовку будующей фигуры (только с контуром)
+    /* Нажатие клавиши мыши */
+    public void mouseDownEventInPaintField(MouseEvent e) {
+        instrument.mouseDown(shape.clone(), new Position(e.getX(), e.getY()));
     }
 
+    /* Удержание клавиши мыши*/
+    public void mouseDragEventInPaintField(MouseEvent e) {
+        instrument.drag(new Position(e.getX(), e.getY()));
+    }
 
+    /* Отжатие клавиши мыши */
     public void mouseUpEventInPaintField(MouseEvent e) {
-        Optional<Command> optionalCommand = instrument.mouseUp((int) e.getX(), (int) e.getY());
+        Optional<Command> optionalCommand = instrument.mouseUp(new Position(e.getX(), e.getY()));
         optionalCommand.ifPresent(command -> stackOperation.push(command));
     }
 
-    //Обработчик различных нажатий клавиш
+    /* Обработчик нажатий клавиш */
     public void keyInFormDown(KeyEvent keyEvent) {
-        Command command;
+        Command command = null;
         KeyCode keyCode = keyEvent.getCode();
         if (keyCode.equals(ShortCuts.CREATE.getKeyCode()))
             setInstrument(btnCreate);
@@ -306,10 +315,9 @@ public class Controller implements Initializable {
             setInstrument(btnSize);
         else if (keyCode.equals(ShortCuts.SELECT.getKeyCode()))
             setInstrument(btnSelect);
-        else if (keyCode.equals(ShortCuts.STEP_BACK.getKeyCode())){
+        else if (keyCode.equals(ShortCuts.STEP_BACK.getKeyCode())) {
             Optional<Command> op = stackOperation.popUnExecute();
-        }
-        else if (keyCode.equals(ShortCuts.STEP_FORWARD.getKeyCode())) {
+        } else if (keyCode.equals(ShortCuts.STEP_FORWARD.getKeyCode())) {
             //todo
         } else if (keyCode.equals(KeyCode.COMMAND))
             paintField.setMultiplySelection(true);
@@ -318,6 +326,7 @@ public class Controller implements Initializable {
             command.execute(paintField);
             stackOperation.push(command);
         } else if (keyCode.equals(ShortCuts.GROUP.getKeyCode())) {
+            if(paintField.getAllSelectedShapes().size() <= 1) return;
             command = new GroupCommand();
             command.execute(paintField);
             stackOperation.push(command);
@@ -332,64 +341,34 @@ public class Controller implements Initializable {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-        }
-        else{
+        } else if (keyCode.equals(ShortCuts.CIRCLE.getKeyCode()))
+            setShape(btnCircle);
+        else if (keyCode.equals(ShortCuts.RECTANGLE.getKeyCode()))
+            setShape(btnSquare);
+        else if (keyCode.equals(ShortCuts.TRIANGLE.getKeyCode()))
+            setShape(btnTriangle);
+        else {
             switch (keyEvent.getCode()) {
-                case RIGHT -> {
-                    moveAction.setDx(2);
-                    moveAction.setDy(0);
-                    paintField.actionSelectedShapes(moveAction);
-                }
-                case LEFT -> {
-                    moveAction.setDx(-2);
-                    moveAction.setDy(0);
-                    paintField.actionSelectedShapes(moveAction);
-                }
-                case UP -> {
-                    moveAction.setDx(0);
-                    moveAction.setDy(-2);
-                    paintField.actionSelectedShapes(moveAction);
-                }
-                case DOWN -> {
-                    moveAction.setDx(0);
-                    moveAction.setDy(2);
-                    paintField.actionSelectedShapes(moveAction);
-                }
-                case L -> {
-                    resizeDeltaAction.setDx(2);
-                    resizeDeltaAction.setDy(0);
-                    paintField.actionSelectedShapes(resizeDeltaAction);
-                }
-                case K -> {
-                    resizeDeltaAction.setDx(-2);
-                    resizeDeltaAction.setDy(0);
-                    paintField.actionSelectedShapes(resizeDeltaAction);
-                }
-                case O -> {
-                    resizeDeltaAction.setDx(0);
-                    resizeDeltaAction.setDy(2);
-                    paintField.actionSelectedShapes(resizeDeltaAction);
-                }
-                case I -> {
-                    resizeDeltaAction.setDx(0);
-                    resizeDeltaAction.setDy(-2);
-                    paintField.actionSelectedShapes(resizeDeltaAction);
-                }
+                case RIGHT -> command = new MoveCommand(new Position(Information.DELTA, 0));
+                case LEFT -> command = new MoveCommand(new Position(-Information.DELTA, 0));
+                case UP -> command = new MoveCommand(new Position(0, -Information.DELTA));
+                case DOWN -> command = new MoveCommand(new Position(0, Information.DELTA));
+                case L -> command = new ResizeCommand(Information.DELTA, 0);
+                case K -> command = new ResizeCommand(-Information.DELTA, 0);
+                case O -> command = new ResizeCommand(0, Information.DELTA);
+                case I -> command = new ResizeCommand(0, -Information.DELTA);
+            }
+            if (command != null) {
+                command.execute(paintField);
+                stackOperation.push(command);
             }
         }
     }
 
-    //Множественное выделение фигур
+    /* Обработчик отжатия клавиш */
     public void keyInFormUp(KeyEvent keyEvent) {
         if (keyEvent.getCode() == KeyCode.COMMAND) {
             paintField.setMultiplySelection(false);
         }
-    }
-
-    //Model change event
-    private void changeModel(int x, int y) {
-        tWidth.setText("width: " + x);
-        tHeight.setText("height: " + y);
-        paintField.resizeSelectedShapes(x, y);
     }
 }

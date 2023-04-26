@@ -2,22 +2,24 @@ package com.example.oop6.models.field.commands;
 
 import com.example.oop6.models.field.PaintField;
 import com.example.oop6.models.shapes.Shape;
+import com.example.oop6.models.shapes.ShapeDecorator;
 import com.example.oop6.models.shapes.funcs.MoveAction;
 import com.example.oop6.utils.Container;
+import com.example.oop6.utils.Images;
 import com.example.oop6.utils.Position;
+import javafx.scene.image.Image;
 
 import java.util.Iterator;
 
-public class MoveCommand implements Command{
-    private int dx;
-    private int dy;
+/* Команда перемещения фигур */
+public class MoveCommand implements Command {
+    private Position deltaPosition;
     private PaintField paintField;
     private Container<Position> posUndo;
     private Container<Shape> selected;
 
-    public MoveCommand(int dx, int dy) {
-        this.dx = dx;
-        this.dy = dy;
+    public MoveCommand(Position position) {
+        deltaPosition = position.clone();
     }
 
     @Override
@@ -29,7 +31,10 @@ public class MoveCommand implements Command{
             posUndo.add(shape.getInstance().getPosition().clone());
             selected.add(shape);
         }
-        paintField.moveSelectedShapes(dx, dy);
+        MoveAction moveAction = new MoveAction(paintField.getWidth(), paintField.getHeight());
+        moveAction.setDx(deltaPosition.getX());
+        moveAction.setDy(deltaPosition.getY());
+        paintField.actionSelectedShapes(moveAction);
     }
 
     @Override
@@ -37,29 +42,20 @@ public class MoveCommand implements Command{
         Iterator<Position> iterator = posUndo.iterator();
         for (Shape shape : selected) {
             Position next = iterator.next();
-            shape.getPosition()
-                            .changePosition(
-                                    next.getX() - shape.getPosition().getX(),
-                                    next.getY() - shape.getPosition().getY());
+            paintField.removeInstanceShape(shape);
+            shape.setPosition(next);
+            paintField.addShapeToContainer(new ShapeDecorator(shape.getInstance()));
         }
         paintField.drawAllShapesInContainer();
     }
 
-    @Override
-    public Command clone() {
-        return null;
+
+    public void setDeltaPosition(Position position) {
+        deltaPosition = position.clone();
     }
 
     @Override
-    public String report() {
-        return "MoveCommand";
-    }
-
-    public void setDx(int dx) {
-        this.dx = dx;
-    }
-
-    public void setDy(int dy) {
-        this.dy = dy;
+    public Image getImage() {
+        return Images.MOVE.getImage();
     }
 }

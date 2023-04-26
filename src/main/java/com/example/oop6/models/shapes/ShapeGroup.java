@@ -2,6 +2,7 @@ package com.example.oop6.models.shapes;
 
 import com.example.oop6.models.shapes.funcs.ShapeAction;
 import com.example.oop6.utils.Container;
+import com.example.oop6.utils.Position;
 import com.example.oop6.utils.ShapeAbstractFactory;
 import javafx.scene.canvas.GraphicsContext;
 
@@ -22,7 +23,7 @@ public class ShapeGroup extends Shape {
     }
 
     public void addShape(Shape shape) {
-        if (shapes.getSize() == 0) {
+        if (shapes.size() == 0) {
             width = shape.width;
             height = shape.height;
             leftShape = shape.position.getX() - shape.getMinWidth() / 2;
@@ -32,20 +33,25 @@ public class ShapeGroup extends Shape {
             position = shape.position.clone();
         }
         //Вычисление координат центра, при добавлении новой фигуры
-        double maxX = Math.max(shape.position.getX() + shape.getXDistanceToBorder(), position.getX() + getXDistanceToBorder());
-        double maxY = Math.max(shape.position.getY() + shape.getYDistanceToBorder(), position.getY() + getYDistanceToBorder());
-        double minX = Math.min(shape.position.getX() - shape.getXDistanceToBorder(), position.getX() - getXDistanceToBorder());
-        double minY = Math.min(shape.position.getY() - shape.getYDistanceToBorder(), position.getY() - getYDistanceToBorder());
-        if (shape.position.getX() > rightShape) rightShape = shape.position.getX() + shape.getMinWidth() / 2;
-        if (shape.position.getX() < leftShape) leftShape = shape.position.getX() - shape.getMinWidth() / 2;
-        if (shape.position.getY() > downShape) downShape = shape.position.getY() + shape.getMinHeight() / 2;
-        if (shape.position.getY() < upShape) upShape = shape.position.getY() - shape.getMinHeight() / 2;
+        double maxX = Math.max(shape.position.getX() + shape.getWidth() / 2,
+                position.getX() + getWidth() / 2);
+        double maxY = Math.max(shape.position.getY() + shape.getHeight() / 2,
+                position.getY() + getHeight() / 2);
+        double minX = Math.min(shape.position.getX() - shape.getWidth() / 2,
+                position.getX() - getWidth() / 2);
+        double minY = Math.min(shape.position.getY() - shape.getHeight() / 2,
+                position.getY() - getHeight() / 2);
+        if (shape.position.getX() > rightShape)
+            rightShape = shape.position.getX() + shape.getMinWidth() / 2;
+        if (shape.position.getX() < leftShape)
+            leftShape = shape.position.getX() - shape.getMinWidth() / 2;
+        if (shape.position.getY() > downShape)
+            downShape = shape.position.getY() + shape.getMinHeight() / 2;
+        if (shape.position.getY() < upShape)
+            upShape = shape.position.getY() - shape.getMinHeight() / 2;
         width = maxX - minX;
         height = maxY - minY;
-        double oldX = position.getX();
-        double oldY = position.getY();
-        position.setX((int) (minX + width / 2));
-        position.setY((int) (minY + height / 2));
+        position = new Position(minX + width / 2, minY + height / 2);
         shapes.add(shape);
     }
 
@@ -65,11 +71,7 @@ public class ShapeGroup extends Shape {
     }
     @Override
     public Shape getExample() {
-        ShapeGroup shapeGroup = new ShapeGroup();
-        for (Shape shape : shapes) {
-            shapeGroup.addShape(shape.clone());
-        }
-        return shapeGroup;
+        return new ShapeGroup();
     }
     //Если обернуть в visitor, то будут выполняться ненужные итерации
     @Override
@@ -81,6 +83,7 @@ public class ShapeGroup extends Shape {
         return false;
     }
     //Реализован через template method
+    //todo
     @Override
     protected void drawShape(GraphicsContext graphicsContext) {
         for (Shape shape : shapes) {
@@ -96,14 +99,24 @@ public class ShapeGroup extends Shape {
     //переименовать
     @Override
     public boolean entersByWidth(double width) {
-        boolean res = super.entersByWidth(width);
-        return res && this.width >= rightShape - leftShape;
+        if (!super.entersByWidth(width)) {
+            return false;
+        }
+        for (Shape shape : shapes) {
+            if(!shape.entersByWidth(width)) return false;
+        }
+        return true;
     }
 
     @Override
     public boolean entersByHeight(double height) {
-        boolean res = super.entersByHeight(height);
-        return res && this.height >= downShape - upShape;
+        if (!super.entersByHeight(height)) {
+            return false;
+        }
+        for (Shape shape : shapes) {
+            if(!shape.entersByHeight(height)) return false;
+        }
+        return true;
     }
 
     @Override
@@ -130,9 +143,21 @@ public class ShapeGroup extends Shape {
     @Override
     public void save(BufferedWriter bufferedWriter) throws IOException {
         super.save(bufferedWriter);
-        bufferedWriter.write("\tShapes: " + shapes.getSize() + "\n");
+        bufferedWriter.write("\tShapes: " + shapes.size() + "\n");
         for (Shape shape : shapes) {
             shape.getInstance().save(bufferedWriter);
+        }
+    }
+
+    @Override
+    public void setPosition(Position position) {
+        double dx = position.getX() - this.position.getX();
+        double dy = position.getY() - this.position.getY();
+        super.setPosition(position);
+        for (Shape shape : shapes) {
+            Position p = shape.getPosition().clone();
+            p.changePosition(dx, dy);
+            shape.setPosition(p);
         }
     }
 }

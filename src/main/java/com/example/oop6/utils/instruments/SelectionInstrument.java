@@ -10,39 +10,37 @@ import com.example.oop6.utils.Position;
 
 import java.util.Optional;
 
-public class SelectionInstrument implements Instrument {
-    //todo mb singlethon
-    private PaintField paintField;
-    private Position startPosition;
+/* Инструмент, который отвечает за выделение фигур */
+public class SelectionInstrument extends PositionInstrument {
     private ShapeDecorator shapeDecorator;
     private SelectCommand command;
 
     public SelectionInstrument(PaintField paintField) {
-        this.paintField = paintField;
+        super(paintField);
     }
 
     @Override
-    public void mouseDown(Shape shape, int x, int y) {
-        command = new SelectCommand(x, y, x, y);
+    public void mouseDown(Shape shape, Position position) {
+        command = new SelectCommand(position, position);
         shapeDecorator = new ShapeDecorator(new Rectangle(0, 0));
-        startPosition = new Position(x, y);
+        startPosition = position.clone();
     }
 
     @Override
-    public void drag(int x, int y) {
-        shapeDecorator.setPosition(new Position(startPosition.getX() + (x - startPosition.getX()) / 2, startPosition.getY() + (y - startPosition.getY()) / 2));
-        shapeDecorator.setSize(Math.abs(x - shapeDecorator.getPosition().getX()) * 2, Math.abs(y - shapeDecorator.getPosition().getY()) * 2);
-        command.setX2(x);
-        command.setY2(y);
+    public void drag(Position position) {
+        shapeDecorator.setPosition(new Position(startPosition.getX() + (position.getX() - startPosition.getX()) / 2, startPosition.getY() + (position.getY() - startPosition.getY()) / 2));
+        shapeDecorator.setSize(Math.abs(position.getX() - shapeDecorator.getPosition().getX()) * 2, Math.abs(position.getY() - shapeDecorator.getPosition().getY()) * 2);
+        command.setSecondPosition(position);
         command.execute(paintField);
         paintField.drawTempShape(shapeDecorator);
     }
 
     @Override
-    public Optional<Command> mouseUp(int x, int y) {
-        command.setX2(x);
-        command.setY2(y);
+    public Optional<Command> mouseUp(Position position) {
+        command.setSecondPosition(position);
         command.execute(paintField);
+        if(command.selectAndOldSelectIsEmpty()) return Optional.empty();
+        paintField.drawAllShapesInContainer();
         return Optional.of(command);
     }
 
