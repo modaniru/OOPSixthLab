@@ -8,15 +8,15 @@
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.control.TreeView?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.Pane?>
-<?import javafx.scene.text.Text?>
 
 <AnchorPane fx:id="form" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="400.0" minWidth="700.0" onKeyPressed="#keyInFormDown" onKeyReleased="#keyInFormUp" prefHeight="427.0" prefWidth="852.0" style="-fx-background-color: #f5f5f5;" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.oop6.Controller">
    <children>
-      <Pane fx:id="drawField" focusTraversable="true" layoutX="57.0" layoutY="36.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseDragged="#mouseDragEventInPaintField" onMouseMoved="#mouseMoveInPaintFieldEvent" onMousePressed="#mouseDownEventInPaintField" onMouseReleased="#mouseUpEventInPaintField" prefHeight="419.0" prefWidth="486.0" style="-fx-background-color: FFF;" AnchorPane.bottomAnchor="4.0" AnchorPane.leftAnchor="40.0" AnchorPane.rightAnchor="318.0" AnchorPane.topAnchor="4.0">
+      <Pane fx:id="drawField" focusTraversable="true" layoutX="57.0" layoutY="36.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseDragged="#mouseDragEventInPaintField" onMousePressed="#mouseDownEventInPaintField" onMouseReleased="#mouseUpEventInPaintField" prefHeight="419.0" prefWidth="486.0" style="-fx-background-color: FFF;" AnchorPane.bottomAnchor="4.0" AnchorPane.leftAnchor="40.0" AnchorPane.rightAnchor="318.0" AnchorPane.topAnchor="4.0">
          <children>
             <MenuBar fx:id="menuBar" layoutY="355.0">
               <menus>
@@ -31,10 +31,8 @@
               </menus>
             </MenuBar>
          </children></Pane>
-      <ColorPicker fx:id="colorPicker" focusTraversable="false" layoutX="528.0" layoutY="174.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="26.0" prefWidth="140.0" AnchorPane.rightAnchor="32.0" AnchorPane.topAnchor="174.0" />
+      <ColorPicker fx:id="colorPicker" focusTraversable="false" layoutX="624.0" layoutY="371.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="26.0" prefWidth="140.0" AnchorPane.rightAnchor="88.0" AnchorPane.topAnchor="371.0" />
       <Button fx:id="btnCanvasClear" focusTraversable="false" layoutX="631.0" layoutY="361.0" mnemonicParsing="false" onAction="#btnClearCanvasAction" text="Очистить" AnchorPane.bottomAnchor="4.0" AnchorPane.rightAnchor="16.0" />
-      <Text layoutX="528.0" layoutY="335.0" strokeType="OUTSIDE" strokeWidth="0.0" text="cursor position:" AnchorPane.bottomAnchor="88.0" AnchorPane.rightAnchor="88.0" />
-      <Text fx:id="tCursorPosition" layoutX="647.0" layoutY="335.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0 0" AnchorPane.bottomAnchor="88.0" AnchorPane.rightAnchor="32.0" />
       <ToolBar layoutX="12.0" layoutY="36.0" orientation="VERTICAL" prefHeight="427.0" prefWidth="18.0" style="-fx-background-color: #363e52;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
         <items>
           <Button fx:id="btnCreate" focusTraversable="false" mnemonicParsing="false" onAction="#btnInstrumentPress">
@@ -102,8 +100,9 @@
             </Button>
         </items>
       </ToolBar>
-      <TextField fx:id="tfProjectName" focusTraversable="false" layoutX="680.0" layoutY="214.0" prefHeight="26.0" prefWidth="140.0" promptText="имя проекта" AnchorPane.bottomAnchor="187.0" AnchorPane.rightAnchor="32.0" />
+      <TextField fx:id="tfProjectName" focusTraversable="false" layoutX="624.0" layoutY="397.0" prefHeight="26.0" prefWidth="140.0" promptText="имя проекта" AnchorPane.bottomAnchor="4.0" AnchorPane.rightAnchor="88.0" />
       <ListView fx:id="lvReport" fixedCellSize="16.0" focusTraversable="false" layoutX="536.0" layoutY="4.0" prefHeight="445.0" prefWidth="28.0" style="-fx-background-color: #363e52;" AnchorPane.bottomAnchor="-18.0" AnchorPane.rightAnchor="272.0" AnchorPane.topAnchor="0.0" />
       <ListView fx:id="lvReDo" fixedCellSize="16.0" focusTraversable="false" layoutX="589.0" layoutY="7.0" prefHeight="445.0" prefWidth="28.0" style="-fx-background-color: #363e52;" AnchorPane.bottomAnchor="-18.0" AnchorPane.rightAnchor="236.0" AnchorPane.topAnchor="0.0" />
+      <TreeView fx:id="treeViewShapes" layoutX="630.0" layoutY="4.0" prefHeight="361.0" prefWidth="200.0" AnchorPane.bottomAnchor="62.0" AnchorPane.rightAnchor="22.0" AnchorPane.topAnchor="4.0" />
    </children>
 </AnchorPane>

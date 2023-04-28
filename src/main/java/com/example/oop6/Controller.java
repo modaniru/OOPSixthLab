@@ -1,5 +1,7 @@
 package com.example.oop6;
 
+import com.example.oop6.models.Observer;
+import com.example.oop6.models.TreeViewObserver;
 import com.example.oop6.models.field.PaintField;
 import com.example.oop6.models.field.commands.*;
 import com.example.oop6.models.shapes.Circle;
@@ -25,7 +27,6 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 
 import java.io.*;
@@ -57,7 +58,7 @@ public class Controller implements Initializable {
     List<Button> instrumentsButtons = new ArrayList<>();
     /* --- text views --- */
     @FXML
-    private Text tCursorPosition;
+    TreeView<String> treeViewShapes;
     /* --- text fields --- */
     @FXML
     private TextField tfProjectName;
@@ -93,9 +94,11 @@ public class Controller implements Initializable {
     private StackOperation stackOperation;
     @FXML
     private ListView<Command> lvReport;
+    private Observer treeViewObserver;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+
         /* Создание класса обертки стека операций */
         stackOperation = new StackOperation();
         stackOperation.setModelChangeEvent((stackOperation) -> {
@@ -134,6 +137,9 @@ public class Controller implements Initializable {
         Canvas canvas = new Canvas(drawField.getPrefWidth(), drawField.getPrefHeight());
         drawField.getChildren().add(canvas);
         paintField = new PaintField(canvas);
+        /*TreeViewObserver*/
+        treeViewObserver = new TreeViewObserver(treeViewShapes);
+        paintField.addObserver(treeViewObserver);
         /* Установка слушателей для формы */
         drawField.widthProperty().addListener(this::formChangeWidthEvent);
         drawField.heightProperty().addListener(this::formChangeHeightEvent);
@@ -280,11 +286,6 @@ public class Controller implements Initializable {
     public void btnClearCanvasAction(ActionEvent actionEvent) {
         paintField.clearField();
         stackOperation.clear();
-    }
-
-    /* Перемещение мыши на форме */
-    public void mouseMoveInPaintFieldEvent(MouseEvent mouseEvent) {
-        tCursorPosition.setText((int) mouseEvent.getX() + " " + (int) mouseEvent.getY());
     }
 
     /* Нажатие клавиши мыши */

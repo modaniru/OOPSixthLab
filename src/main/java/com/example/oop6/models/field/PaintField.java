@@ -1,6 +1,7 @@
 package com.example.oop6.models.field;
 
 import com.example.oop6.funcInterfaces.ContainerMapFunc;
+import com.example.oop6.models.Observer;
 import com.example.oop6.models.shapes.Shape;
 import com.example.oop6.models.shapes.ShapeDecorator;
 import com.example.oop6.models.shapes.ShapeGroup;
@@ -23,6 +24,17 @@ public class PaintField {
     private boolean multiplySelection = false;
     private int width;
     private int height;
+    private List<Observer> observers = new ArrayList<>();
+
+    public void addObserver(Observer observer){
+        observers.add(observer);
+    }
+
+    public void notifyAllObservers(){
+        for (Observer observer : observers) {
+            observer.notifyObserver(shapeContainer);
+        }
+    }
 
     public PaintField(Canvas canvas) {
         width = (int) canvas.getWidth();
@@ -38,12 +50,14 @@ public class PaintField {
         }
         if (!multiplySelection) unselectAllShapes();
         addShapeToContainer(new ShapeDecorator(shape));
+        notifyAllObservers();
     }
 
     /* Добавляет фигуру без выделения */
     public void addShapeToContainer(Shape shape) {
         shapeContainer.add(shape);
         drawAllShapesInContainer();
+        notifyAllObservers();
     }
 
     /* Удаляет фигуру по instance */
@@ -55,6 +69,7 @@ public class PaintField {
         }
         shapeContainer.delete(shape);
         drawAllShapesInContainer();
+        notifyAllObservers();
     }
 
     /* Возвращает булево значение, находится ли точка в какой-нибудь фигуре */
@@ -77,7 +92,7 @@ public class PaintField {
             }
         }
         for (Shape shape : news) {
-            shapeContainer.add(shape);
+            addShapeToContainer(shape);
         }
         drawAllShapesInContainer();
     }
@@ -99,7 +114,7 @@ public class PaintField {
             }
         }
         for (Shape addShape : addShapes) {
-            shapeContainer.add(addShape);
+            addShapeToContainer(addShape);
         }
         drawAllShapesInContainer();
     }
@@ -148,6 +163,7 @@ public class PaintField {
     /* Очистка всего поля */
     public void clearField() {
         shapeContainer.clear();
+        notifyAllObservers();
         clearCanvas();
     }
 
@@ -159,7 +175,7 @@ public class PaintField {
             shapeGroup.addShape(selectedShape.getInstance());
             shapeContainer.delete(selectedShape);
         }
-        shapeContainer.add(new ShapeDecorator(shapeGroup));
+        addShape(new ShapeDecorator(shapeGroup));
         drawAllShapesInContainer();
         return shapeGroup;
     }
@@ -217,7 +233,7 @@ public class PaintField {
         removeInstanceShape(shape);
         shape = shape.getInstance();
         for (Shape s : shape.getShapes()) {
-            shapeContainer.add(new ShapeDecorator(s));
+            addShape(new ShapeDecorator(s));
         }
         drawAllShapesInContainer();
         return shape.getShapes();

@@ -80,6 +80,42 @@ public enum Images {
                 throw new RuntimeException(e);
             }
         }
+    }.evaluate()),
+    CIRCLE(new Object() {
+        Image evaluate() {
+            try {
+                return new Image(new FileInputStream(new File("src/main/resources/com/example/oop6/icons/circle.png")));
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }.evaluate()),
+    RECTANGLE(new Object() {
+        Image evaluate() {
+            try {
+                return new Image(new FileInputStream(new File("src/main/resources/com/example/oop6/icons/square.png")));
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }.evaluate()),
+    TRIANGLE(new Object() {
+        Image evaluate() {
+            try {
+                return new Image(new FileInputStream(new File("src/main/resources/com/example/oop6/icons/triangle.png")));
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }.evaluate()),
+    SHAPEGROUP(new Object() {
+        Image evaluate() {
+            try {
+                return new Image(new FileInputStream(new File("src/main/resources/com/example/oop6/icons/group.png")));
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }.evaluate());
     private final Image image;
 
