@@ -11,7 +11,6 @@ import com.example.oop6.models.shapes.Triangle;
 import com.example.oop6.utils.Position;
 import com.example.oop6.utils.ShapeFactory;
 import com.example.oop6.utils.ShortCuts;
-import com.example.oop6.utils.boundsChecker.RectangleBoundsChecker;
 import com.example.oop6.utils.information.Information;
 import com.example.oop6.utils.instruments.*;
 import com.example.oop6.utils.mvc.StackOperation;
@@ -137,9 +136,22 @@ public class Controller implements Initializable {
         /* Создание paintField с вставкой Canvas */
         Canvas canvas = new Canvas(drawField.getPrefWidth(), drawField.getPrefHeight());
         drawField.getChildren().add(canvas);
-        paintField = new PaintField(canvas, new RectangleBoundsChecker());
+        paintField = new PaintField(canvas);
         /*TreeViewObserver*/
         treeViewObserver = new TreeViewObserver(treeViewShapes);
+        treeViewShapes.getSelectionModel().selectedItemProperty().addListener(
+                (observable, oldValue, newValue) -> {
+                    if(newValue != null){
+                        paintField.unselectAllShapes();
+                        for (TreeItem<Shape> selectedItem : treeViewShapes.getSelectionModel().getSelectedItems()) {
+                            paintField.selectShape(selectedItem.getValue());
+                        }
+                    }
+                    else{
+                        paintField.unSelectShape(oldValue.getValue());
+                    }
+                }
+        );
         paintField.addObserver(treeViewObserver);
         treeViewShapes.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         /* Установка слушателей для формы */

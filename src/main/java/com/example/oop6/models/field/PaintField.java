@@ -9,7 +9,6 @@ import com.example.oop6.models.shapes.funcs.ShapeAction;
 import com.example.oop6.utils.Container;
 import com.example.oop6.utils.Position;
 import com.example.oop6.utils.ShapeAbstractFactory;
-import com.example.oop6.utils.boundsChecker.BoundsChecker;
 import javafx.scene.canvas.Canvas;
 
 import java.io.BufferedReader;
@@ -26,7 +25,6 @@ public class PaintField {
     private int width;
     private int height;
     private List<Observer> observers = new ArrayList<>();
-    private BoundsChecker boundsChecker;
 
     public void addObserver(Observer observer) {
         observers.add(observer);
@@ -38,8 +36,7 @@ public class PaintField {
         }
     }
 
-    public PaintField(Canvas canvas, BoundsChecker boundsChecker) {
-        this.boundsChecker = boundsChecker;
+    public PaintField(Canvas canvas) {
         width = (int) canvas.getWidth();
         height = (int) canvas.getHeight();
         this.shapeContainer = new Container<>();
@@ -264,6 +261,7 @@ public class PaintField {
             shapeContainer.add(factory.createShape(bufferedReader));
         }
         drawAllShapesInContainer();
+        notifyAllObservers();
     }
 
     public void save(BufferedWriter bufferedWriter) throws IOException {
@@ -271,5 +269,25 @@ public class PaintField {
         for (Shape shape : shapeContainer) {
             shape.getInstance().save(bufferedWriter);
         }
+    }
+
+    public void selectShape(Shape value) {
+        for (Shape shape : shapeContainer) {
+            if(shape.getInstance() == value.getInstance()){
+                shapeContainer.replace(shape, new ShapeDecorator(shape.getInstance()));
+                break;
+            }
+        }
+        drawAllShapesInContainer();
+    }
+
+    public void unSelectShape(Shape value){
+        for (Shape shape : shapeContainer) {
+            if(shape.getInstance() == value.getInstance()){
+                shapeContainer.replace(shape, shape.getInstance());
+                break;
+            }
+        }
+        drawAllShapesInContainer();
     }
 }
