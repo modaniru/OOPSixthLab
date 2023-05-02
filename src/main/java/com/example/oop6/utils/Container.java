@@ -254,18 +254,28 @@ public class Container<T> implements Iterable<T> {
         }
     }
 
-    public void delete(T shape) {
-        if (size == 0) return;
+    public Node find(T t){
+        if (size == 0) return null;
         Node temp = head;
-        while (temp != null && temp.next.value != shape) {
+        while (temp != null && temp.next.value != t) {
             temp = temp.next;
         }
-        if (temp == null) return;
+        return temp;
+    }
+
+    public void replace(T oldT, T newT){
+        Node temp = find(oldT);
+        if(temp == null) return;
+        temp.next.value = newT;
+    }
+
+    public void delete(T t) {
+        Node temp = find(t);
+        if(temp == null) return;
         if (temp.next == tail) {
             tail = temp;
         }
         temp.next = temp.next.next;
-
         size--;
     }
 }

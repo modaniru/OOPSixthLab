@@ -27,6 +27,7 @@ public class UnGroupCommand implements Command {
         for (Shape group : groups) {
             for (Shape shape : group.getInstance().getShapes()) {
                 shape = shape.getInstance();
+                shape.setRoot(group.getInstance());
                 paintField.removeInstanceShape(shape);
             }
             paintField.addShape(group.getInstance());

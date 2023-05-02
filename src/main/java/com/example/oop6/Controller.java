@@ -11,6 +11,7 @@ import com.example.oop6.models.shapes.Triangle;
 import com.example.oop6.utils.Position;
 import com.example.oop6.utils.ShapeFactory;
 import com.example.oop6.utils.ShortCuts;
+import com.example.oop6.utils.boundsChecker.RectangleBoundsChecker;
 import com.example.oop6.utils.information.Information;
 import com.example.oop6.utils.instruments.*;
 import com.example.oop6.utils.mvc.StackOperation;
@@ -58,7 +59,7 @@ public class Controller implements Initializable {
     List<Button> instrumentsButtons = new ArrayList<>();
     /* --- text views --- */
     @FXML
-    TreeView<String> treeViewShapes;
+    TreeView<Shape> treeViewShapes;
     /* --- text fields --- */
     @FXML
     private TextField tfProjectName;
@@ -136,7 +137,7 @@ public class Controller implements Initializable {
         /* Создание paintField с вставкой Canvas */
         Canvas canvas = new Canvas(drawField.getPrefWidth(), drawField.getPrefHeight());
         drawField.getChildren().add(canvas);
-        paintField = new PaintField(canvas);
+        paintField = new PaintField(canvas, new RectangleBoundsChecker());
         /*TreeViewObserver*/
         treeViewObserver = new TreeViewObserver(treeViewShapes);
         paintField.addObserver(treeViewObserver);

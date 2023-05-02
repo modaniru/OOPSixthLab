@@ -20,6 +20,7 @@ public abstract class Shape {
     protected double width;
     protected double height;
     private Color fillColor;
+    private Shape root;
 
     public Shape(double width, double height) {
         this.width = width;
@@ -82,6 +83,18 @@ public abstract class Shape {
         return position.getY() > getHeight() / 2 && position.getY() < height - getHeight() / 2 ;
     }
 
+    public boolean entersByHeight(double height, Position position){
+        if (this.height < getMinHeight()) return false;
+        return position.getY() - height / 2 < this.position.getY() - getHeight() / 2 &&
+                position.getY() + height / 2 > this.position.getY() + getHeight() / 2;
+    }
+
+    public boolean entersByWidth(double width, Position position){
+        if (this.width < getMinWidth()) return false;
+        return position.getX() - width / 2 < this.position.getX() - getWidth() / 2 &&
+                position.getX() + width / 2 > this.position.getX() + getWidth() / 2;
+    }
+
     public Color getFillColor() {
         return fillColor;
     }
@@ -131,6 +144,14 @@ public abstract class Shape {
         fillColor = Color.rgb(red, green, blue);
     }
 
+    public Shape getRoot(){
+        return root;
+    }
+
+    public void setRoot(Shape shape){
+        root = shape;
+    }
+
     public void save(BufferedWriter bufferedWriter) throws IOException {
         bufferedWriter.write(getClass().getSimpleName() + "\n");
         bufferedWriter.write("\tx: " + position.getX() + "\n");
@@ -154,5 +175,10 @@ public abstract class Shape {
             }
         }
         return line;
+    }
+
+    @Override
+    public String toString() {
+        return this.getInstance().getClass().getSimpleName();
     }
 }

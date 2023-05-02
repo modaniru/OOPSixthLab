@@ -120,6 +120,28 @@ public class ShapeGroup extends Shape {
     }
 
     @Override
+    public boolean entersByHeight(double height, Position position) {
+        if (!super.entersByHeight(height, position)) {
+            return false;
+        }
+        for (Shape shape : shapes) {
+            if(!shape.entersByHeight(height, this.position)) return false;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean entersByWidth(double width, Position position) {
+        if (!super.entersByWidth(width, position)) {
+            return false;
+        }
+        for (Shape shape : shapes) {
+            if(!shape.entersByWidth(width, this.position)) return false;
+        }
+        return true;
+    }
+
+    @Override
     public double getMinWidth() {
         return rightShape - leftShape;
     }

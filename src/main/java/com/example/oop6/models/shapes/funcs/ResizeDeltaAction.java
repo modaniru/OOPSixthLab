@@ -2,6 +2,7 @@ package com.example.oop6.models.shapes.funcs;
 
 import com.example.oop6.models.shapes.Shape;
 import com.example.oop6.utils.Container;
+import com.example.oop6.utils.Position;
 
 /* Класс посетитель по изменению размера */
 public class ResizeDeltaAction implements ShapeAction {
@@ -17,10 +18,19 @@ public class ResizeDeltaAction implements ShapeAction {
 
     @Override
     public boolean shapeAction(Shape shape) {
+        //todo вынести
+        double width = this.width;
+        double height = this.height;
+        Position position = new Position(width / 2, height / 2);
+        if(shape.getRoot() != null){
+            width = shape.getRoot().getWidth();
+            height = shape.getRoot().getHeight();
+            position = shape.getRoot().getPosition();
+        }
         double oldWidth = shape.getWidth();
         double oldHeight = shape.getHeight();
         shape.setSize(oldWidth + dx, oldHeight + dy);
-        if (!(shape.entersByWidth(width) && shape.entersByHeight(height))) {
+        if (!(shape.entersByWidth(width, position) && shape.entersByHeight(height, position))) {
             shape.setSize(oldWidth, oldHeight);
             return false;
         }
@@ -31,6 +41,14 @@ public class ResizeDeltaAction implements ShapeAction {
     //сначала проверять смогут ли элементы группы уменьшиться, а потом уменьшать саму группу
     @Override
     public boolean groupAction(Shape shape) {
+        double width = this.width;
+        double height = this.height;
+        Position position = new Position(width / 2, height / 2);
+        if(shape.getRoot() != null){
+            width = shape.getRoot().getWidth();
+            height = shape.getRoot().getHeight();
+            position = shape.getRoot().getPosition();
+        }
         getAllShapesInContainer(shape);
         shapes.add(shape);
         boolean res = false;
@@ -38,7 +56,7 @@ public class ResizeDeltaAction implements ShapeAction {
             s = s.clone();
             s.setSize(s.getWidth() + dx, s.getHeight() + dy);
             if(!res){
-                res = !(s.entersByHeight(height) && s.entersByWidth(width));
+                res = !(s.entersByHeight(height, position) && s.entersByWidth(width, position));
             }
             else{
                 break;

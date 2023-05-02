@@ -1,6 +1,7 @@
 package com.example.oop6.models.shapes.funcs;
 
 import com.example.oop6.models.shapes.Shape;
+import com.example.oop6.utils.Position;
 
 /* Класс посетитель по перемещению */
 public class MoveAction implements ShapeAction {
@@ -16,9 +17,16 @@ public class MoveAction implements ShapeAction {
 
     @Override
     public boolean shapeAction(Shape shape) {
-        System.out.println(dx + " " + dy);
+        double width = this.width;
+        double height = this.height;
+        Position position = new Position(width / 2, height / 2);
+        if(shape.getRoot() != null){
+            width = shape.getRoot().getWidth();
+            height = shape.getRoot().getHeight();
+            position = shape.getRoot().getPosition();
+        }
         shape.getPosition().changePosition(dx, dy);
-        if (!(shape.entersByWidth(width) && shape.entersByHeight(height))) {
+        if (!(shape.entersByWidth(width, position) && shape.entersByHeight(height, position))) {
             shape.getPosition().changePosition(-dx, -dy);
             return false;
         }
