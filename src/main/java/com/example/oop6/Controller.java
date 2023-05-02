@@ -140,6 +140,7 @@ public class Controller implements Initializable {
         /*TreeViewObserver*/
         treeViewObserver = new TreeViewObserver(treeViewShapes);
         paintField.addObserver(treeViewObserver);
+        treeViewShapes.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         /* Установка слушателей для формы */
         drawField.widthProperty().addListener(this::formChangeWidthEvent);
         drawField.heightProperty().addListener(this::formChangeHeightEvent);
