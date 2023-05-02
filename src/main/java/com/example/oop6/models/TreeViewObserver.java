@@ -15,6 +15,11 @@ import java.util.List;
 public class TreeViewObserver implements Observer {
     private TreeView<Shape> tree;
     private List<TreeItem<Shape>>  selectedShapes = new ArrayList<>();
+    private boolean isNotified = false;
+
+    public boolean isNotified() {
+        return isNotified;
+    }
 
     public TreeViewObserver(TreeView<Shape> tree) {
         this.tree = tree;
@@ -22,6 +27,7 @@ public class TreeViewObserver implements Observer {
 
     @Override
     public void notifyObserver(Container<Shape> shapes) {
+        isNotified = true;
         selectedShapes = new ArrayList<>();
         TreeItem<Shape> root = new TreeItem<>(new Rectangle());
         for (Shape shape : shapes) {
@@ -33,6 +39,7 @@ public class TreeViewObserver implements Observer {
             msm.select(s);
         }
         tree.setShowRoot(false);
+        isNotified = false;
     }
 
     private TreeItem<Shape> getTreeItem(Shape shape) {

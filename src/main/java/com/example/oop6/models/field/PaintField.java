@@ -50,7 +50,6 @@ public class PaintField {
         }
         if (!multiplySelection) unselectAllShapes();
         addShapeToContainer(new ShapeDecorator(shape));
-        notifyAllObservers();
     }
 
     /* Добавляет фигуру без выделения */
@@ -182,7 +181,7 @@ public class PaintField {
         Container<Shape> selectedShapes = getAllSelectedShapes();
         for (Shape selectedShape : selectedShapes) {
             shapeGroup.addShape(selectedShape.getInstance());
-            selectedShape.setRoot(shapeGroup);
+            selectedShape.getInstance().setRoot(shapeGroup);
             shapeContainer.delete(selectedShape);
         }
         addShape(new ShapeDecorator(shapeGroup));
@@ -206,9 +205,8 @@ public class PaintField {
         }
         for (Shape decorator : decorators) {
             shapeContainer.replace(decorator, decorator.getInstance());
-//            shapeContainer.delete(decorator);
-//            shapeContainer.add(decorator.getInstance());
         }
+        drawAllShapesInContainer();
     }
 
     /* Очистка канваса */
@@ -278,6 +276,7 @@ public class PaintField {
                 break;
             }
         }
+        notifyAllObservers();
         drawAllShapesInContainer();
     }
 

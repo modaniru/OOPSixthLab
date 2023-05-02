@@ -1,6 +1,5 @@
 package com.example.oop6;
 
-import com.example.oop6.models.Observer;
 import com.example.oop6.models.TreeViewObserver;
 import com.example.oop6.models.field.PaintField;
 import com.example.oop6.models.field.commands.*;
@@ -8,6 +7,7 @@ import com.example.oop6.models.shapes.Circle;
 import com.example.oop6.models.shapes.Rectangle;
 import com.example.oop6.models.shapes.Shape;
 import com.example.oop6.models.shapes.Triangle;
+import com.example.oop6.utils.Container;
 import com.example.oop6.utils.Position;
 import com.example.oop6.utils.ShapeFactory;
 import com.example.oop6.utils.ShortCuts;
@@ -94,7 +94,7 @@ public class Controller implements Initializable {
     private StackOperation stackOperation;
     @FXML
     private ListView<Command> lvReport;
-    private Observer treeViewObserver;
+    private TreeViewObserver treeViewObserver;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -141,14 +141,21 @@ public class Controller implements Initializable {
         treeViewObserver = new TreeViewObserver(treeViewShapes);
         treeViewShapes.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> {
-                    if(newValue != null){
-                        paintField.unselectAllShapes();
-                        for (TreeItem<Shape> selectedItem : treeViewShapes.getSelectionModel().getSelectedItems()) {
-                            paintField.selectShape(selectedItem.getValue());
+                    if(!treeViewObserver.isNotified()){
+                        if(newValue != null){
+                            Container<Shape> shapes = new Container<>();
+                            for (TreeItem<Shape> selectedItem : treeViewShapes.getSelectionModel().getSelectedItems()) {
+                                shapes.add(selectedItem.getValue());
+                            }
+                            Command command = new SelectShapeCommand(shapes);
+                            command.execute(paintField);
+                            stackOperation.push(command);
                         }
-                    }
-                    else{
-                        paintField.unSelectShape(oldValue.getValue());
+                        else{
+                            Command command = new UnSelectShapeCommand(oldValue.getValue());
+                            command.execute(paintField);
+                            stackOperation.push(command);
+                        }
                     }
                 }
         );
